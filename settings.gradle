@@ -1,0 +1,3 @@
+rootProject.name = 'soc-struct'
+include 'soc-struct-core',
+        'soc-struct-model'

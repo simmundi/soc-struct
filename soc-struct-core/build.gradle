@@ -1,0 +1,22 @@
+dependencies {
+    annotationProcessor "net.snowyhollows.bento:bento-generator:${bentoVersion}"
+    annotationProcessor 'pl.edu.icm.em:trurl-generator:1.1-SNAPSHOT'
+
+    api 'pl.edu.icm.em:trurl-core:1.1-SNAPSHOT'
+    api project(":soc-struct-model")
+    api "com.google.guava:guava:${guavaVersion}"
+    api "net.snowyhollows.bento:bento-core:${bentoVersion}"
+    api "org.geotools:gt-epsg-hsql:${geotoolsVersion}"
+    api "org.geotools:gt-geopkg:${geotoolsVersion}"
+    api "org.geotools:gt-xml:${geotoolsVersion}"
+
+    implementation 'pl.edu.icm.em:trurl-orc:1.1-SNAPSHOT'
+    implementation "com.graphhopper:graphhopper-core:${grasshopperVersion}"
+    implementation "com.univocity:univocity-parsers:${univocityVersion}"
+    implementation "it.unimi.dsi:fastutil:${fastutilVersion}"
+    implementation "org.apache.commons:commons-math3:${commonsMathVersion}"
+
+    runtimeOnly "org.postgresql:postgresql:${postgresVersion}"
+
+    testImplementation 'pl.edu.icm.em:trurl-store-tablesaw:1.1-SNAPSHOT'
+}

@@ -1,0 +1,66 @@
+package pl.edu.icm.board.geography.graph;
+
+import com.graphhopper.GraphHopper;
+import com.graphhopper.config.Profile;
+import com.graphhopper.storage.GraphBuilder;
+import com.graphhopper.storage.GraphHopperStorage;
+import com.graphhopper.storage.NodeAccess;
+import net.snowyhollows.bento2.annotation.WithFactory;
+import pl.edu.icm.trurl.ecs.mapper.Mapper;
+import pl.edu.icm.trurl.ecs.mapper.Mappers;
+import pl.edu.icm.trurl.store.Store;
+
+import java.util.List;
+import java.util.Optional;
+
+public class GraphSource {
+
+    private final String osmFilename;
+
+    @WithFactory
+    GraphSource(String osmFilename) {
+        this.osmFilename = osmFilename;
+    }
+
+    public void load(Store store) {
+        GraphHopper hopper = new GraphHopper();
+        hopper.setOSMFile(osmFilename);
+        hopper.setGraphHopperLocation("output/graph");
+        hopper.setProfiles(List.of(new Profile("car").setVehicle("car").setWeighting("shortest")));
+        hopper.importOrLoad();
+        var em = hopper.getEncodingManager();
+        hopper.close();
+        GraphHopperStorage graph = new GraphBuilder(em).setRAM("output/graph", true).build();
+        graph.loadExisting();
+        var baseGraph = graph.getBaseGraph();
+
+        Mapper<GraphStoreItem> graphItemMapper = Mappers.create(GraphStoreItem.class);
+        graphItemMapper.configureStore(store);
+        graphItemMapper.attachStore(store);
+
+        int idx = 0;
+        var edges = baseGraph.getAllEdges();
+        GraphStoreItem item = graphItemMapper.create();
+        while (edges.next()) {
+            item.setBaseNode(edges.getBaseNode());
+            item.setAdjNode(edges.getAdjNode());
+            item.setDistance(edges.getDistance());
+            item.setId(edges.getEdge());
+            item.setNode(false);
+            graphItemMapper.save(item, idx++);
+        }
+
+        item = graphItemMapper.create();
+        NodeAccess nodes = baseGraph.getNodeAccess();
+        for (int i = 0; i < baseGraph.getNodes(); i++) {
+            item.setLon(nodes.getLon(i));
+            item.setLat(nodes.getLat(i));
+            item.setId(i);
+            item.setNode(true);
+            graphItemMapper.save(item, idx++);
+        }
+        store.fireUnderlyingDataChanged(0, idx);
+        graph.close();
+        hopper.clean();
+    }
+}
