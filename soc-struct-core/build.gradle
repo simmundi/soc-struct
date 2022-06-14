@@ -20,3 +20,16 @@ dependencies {
 
     testImplementation 'pl.edu.icm.em:trurl-store-tablesaw:1.1-SNAPSHOT'
 }
+
+publishing {
+    publications {
+        corePublication(MavenPublication) {
+            from components.java
+            artifact sourceJar
+
+            groupId rootProject.getGroup()
+            artifactId project.name
+            version rootProject.getVersion()
+        }
+    }
+}

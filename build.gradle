@@ -1,3 +1,6 @@
+group 'pl.edu.icm.em'
+version '1.1-SNAPSHOT'
+
 subprojects {
 
     apply plugin: 'java'
@@ -35,9 +38,6 @@ subprojects {
         mavenCentral()
     }
 
-    group 'pl.edu.icm.em'
-    version '1.1-SNAPSHOT'
-
     test {
         useJUnitPlatform()
     }
@@ -47,26 +47,12 @@ subprojects {
     }
 
     task sourceJar(type: Jar) {
-        from sourceSets.main.allJava
         classifier 'sources'
     }
 
     task javadocJar(type: Jar) {
         from javadoc
         classifier 'javadoc'
-    }
-
-    publishing {
-        publications {
-            MyPublication(MavenPublication) {
-                from components.java
-                artifact sourceJar
-                artifact javadocJar
-                groupId project.getGroup()
-                artifactId project.getName()
-                version project.getVersion()
-            }
-        }
     }
 
     ext {
@@ -89,6 +75,22 @@ subprojects {
         mockitoVersion = '3.11.2'
         juniJupiterApiVersion = '5.7.0'
         assertJVersion = '3.11.1'
+    }
+
+    publishing {
+        publishing {
+            repositories {
+                maven {
+                    def releasesRepoUrl = "https://maven.ceon.pl/artifactory/em-releases"
+                    def snapshotsRepoUrl = "https://maven.ceon.pl/artifactory/em-snapshot"
+                    url = rootProject.version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+                    credentials {
+                        username System.getenv("ARTIFACTORY_USR")
+                        password System.getenv("ARTIFACTORY_PSW")
+                    }
+                }
+            }
+        }
     }
 
     dependencies {
