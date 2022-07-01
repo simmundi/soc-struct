@@ -14,9 +14,11 @@ subprojects {
     }
 
     repositories {
+        mavenLocal()
         maven {
             url 'https://repo.osgeo.org/repository/release'
         }
+        mavenCentral()
         maven {
             url 'https://gitlab.com/api/v4/groups/7797656/-/packages/maven'
         }
@@ -35,7 +37,6 @@ subprojects {
                 releasesOnly()
             }
         }
-        mavenCentral()
     }
 
     test {
@@ -103,6 +104,11 @@ subprojects {
         testImplementation 'org.assertj:assertj-core:3.11.1'
         testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
     }
+
+    configurations.all {
+        resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+    }
+
 }
 
 task clean(type: Delete, group: 'build') {
