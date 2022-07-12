@@ -86,12 +86,13 @@ public class AssignPatientsToHealthcareUrizen {
                 cell = KilometerGridCell.fromLocation(householdEntity.get(Location.class));
                 List<Entity> members = householdEntity.get(Household.class).getMembers();
                 for (Entity member : members) {
-                    if (member.get(Patient.class) != null) {
+                    if (member.get(Patient.class) != null || member.get(Person.class).getAge() < 18) {
                         cell = null;
                         break;
                     }
                     unit = findUnitIfNotAlreadyFound(healthcareUnits, cell, unit);
-                    entities.createPatient(member, unit);
+                    var healthcareUnitEntity = member.getSession().getEntity(unit.getId());
+                    entities.createPatient(member, healthcareUnitEntity);
                 }
             } catch (NullPointerException re) {
                 status.problem("Couldn't assign attendee(s) to healthcare unit");
@@ -124,7 +125,7 @@ public class AssignPatientsToHealthcareUrizen {
         var result = entityStreamManipulator.groupIntoShapes(
                 engine.streamDetached()
                         .filter(entity -> entity.get(Healthcare.class) != null),
-                entity -> 10000,
+                entity -> entity.get(Healthcare.class).getCapacity(),
                 entity -> KilometerGridCell.fromLocation(entity.get(Location.class))
                         .neighboringCircle(radius).filter(populationDensityLoader::isPopulated)
                         .flatMap(cell -> {
@@ -144,7 +145,7 @@ public class AssignPatientsToHealthcareUrizen {
         var result = entityStreamManipulator.groupIntoShapes(
                 engine.streamDetached()
                         .filter(entity -> entity.get(Healthcare.class) != null),
-                entity -> 10000,
+                entity -> entity.get(Healthcare.class).getCapacity(),
                 entity -> KilometerGridCell.fromLocation(entity.get(Location.class))
                         .neighboringCircle(radius)
                         .filter(cells::contains)
