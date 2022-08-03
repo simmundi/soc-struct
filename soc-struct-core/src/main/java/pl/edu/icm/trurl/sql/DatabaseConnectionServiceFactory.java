@@ -1,7 +1,7 @@
 package pl.edu.icm.trurl.sql;
 
-import net.snowyhollows.bento2.Bento;
-import net.snowyhollows.bento2.BentoFactory;
+import net.snowyhollows.bento.Bento;
+import net.snowyhollows.bento.BentoFactory;
 
 public enum DatabaseConnectionServiceFactory implements BentoFactory<DatabaseConnectionService> {
   IT;

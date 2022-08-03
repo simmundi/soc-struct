@@ -10,10 +10,10 @@ import pl.edu.icm.board.Board;
 import pl.edu.icm.board.geography.KilometerGridCell;
 import pl.edu.icm.board.geography.commune.Commune;
 import pl.edu.icm.board.geography.commune.CommuneManager;
+import pl.edu.icm.em.common.DebugTextFile;
+import pl.edu.icm.em.common.DebugTextFileService;
 import pl.edu.icm.trurl.ecs.EngineConfiguration;
-import pl.edu.icm.trurl.ecs.util.StaticSelectors;
 import pl.edu.icm.trurl.store.tablesaw.TablesawStoreFactory;
-import pl.edu.icm.trurl.util.TextFile;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -22,54 +22,54 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Set;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class PdynExporterTest {
     @Mock
-    DatFileCreator datFileCreator;
+    DebugTextFileService datFileCreator;
     @Mock
     CommuneManager communeManager;
-    @Mock
-    StaticSelectors staticSelectors;
 
     ByteArrayOutputStream gdStream = new ByteArrayOutputStream();
-    TextFile gd;
+    DebugTextFile gd;
 
     ByteArrayOutputStream agenciStream = new ByteArrayOutputStream();
-    TextFile agenci;
+    DebugTextFile agenci;
 
     ByteArrayOutputStream zakladyStream = new ByteArrayOutputStream();
-    TextFile zaklady;
+    DebugTextFile zaklady;
 
 
     ByteArrayOutputStream szkolyStream = new ByteArrayOutputStream();
-    TextFile szkoly;
+    DebugTextFile szkoly;
 
     ByteArrayOutputStream liceaStream = new ByteArrayOutputStream();
-    TextFile licea;
+    DebugTextFile licea;
 
 
     ByteArrayOutputStream bigUniversitiesStream = new ByteArrayOutputStream();
-    TextFile bigUniversities;
+    DebugTextFile bigUniversities;
 
     ByteArrayOutputStream smallUniversitiesStream = new ByteArrayOutputStream();
-    TextFile smallUniversities;
+    DebugTextFile smallUniversities;
 
     PdynExporter pdynExporter;
 
     @BeforeEach
     public void before() throws IOException {
-        Board board = new Board(new EngineConfiguration(new TablesawStoreFactory()), null);
+        EngineConfiguration engineConfiguration = new EngineConfiguration();
+        engineConfiguration.setStoreFactory(new TablesawStoreFactory());
+        Board board = new Board(engineConfiguration, null, null, null);
 
-        gd = new TextFile(new PrintWriter(gdStream));
-        agenci = new TextFile(new PrintWriter(agenciStream));
-        zaklady = new TextFile(new PrintWriter(zakladyStream));
-        szkoly = new TextFile(new PrintWriter(szkolyStream));
-        licea = new TextFile(new PrintWriter(liceaStream));
-        bigUniversities = new TextFile(new PrintWriter(bigUniversitiesStream));
-        smallUniversities = new TextFile(new PrintWriter(smallUniversitiesStream));
+        gd = new DebugTextFile(new PrintWriter(gdStream));
+        agenci = new DebugTextFile(new PrintWriter(agenciStream));
+        zaklady = new DebugTextFile(new PrintWriter(zakladyStream));
+        szkoly = new DebugTextFile(new PrintWriter(szkolyStream));
+        licea = new DebugTextFile(new PrintWriter(liceaStream));
+        bigUniversities = new DebugTextFile(new PrintWriter(bigUniversitiesStream));
+        smallUniversities = new DebugTextFile(new PrintWriter(smallUniversitiesStream));
 
         pdynExporter = new PdynExporter(datFileCreator, board, communeManager, true);
         board.load(PdynExporter.class.getResourceAsStream("/pdyn15.csv"));
@@ -86,13 +86,13 @@ class PdynExporterTest {
     public void execute() throws IOException {
         // given
 
-        when(datFileCreator.create(Paths.get("dir", "gd.dat").toString())).thenReturn(gd);
-        when(datFileCreator.create(Paths.get("dir", "agenci.dat").toString())).thenReturn(agenci);
-        when(datFileCreator.create(Paths.get("dir", "zaklady.dat").toString())).thenReturn(zaklady);
-        when(datFileCreator.create(Paths.get("dir","szkoly.dat").toString())).thenReturn(szkoly);
-        when(datFileCreator.create(Paths.get("dir", "licea.dat").toString())).thenReturn(licea);
-        when(datFileCreator.create(Paths.get("dir", "jew.dat").toString())).thenReturn(smallUniversities);
-        when(datFileCreator.create(Paths.get("dir", "djew.dat").toString())).thenReturn(bigUniversities);
+        when(datFileCreator.createTextFile(Paths.get("dir", "gd.dat").toString())).thenReturn(gd);
+        when(datFileCreator.createTextFile(Paths.get("dir", "agenci.dat").toString())).thenReturn(agenci);
+        when(datFileCreator.createTextFile(Paths.get("dir", "zaklady.dat").toString())).thenReturn(zaklady);
+        when(datFileCreator.createTextFile(Paths.get("dir","szkoly.dat").toString())).thenReturn(szkoly);
+        when(datFileCreator.createTextFile(Paths.get("dir", "licea.dat").toString())).thenReturn(licea);
+        when(datFileCreator.createTextFile(Paths.get("dir", "jew.dat").toString())).thenReturn(smallUniversities);
+        when(datFileCreator.createTextFile(Paths.get("dir", "djew.dat").toString())).thenReturn(bigUniversities);
 
         // execute
         pdynExporter.export("dir");

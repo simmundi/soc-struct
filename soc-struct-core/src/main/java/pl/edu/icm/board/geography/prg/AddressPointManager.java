@@ -3,7 +3,7 @@ package pl.edu.icm.board.geography.prg;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.SetMultimap;
 import it.unimi.dsi.fastutil.ints.IntArrays;
-import net.snowyhollows.bento2.annotation.WithFactory;
+import net.snowyhollows.bento.annotation.WithFactory;
 import org.apache.commons.math3.random.RandomGenerator;
 import pl.edu.icm.board.geography.KilometerGridCell;
 import pl.edu.icm.board.geography.StreetNameNormalizer;

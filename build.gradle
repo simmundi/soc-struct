@@ -57,8 +57,9 @@ subprojects {
     }
 
     ext {
+        bentoVersion = '1.4'
+        trurlVersion = '1.1-SNAPSHOT'
         guavaVersion = '30.1-jre'
-        bentoVersion = '1.4-SNAPSHOT'
         geotoolsVersion = '26-RC'
         grasshopperVersion = '4.0'
         univocityVersion = '2.8.4'

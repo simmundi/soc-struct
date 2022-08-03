@@ -1,9 +1,9 @@
 package pl.edu.icm.board.export;
 
-import net.snowyhollows.bento2.annotation.WithFactory;
+import net.snowyhollows.bento.annotation.WithFactory;
 import pl.edu.icm.board.Board;
 import pl.edu.icm.board.BoardFactory;
-import pl.edu.icm.board.DefaultConfig;
+import pl.edu.icm.em.common.EmConfig;
 import pl.edu.icm.board.model.Attendee;
 import pl.edu.icm.board.model.EducationalInstitution;
 import pl.edu.icm.board.model.Household;
@@ -80,7 +80,7 @@ public class DistanceFromAttendeeExporter {
     }
 
     public static void main(String[] args) throws IOException {
-        var config = DefaultConfig.create();
+        var config = EmConfig.create(args);
         var board = config.get(BoardFactory.IT);
         var exporter = config.get(DistanceFromAttendeeExporterFactory.IT);
 

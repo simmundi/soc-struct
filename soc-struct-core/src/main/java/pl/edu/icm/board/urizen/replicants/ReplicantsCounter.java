@@ -1,6 +1,6 @@
 package pl.edu.icm.board.urizen.replicants;
 
-import net.snowyhollows.bento2.annotation.WithFactory;
+import net.snowyhollows.bento.annotation.WithFactory;
 
 public class ReplicantsCounter {
     private final int replicantsCount;

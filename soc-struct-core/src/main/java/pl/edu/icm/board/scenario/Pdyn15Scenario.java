@@ -1,8 +1,8 @@
 package pl.edu.icm.board.scenario;
 
-import net.snowyhollows.bento2.annotation.WithFactory;
+import net.snowyhollows.bento.annotation.WithFactory;
 import pl.edu.icm.board.BoardFactory;
-import pl.edu.icm.board.DefaultConfig;
+import pl.edu.icm.em.common.EmConfig;
 import pl.edu.icm.board.urizen.household.HouseholdUrizen;
 import pl.edu.icm.board.urizen.household.HouseholdsFromGridToAddressPointsUrizen;
 import pl.edu.icm.board.urizen.household.HouseholdsToGridUrizen;
@@ -71,12 +71,12 @@ public class Pdyn15Scenario {
     }
 
     public static void main(String[] args) throws IOException {
-        DefaultConfig.createWith()
-                .propertiesFile("output/households.properties")
-                .propertiesFile("output/workplaces.properties")
-                .propertiesFile("input/config/board/socstruct.properties")
-                .propertiesFile("input/config/board/replicants.properties")
+        EmConfig.configurer(args)
+                .loadConfigFile("output/households.properties")
+                .loadConfigFile("output/workplaces.properties")
+                .loadConfigFile("input/config/board/socstruct.properties")
+                .loadConfigFile("input/config/board/replicants.properties")
                 .use(Pdyn15ScenarioFactory.IT, scenario -> scenario.execute())
-                .use(BoardFactory.IT, board -> board.save("output/scenario15.csv"));
+                .useWithIo(BoardFactory.IT, board -> board.save("output/scenario15.csv"));
     }
 }

@@ -1,6 +1,6 @@
 package pl.edu.icm.board.export.legacy;
 
-import net.snowyhollows.bento2.annotation.WithFactory;
+import net.snowyhollows.bento.annotation.WithFactory;
 import pl.edu.icm.board.export.DistanceFromAttendeeExporterFactory;
 import pl.edu.icm.board.export.ExportedAttendee;
 import pl.edu.icm.board.export.LegacyAttendee;
@@ -10,7 +10,7 @@ import pl.edu.icm.board.model.Household;
 import pl.edu.icm.board.model.Person;
 import pl.edu.icm.board.Board;
 import pl.edu.icm.board.BoardFactory;
-import pl.edu.icm.board.DefaultConfig;
+import pl.edu.icm.em.common.EmConfig;
 import pl.edu.icm.trurl.ecs.Engine;
 import pl.edu.icm.trurl.ecs.Entity;
 import pl.edu.icm.trurl.ecs.util.Selectors;
@@ -82,7 +82,7 @@ public class LegacyDistanceFromAttendeeExporter {
     }
 
     public static void main(String[] args) throws IOException {
-        var config = DefaultConfig.create();
+        var config = EmConfig.create(args);
         var board = config.get(BoardFactory.IT);
         var exporter = config.get(DistanceFromAttendeeExporterFactory.IT);
 

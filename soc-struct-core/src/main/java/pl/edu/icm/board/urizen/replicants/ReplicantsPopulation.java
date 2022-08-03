@@ -1,6 +1,6 @@
 package pl.edu.icm.board.urizen.replicants;
 
-import net.snowyhollows.bento2.annotation.WithFactory;
+import net.snowyhollows.bento.annotation.WithFactory;
 import pl.edu.icm.board.urizen.population.Population;
 import pl.edu.icm.board.urizen.population.gm.GusModelCountyPopulationLoader;
 

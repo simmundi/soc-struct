@@ -1,33 +1,33 @@
 package pl.edu.icm.board.urizen.place;
 
-import net.snowyhollows.bento2.annotation.WithFactory;
+import net.snowyhollows.bento.annotation.WithFactory;
+import net.snowyhollows.bento.config.WorkDir;
 import org.apache.commons.math3.distribution.ZipfDistribution;
 import org.apache.commons.math3.random.RandomGenerator;
 import pl.edu.icm.board.Board;
-import pl.edu.icm.board.model.AdministrationUnit;
 import pl.edu.icm.board.geography.KilometerGridCell;
-import pl.edu.icm.board.model.Location;
 import pl.edu.icm.board.geography.commune.Commune;
 import pl.edu.icm.board.geography.commune.CommuneManager;
-import pl.edu.icm.board.model.Household;
+import pl.edu.icm.board.model.AdministrationUnit;
 import pl.edu.icm.board.model.Employee;
+import pl.edu.icm.board.model.Household;
+import pl.edu.icm.board.model.Location;
 import pl.edu.icm.board.model.Person;
+import pl.edu.icm.board.model.Workplace;
 import pl.edu.icm.board.urizen.generic.EntityStreamManipulator;
 import pl.edu.icm.board.util.RandomProvider;
 import pl.edu.icm.board.workplace.ProfessionalActivityAssessor;
-import pl.edu.icm.board.model.Workplace;
 import pl.edu.icm.board.workplace.WorkplacesInCommunes;
+import pl.edu.icm.em.common.DebugTextFile;
+import pl.edu.icm.em.common.DebugTextFileService;
 import pl.edu.icm.trurl.bin.BinPool;
 import pl.edu.icm.trurl.bin.BinPoolsByShape;
 import pl.edu.icm.trurl.ecs.Entity;
 import pl.edu.icm.trurl.ecs.Session;
 import pl.edu.icm.trurl.ecs.util.Selectors;
 import pl.edu.icm.trurl.util.Status;
-import pl.edu.icm.trurl.util.TextFile;
 
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -38,6 +38,7 @@ import java.util.stream.Stream;
 import static pl.edu.icm.trurl.ecs.util.EntityIterator.select;
 
 public class WorkplacesUrizen {
+    private final WorkDir workDir;
     private final WorkplacesInCommunes workplacesInCommunes;
     private final CommuneManager communeManager;
     private final EntityStreamManipulator entityStreamManipulator;
@@ -45,6 +46,7 @@ public class WorkplacesUrizen {
     private final ProfessionalActivityAssessor professionalActivityAssessor;
     private final RandomGenerator random;
     private final Selectors selectors;
+    private final DebugTextFileService debugTextFileService;
 
     private final double[] workplaceCountsByEmployees;
 
@@ -58,17 +60,19 @@ public class WorkplacesUrizen {
             int privateSectorZipfN,
             String privateSectorZipfS,
             int privateSectorTotal,
-            CommuneManager communeManager,
+            WorkDir workDir, CommuneManager communeManager,
             EntityStreamManipulator entityStreamManipulator,
             ProfessionalActivityAssessor professionalActivityAssessor,
-            RandomProvider randomProvider, Selectors selectors) {
+            RandomProvider randomProvider, Selectors selectors, DebugTextFileService debugTextFileService) {
         this.workplacesInCommunes = workplacesInCommunes;
         this.board = board;
+        this.workDir = workDir;
         this.communeManager = communeManager;
         this.entityStreamManipulator = entityStreamManipulator;
         this.professionalActivityAssessor = professionalActivityAssessor;
         this.random = randomProvider.getRandomGenerator(WorkplacesUrizen.class);
         this.selectors = selectors;
+        this.debugTextFileService = debugTextFileService;
 
         int maxEmployees = Math.max(publicSectorZipfN, privateSectorZipfN);
         workplaceCountsByEmployees = new double[maxEmployees];
@@ -110,8 +114,7 @@ public class WorkplacesUrizen {
             employees.add(commune, workplacesInCommunes.getEmploymentDataFor(commune).getWorkplaces());
         }
 
-        try (FileWriter fw = new FileWriter("output/slots_in_communes.csv")) {
-            PrintWriter pw = new PrintWriter(fw);
+        try (DebugTextFile pw = debugTextFileService.createTextFile("output/slots_in_communes.csv")) {
             pw.println("teryt,nazwa,slots");
             employees.streamBins().forEach(b -> {
                 pw.println(String.format("%s,%s,%d", b.getLabel().getTeryt(), b.getLabel().getName(), b.getCount()));
@@ -162,7 +165,7 @@ public class WorkplacesUrizen {
         Map<Commune, BinPool<Commune>> flows = new HashMap<>();
         Map<Commune, BinPool<Classification>> classifications = new HashMap<>();
 
-        try (var df = TextFile.create("output/debug_flows.csv")) {
+        try (var df = debugTextFileService.createTextFile("output/debug_flows.csv")) {
             df.println("commune,traveling,local,unemployed,workplaces");
             communeManager.getCommunes().forEach(commune -> {
                 var employment = workplacesInCommunes.getEmploymentDataFor(commune);
@@ -249,9 +252,7 @@ public class WorkplacesUrizen {
         }));
         status.done();
         System.out.println(String.format("Managed %d local, %d remote, %d unemployed and %d errors", successesLocal.get(), successesTravel.get(), unemployed.get(), errors.get()));
-        try (
-                FileWriter fw = new FileWriter("output/unused_slots_in_communes.csv")) {
-            PrintWriter pw = new PrintWriter(fw);
+        try (DebugTextFile pw = debugTextFileService.createTextFile("output/unused_slots_in_communes.csv")) {
             pw.println("teryt,nazwa,unusedSlots");
             workplacesByCommunes.getGroupedBins().entrySet().forEach(b -> {
                 pw.println(String.format("%s,%s,%d", b.getKey().getTeryt(), b.getKey().getName(), b.getValue().getTotalCount()));

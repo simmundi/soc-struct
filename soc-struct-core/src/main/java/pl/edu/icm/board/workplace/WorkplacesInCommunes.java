@@ -2,7 +2,8 @@ package pl.edu.icm.board.workplace;
 
 import com.univocity.parsers.csv.CsvParser;
 import com.univocity.parsers.csv.CsvParserSettings;
-import net.snowyhollows.bento2.annotation.WithFactory;
+import net.snowyhollows.bento.annotation.WithFactory;
+import net.snowyhollows.bento.config.WorkDir;
 import pl.edu.icm.board.Board;
 import pl.edu.icm.board.geography.KilometerGridCell;
 import pl.edu.icm.board.geography.commune.Commune;
@@ -22,6 +23,7 @@ import java.util.Set;
 
 public class WorkplacesInCommunes {
 
+    private final WorkDir workDir;
     private final Board board;
     private final CommuneManager communeManager;
     private final ProfessionalActivityAssessor professionalActivityAssessor;
@@ -32,7 +34,8 @@ public class WorkplacesInCommunes {
     private final Map<Commune, EmploymentInCommune> employment = new HashMap<>();
 
     @WithFactory
-    public WorkplacesInCommunes(Board board, CommuneManager communeManager, ProfessionalActivityAssessor professionalActivityAssessor, String przeplywyLudnosciFilename, int totalSlotsInWorkContexts) {
+    public WorkplacesInCommunes(WorkDir workDir, Board board, CommuneManager communeManager, ProfessionalActivityAssessor professionalActivityAssessor, String przeplywyLudnosciFilename, int totalSlotsInWorkContexts) {
+        this.workDir = workDir;
         this.board = board;
         this.communeManager = communeManager;
         this.professionalActivityAssessor = professionalActivityAssessor;
@@ -95,7 +98,7 @@ public class WorkplacesInCommunes {
         Set<String> problematic = new HashSet<>();
 
         CsvParser csvParser = new CsvParser(csvParserSettings);
-        csvParser.iterateRecords(new File(przeplywyLudnosciFilename)).forEach(record -> {
+        csvParser.iterateRecords(workDir.openForReading(new File(przeplywyLudnosciFilename))).forEach(record -> {
             String terytOfResidence = record.getString(0);
             String terytOfEmplyment = record.getString(1);
             int travelCount = record.getInt(2);

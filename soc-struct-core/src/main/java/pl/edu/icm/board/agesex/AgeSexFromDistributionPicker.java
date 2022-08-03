@@ -2,7 +2,8 @@ package pl.edu.icm.board.agesex;
 
 import com.univocity.parsers.csv.CsvParser;
 import com.univocity.parsers.csv.CsvParserSettings;
-import net.snowyhollows.bento2.annotation.WithFactory;
+import net.snowyhollows.bento.annotation.WithFactory;
+import net.snowyhollows.bento.config.WorkDir;
 import pl.edu.icm.board.model.Person;
 import pl.edu.icm.board.urizen.household.model.AgeRange;
 import pl.edu.icm.trurl.bin.BinPool;
@@ -13,11 +14,13 @@ import java.util.Map;
 
 public class AgeSexFromDistributionPicker {
     private final Map<AgeSex, BinPool<Integer>> peopleByAgeSex = new EnumMap<>(AgeSex.class);
+    private final WorkDir workDir;
 
     String ageSexStructureFilename;
 
     @WithFactory
-    public AgeSexFromDistributionPicker(String ageSexStructureFilename) {
+    public AgeSexFromDistributionPicker(WorkDir workDir, String ageSexStructureFilename) {
+        this.workDir = workDir;
         this.ageSexStructureFilename = ageSexStructureFilename;
         prepareBinPools();
     }
@@ -31,7 +34,7 @@ public class AgeSexFromDistributionPicker {
         CsvParser csvParser = new CsvParser(settings);
         var ageSexTailFile = new File(ageSexStructureFilename);
 
-        var ageSexTail = csvParser.parseAllRecords(ageSexTailFile);
+        var ageSexTail = csvParser.parseAllRecords(workDir.openForReading(ageSexTailFile));
 
         ageSexTail.forEach(record -> {
             var age = record.getInt("age");

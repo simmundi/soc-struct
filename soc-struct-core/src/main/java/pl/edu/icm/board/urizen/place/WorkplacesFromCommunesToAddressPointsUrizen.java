@@ -3,7 +3,7 @@ package pl.edu.icm.board.urizen.place;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.MultimapBuilder;
 import com.google.common.collect.Multimaps;
-import net.snowyhollows.bento2.annotation.WithFactory;
+import net.snowyhollows.bento.annotation.WithFactory;
 import org.apache.commons.math3.random.RandomGenerator;
 import pl.edu.icm.board.Board;
 import pl.edu.icm.board.geography.KilometerGridCell;
@@ -14,8 +14,9 @@ import pl.edu.icm.board.model.AdministrationUnit;
 import pl.edu.icm.board.model.Location;
 import pl.edu.icm.board.model.Workplace;
 import pl.edu.icm.board.util.RandomProvider;
+import pl.edu.icm.em.common.DebugTextFile;
+import pl.edu.icm.em.common.DebugTextFileService;
 import pl.edu.icm.trurl.ecs.util.Selectors;
-import pl.edu.icm.trurl.util.DebugFile;
 import pl.edu.icm.trurl.util.Status;
 
 import java.io.IOException;
@@ -29,17 +30,19 @@ public class WorkplacesFromCommunesToAddressPointsUrizen {
     private final RandomGenerator random;
     private ListMultimap<String, AddressPoint> map;
     private final Selectors selectors;
+    private final DebugTextFileService debugTextFileService;
     private int failures;
 
     @WithFactory
     public WorkplacesFromCommunesToAddressPointsUrizen(AddressPointManager addressPointsManager,
                                                        CommuneManager communeManager, Board board,
-                                                       RandomProvider randomProvider, Selectors selectors) {
+                                                       RandomProvider randomProvider, Selectors selectors, DebugTextFileService debugTextFileService) {
         this.addressPointsManager = addressPointsManager;
         this.communeManager = communeManager;
         this.board = board;
         this.random = randomProvider.getRandomGenerator(WorkplacesFromCommunesToAddressPointsUrizen.class);
         this.selectors = selectors;
+        this.debugTextFileService = debugTextFileService;
     }
 
     public int assignWorkplaces() {
@@ -53,7 +56,7 @@ public class WorkplacesFromCommunesToAddressPointsUrizen {
                         ap -> ap,
                         MultimapBuilder.hashKeys(240000).arrayListValues()::build));
         status.done();
-        try (DebugFile debugFile = DebugFile.create("output/debug_address_points.csv")) {
+        try (DebugTextFile debugFile = debugTextFileService.createTextFile("output/debug_address_points.csv")) {
             debugFile.println("teryt,apCount");
             var keyset = map.keys();
             for (String s : map.keySet()) {

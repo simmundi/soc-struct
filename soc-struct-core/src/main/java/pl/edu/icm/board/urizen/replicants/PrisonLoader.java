@@ -2,7 +2,8 @@ package pl.edu.icm.board.urizen.replicants;
 
 import com.univocity.parsers.csv.CsvParser;
 import com.univocity.parsers.csv.CsvParserSettings;
-import net.snowyhollows.bento2.annotation.WithFactory;
+import net.snowyhollows.bento.annotation.WithFactory;
+import net.snowyhollows.bento.config.WorkDir;
 import pl.edu.icm.trurl.store.array.ArrayStore;
 import pl.edu.icm.trurl.util.Status;
 
@@ -13,11 +14,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 public class PrisonLoader {
+    private final WorkDir workDir;
     private final String prisonFilename;
     public PrisonFromCsvMapper mapper;
 
     @WithFactory
-    public PrisonLoader(String prisonFilename) {
+    public PrisonLoader(WorkDir workDir, String prisonFilename) {
+        this.workDir = workDir;
         this.prisonFilename = prisonFilename;
     }
 
@@ -34,7 +37,7 @@ public class PrisonLoader {
 
             CsvParser csvParser = new CsvParser(csvParserSettings);
             AtomicInteger counter = new AtomicInteger(0);
-            csvParser.iterateRecords(new File(prisonFilename), StandardCharsets.UTF_8).forEach(row -> {
+            csvParser.iterateRecords(workDir.openForReading(new File(prisonFilename)), StandardCharsets.UTF_8).forEach(row -> {
                 PrisonFromCsv prisonFromCsv = new PrisonFromCsv();
                 prisonFromCsv.setName(row.getString("Nazwa zakladu"));
                 prisonFromCsv.setLocality(row.getString("miasto"));

@@ -3,7 +3,7 @@ package pl.edu.icm.board.urizen.university;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import pl.edu.icm.board.geography.KilometerGridCell;
-import pl.edu.icm.board.model.Location;
+
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -19,7 +19,7 @@ class UniversityLoaderTest {
                 "1 4",
                 "10 10 Uni2");
         //execute
-        UniversityLoader loader = new UniversityLoader("big", "small");
+        UniversityLoader loader = new UniversityLoader("big", "small", null);
         var universityList = loader.load(textFileLines);
         //assert
         assertThat(universityList)
@@ -42,7 +42,7 @@ class UniversityLoaderTest {
         String locationNoName = "1 3";
 
         //execute
-        UniversityLoader loader = new UniversityLoader("big", "small");
+        UniversityLoader loader = new UniversityLoader("big", "small", null);
         University bigUniversity = loader.parseUniversityDefinition(universityStudents, locationAndName);
         University smallUniversity = loader.parseUniversityDefinition(universityStudents, locationNoName);
 

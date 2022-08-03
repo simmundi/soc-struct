@@ -42,8 +42,9 @@ class AssignPatientsToHealthcareUrizenTest {
 
     @BeforeEach
     void before() throws IOException {
-        EngineConfiguration engineConfiguration = new EngineConfiguration(new TablesawStoreFactory());
-        board = Mockito.spy(new Board(engineConfiguration, null));
+        EngineConfiguration engineConfiguration = new EngineConfiguration();
+        engineConfiguration.setStoreFactory(new TablesawStoreFactory());
+        board = Mockito.spy(new Board(engineConfiguration, null, null, null));
         StaticSelectors staticSelectors = new StaticSelectors(engineConfiguration);
         assigner = new AssignPatientsToHealthcareUrizen(board, entities, entityStreamManipulator, randomProvider, populationDensityLoader, staticSelectors);
         board.require(Healthcare.class, Location.class, Named.class, Household.class, Person.class, Patient.class);

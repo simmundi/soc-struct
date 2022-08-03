@@ -3,7 +3,8 @@ package pl.edu.icm.board.urizen.household;
 import com.univocity.parsers.common.record.Record;
 import com.univocity.parsers.csv.CsvParser;
 import com.univocity.parsers.csv.CsvParserSettings;
-import net.snowyhollows.bento2.annotation.WithFactory;
+import net.snowyhollows.bento.annotation.WithFactory;
+import net.snowyhollows.bento.config.WorkDir;
 import org.apache.commons.math3.distribution.GammaDistribution;
 import org.apache.commons.math3.random.RandomDataGenerator;
 import org.apache.commons.math3.random.RandomGenerator;
@@ -28,6 +29,7 @@ import java.util.Map;
 
 public class HouseholdUrizen {
 
+    private final WorkDir workDir;
     private String gmHouseholdStatsFilename;
     private final GusModelCountyPopulationLoader gusModelCountyPopulationLoader;
     private final Entities entities;
@@ -40,7 +42,7 @@ public class HouseholdUrizen {
 
     @WithFactory
     public HouseholdUrizen(
-            String gmHouseholdStatsFilename,
+            WorkDir workDir, String gmHouseholdStatsFilename,
             GusModelCountyPopulationLoader gusModelCountyPopulationLoader,
             AgeSexFromDistributionPicker ageSexFromDistributionPicker, Entities entities,
             Board board,
@@ -48,6 +50,7 @@ public class HouseholdUrizen {
             RandomProvider randomProvider,
             float gammaShape,
             float gammaScale) {
+        this.workDir = workDir;
         this.gmHouseholdStatsFilename = gmHouseholdStatsFilename;
         this.gusModelCountyPopulationLoader = gusModelCountyPopulationLoader;
         this.ageSexFromDistributionPicker = ageSexFromDistributionPicker;
@@ -76,7 +79,7 @@ public class HouseholdUrizen {
             CsvParser parser = new CsvParser(settings);
             Status stats = Status.of("Creating households", 1000000);
             Session session = sessionFactory.create();
-            for (Record record : parser.iterateRecords(mieszkania)) {
+            for (Record record : parser.iterateRecords(workDir.openForReading(mieszkania))) {
                 if (session.getCount() > 200_000) {
                     session.close();
                     session = sessionFactory.create();

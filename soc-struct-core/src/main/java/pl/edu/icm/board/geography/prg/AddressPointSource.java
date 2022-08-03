@@ -2,14 +2,13 @@ package pl.edu.icm.board.geography.prg;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
-import net.snowyhollows.bento2.annotation.WithFactory;
+import net.snowyhollows.bento.annotation.WithFactory;
+import net.snowyhollows.bento.config.WorkDir;
 import pl.edu.icm.board.geography.KilometerGridCell;
 import pl.edu.icm.board.geography.StreetNameNormalizer;
 import pl.edu.icm.board.geography.prg.model.IndexedAddressPoint;
 import pl.edu.icm.trurl.ecs.mapper.Mappers;
 import pl.edu.icm.trurl.store.Store;
-import pl.edu.icm.trurl.util.DefaultFilesystem;
-import pl.edu.icm.trurl.util.Filesystem;
 import pl.edu.icm.trurl.util.Status;
 
 import javax.xml.stream.XMLInputFactory;
@@ -25,18 +24,14 @@ public class AddressPointSource {
     private final XMLInputFactory xmlInputFactory = XMLInputFactory.newDefaultFactory();
     private StreetNameNormalizer streetNameNormalizer;
     private final String prgInputDir;
-    private final Filesystem filesystem;
+    private final WorkDir filesystem;
     private final SetMultimap<String, KilometerGridCell> postalCodesToLocations = HashMultimap.create();
 
-    public AddressPointSource(StreetNameNormalizer streetNameNormalizer, String prgInputDir, Filesystem filesystem) {
+    @WithFactory
+    public AddressPointSource(StreetNameNormalizer streetNameNormalizer, String prgInputDir, WorkDir filesystem) {
         this.streetNameNormalizer = streetNameNormalizer;
         this.prgInputDir = prgInputDir;
         this.filesystem = filesystem;
-    }
-
-    @WithFactory
-    public AddressPointSource(StreetNameNormalizer streetNameNormalizer, String prgInputDir) {
-        this(streetNameNormalizer, prgInputDir, new DefaultFilesystem());
     }
 
     public void load(Store addressPointStore) {
