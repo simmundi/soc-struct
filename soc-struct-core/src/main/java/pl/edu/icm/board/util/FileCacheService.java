@@ -1,9 +1,11 @@
 package pl.edu.icm.board.util;
 
-import net.snowyhollows.bento2.annotation.WithFactory;
+import net.snowyhollows.bento.annotation.WithFactory;
+import net.snowyhollows.bento.config.WorkDir;
 import pl.edu.icm.trurl.io.orc.OrcStoreService;
 import pl.edu.icm.trurl.store.Store;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.function.Consumer;
 
@@ -16,14 +18,16 @@ public class FileCacheService {
 
     private final OrcStoreService orcStoreService;
     private final String cacheDirName = "output/cache";
+    private final String rootPath;
 
-    public FileCacheService(OrcStoreService orcStoreService) {
+    public FileCacheService(OrcStoreService orcStoreService, String rootPath) {
         this.orcStoreService = orcStoreService;
+        this.rootPath = rootPath;
     }
 
     @WithFactory
-    public FileCacheService() {
-        this(new OrcStoreService());
+    public FileCacheService(String rootPath) {
+        this(new OrcStoreService(), rootPath);
     }
 
     /**
@@ -38,7 +42,8 @@ public class FileCacheService {
      */
     public void computeIfAbsent(String name, Store store, Consumer<Store> storeConsumer) {
         try {
-            String fileName = String.format("%s/%s.%s", cacheDirName, name, "orc");
+            String fileName = new File(rootPath, String.format("%s/%s.%s", cacheDirName, name, "orc"))
+                    .getAbsolutePath();
             if (orcStoreService.fileExists(fileName)) {
                 orcStoreService.read(store, fileName);
             } else {

@@ -1,7 +1,8 @@
 package pl.edu.icm.board.urizen.household;
 
 import com.google.common.collect.ConcurrentHashMultiset;
-import net.snowyhollows.bento2.annotation.WithFactory;
+import net.snowyhollows.bento.annotation.WithFactory;
+import net.snowyhollows.bento.config.WorkDir;
 import pl.edu.icm.board.urizen.household.fileformat.RcbCovidDane02;
 import pl.edu.icm.board.urizen.household.model.RcbCovidDane02Aggregate;
 import pl.edu.icm.trurl.csv.CsvReader;
@@ -9,26 +10,23 @@ import pl.edu.icm.trurl.ecs.mapper.Mapper;
 import pl.edu.icm.trurl.ecs.mapper.Mappers;
 import pl.edu.icm.trurl.store.Store;
 import pl.edu.icm.trurl.store.array.ArrayStore;
-import pl.edu.icm.trurl.util.DefaultFilesystem;
-import pl.edu.icm.trurl.util.Filesystem;
 import pl.edu.icm.trurl.util.Status;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class HouseholdInGridLoader {
     private final String gmHouseholdGridFilename;
     private final CsvReader csvReader;
-    private final Filesystem filesystem;
+    private final WorkDir workDir;
 
     @WithFactory
     public HouseholdInGridLoader(String gmHouseholdGridFilename,
-                                 CsvReader csvReader) {
+                                 CsvReader csvReader, WorkDir workDir) {
         this.csvReader = csvReader;
         this.gmHouseholdGridFilename = gmHouseholdGridFilename;
-        this.filesystem = new DefaultFilesystem();
+        this.workDir = workDir;
     }
 
     public void load(Store store) {
@@ -40,7 +38,7 @@ public class HouseholdInGridLoader {
         Store tmpStore = new ArrayStore(12_000_000);
         Status sts = Status.of("Loading household data from " + gmHouseholdGridFilename);
         csvMapper.configureStore(tmpStore);
-        csvReader.load(filesystem.openForReading(new File(gmHouseholdGridFilename)), tmpStore);
+        csvReader.load(workDir.openForReading(new File(gmHouseholdGridFilename)), tmpStore);
         csvMapper.attachStore(tmpStore);
 
         AtomicInteger idx = new AtomicInteger();

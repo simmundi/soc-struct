@@ -1,11 +1,11 @@
 package pl.edu.icm.board.pdyn1;
 
-import net.snowyhollows.bento2.annotation.WithFactory;
+import net.snowyhollows.bento.annotation.WithFactory;
+import net.snowyhollows.bento.config.WorkDir;
 import pl.edu.icm.board.geography.KilometerGridCell;
 import pl.edu.icm.board.geography.commune.CommuneManager;
-import pl.edu.icm.trurl.util.DefaultFilesystem;
-import pl.edu.icm.trurl.util.Filesystem;
-import pl.edu.icm.trurl.util.TextFile;
+import pl.edu.icm.em.common.DebugTextFile;
+import pl.edu.icm.em.common.DebugTextFileService;
 
 import java.io.IOException;
 
@@ -16,23 +16,23 @@ import java.io.IOException;
  * (or seven zeros, if the cell does not belong to any commune)
  */
 public class GminyDatExporter {
-    private final Filesystem filesystem;
+    private final WorkDir workDir;
     private final CommuneManager communeManager;
+    private final DebugTextFileService debugTextFileService;
+
+
 
     @WithFactory
-    public GminyDatExporter(CommuneManager communeManager) {
-        this(communeManager, new DefaultFilesystem());
-    }
-
-    public GminyDatExporter(CommuneManager communeManager, Filesystem filesystem) {
+    public GminyDatExporter(CommuneManager communeManager, WorkDir workDir, DebugTextFileService debugTextFileService) {
         this.communeManager = communeManager;
-        this.filesystem = filesystem;
+        this.workDir = workDir;
+        this.debugTextFileService = debugTextFileService;
     }
 
     public void saveGridToFile(String path) throws IOException {
         int rows = communeManager.getGridRows();;
         int cols = communeManager.getGridCols();
-        TextFile textFile = TextFile.create(filesystem, path, 64 * 1024);
+        DebugTextFile textFile = debugTextFileService.createTextFile(path, 64 * 1024);
         textFile.printf("%d %d\r\n", rows, cols);
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < cols; col++) {

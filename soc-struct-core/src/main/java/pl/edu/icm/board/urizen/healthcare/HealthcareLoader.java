@@ -2,7 +2,8 @@ package pl.edu.icm.board.urizen.healthcare;
 
 import com.univocity.parsers.csv.CsvParser;
 import com.univocity.parsers.csv.CsvParserSettings;
-import net.snowyhollows.bento2.annotation.WithFactory;
+import net.snowyhollows.bento.annotation.WithFactory;
+import net.snowyhollows.bento.config.WorkDir;
 import pl.edu.icm.trurl.store.array.ArrayStore;
 import pl.edu.icm.trurl.util.Status;
 
@@ -14,11 +15,13 @@ import java.util.function.Consumer;
 
 public class HealthcareLoader {
     private final String healthcareFilename;
+    private final WorkDir workDir;
     public HealthcareFromCsvMapper mapper;
 
     @WithFactory
-    public HealthcareLoader(String healthcareFilename) {
+    public HealthcareLoader(String healthcareFilename, WorkDir workDir) {
         this.healthcareFilename = healthcareFilename;
+        this.workDir = workDir;
     }
 
     public void load() throws IOException {
@@ -35,7 +38,7 @@ public class HealthcareLoader {
 
             CsvParser csvParser = new CsvParser(csvParserSettings);
             AtomicInteger counter = new AtomicInteger(0);
-            csvParser.iterateRecords(new File(healthcareFilename), StandardCharsets.UTF_8).forEach(row -> {
+            csvParser.iterateRecords(workDir.openForReading(new File(healthcareFilename)), StandardCharsets.UTF_8).forEach(row -> {
                 HealthcareFromCsv healthcareFromCsv = new HealthcareFromCsv();
                 healthcareFromCsv.setType(row.getString("KodResortVIII"));
                 healthcareFromCsv.setCommuneTeryt(row.getString("Teryt"));

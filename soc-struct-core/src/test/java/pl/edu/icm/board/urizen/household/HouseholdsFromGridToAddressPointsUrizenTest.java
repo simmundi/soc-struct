@@ -39,7 +39,10 @@ class HouseholdsFromGridToAddressPointsUrizenTest {
 
     @BeforeEach
     void setup() throws IOException {
-        board = new Board(new EngineConfiguration(new TablesawStoreFactory()), null);
+        var engineConfiguration = new EngineConfiguration();
+        engineConfiguration.setStoreFactory(new TablesawStoreFactory());
+        board = new Board(engineConfiguration, null, null, null);
+
         board.load(HouseholdsFromGridToAddressPointsUrizenTest.class.getResourceAsStream("/fromgridtoaddresspoint.csv"),
                 Person.class, Household.class, Complex.class, Location.class);
         var ap1 = new AddressPoint();

@@ -1,6 +1,6 @@
 package pl.edu.icm.board.urizen.university;
 
-import net.snowyhollows.bento2.annotation.WithFactory;
+import net.snowyhollows.bento.annotation.WithFactory;
 import pl.edu.icm.board.geography.KilometerGridCell;
 import pl.edu.icm.board.model.Location;
 
@@ -15,11 +15,13 @@ public class UniversityLoader {
 
     private final String bigUniversityFilename;
     private final String smallUniversityFileName;
+    private final String rootPath;
 
     @WithFactory
-    public UniversityLoader(String bigUniversityFilename, String smallUniversityFileName) {
+    public UniversityLoader(String bigUniversityFilename, String smallUniversityFileName, String rootPath) {
         this.bigUniversityFilename = bigUniversityFilename;
         this.smallUniversityFileName = smallUniversityFileName;
+        this.rootPath = rootPath;
     }
 
     public List<University> loadSmallUniversities () {
@@ -32,7 +34,7 @@ public class UniversityLoader {
 
     List<University> load (String fileName) {
         try {
-            return load (Files.readAllLines(Paths.get(fileName)));
+            return load (Files.readAllLines(Paths.get(rootPath, fileName)));
         } catch (IOException exception) {
             throw new RuntimeException(exception);
         }

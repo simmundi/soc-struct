@@ -2,7 +2,8 @@ package pl.edu.icm.board.urizen.place;
 
 import com.univocity.parsers.csv.CsvParser;
 import com.univocity.parsers.csv.CsvParserSettings;
-import net.snowyhollows.bento2.annotation.WithFactory;
+import net.snowyhollows.bento.annotation.WithFactory;
+import net.snowyhollows.bento.config.WorkDir;
 import pl.edu.icm.trurl.store.array.ArrayStore;
 import pl.edu.icm.trurl.util.Status;
 
@@ -14,11 +15,13 @@ import java.util.function.Consumer;
 
 public class EducationalInstitutionLoader {
     private final String educationalInstitutionsFilename;
+    private final WorkDir workDir;
     private static EducationalInstitutionFromCsvMapper mapper;
 
     @WithFactory
-    public EducationalInstitutionLoader(String educationalInstitutionsFilename) {
+    public EducationalInstitutionLoader(String educationalInstitutionsFilename, WorkDir workDir) {
         this.educationalInstitutionsFilename = educationalInstitutionsFilename;
+        this.workDir = workDir;
     }
 
     public void load() throws IOException {
@@ -35,7 +38,7 @@ public class EducationalInstitutionLoader {
 
             CsvParser csvParser = new CsvParser(csvParserSettings);
             AtomicInteger counter = new AtomicInteger(0);
-            csvParser.iterateRecords(new File(educationalInstitutionsFilename), StandardCharsets.UTF_8).forEach(row -> {
+            csvParser.iterateRecords(workDir.openForReading(new File(educationalInstitutionsFilename)), StandardCharsets.UTF_8).forEach(row -> {
                 EducationalInstitutionFromCsv educationalInstitutionFromCsv = new EducationalInstitutionFromCsv();
                 educationalInstitutionFromCsv.setTeachers(row.getInt("LiczbaNaucz"));
                 educationalInstitutionFromCsv.setPupils(row.getInt("dzienna"));

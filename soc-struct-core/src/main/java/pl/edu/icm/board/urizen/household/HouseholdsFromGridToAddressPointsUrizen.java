@@ -3,7 +3,7 @@ package pl.edu.icm.board.urizen.household;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.MultimapBuilder;
 import com.google.common.collect.Multimaps;
-import net.snowyhollows.bento2.annotation.WithFactory;
+import net.snowyhollows.bento.annotation.WithFactory;
 import org.apache.commons.math3.random.RandomGenerator;
 import pl.edu.icm.board.Board;
 import pl.edu.icm.board.geography.KilometerGridCell;

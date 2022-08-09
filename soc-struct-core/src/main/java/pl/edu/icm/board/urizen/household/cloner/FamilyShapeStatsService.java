@@ -1,6 +1,6 @@
 package pl.edu.icm.board.urizen.household.cloner;
 
-import net.snowyhollows.bento2.annotation.WithFactory;
+import net.snowyhollows.bento.annotation.WithFactory;
 import pl.edu.icm.board.Board;
 import pl.edu.icm.board.agesex.AgeSexFromDistributionPicker;
 import pl.edu.icm.board.model.AdministrationUnit;

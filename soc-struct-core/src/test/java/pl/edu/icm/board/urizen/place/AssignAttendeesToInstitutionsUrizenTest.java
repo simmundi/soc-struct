@@ -45,8 +45,9 @@ class AssignAttendeesToInstitutionsUrizenTest {
 
     @BeforeEach
     void before() throws IOException {
-        EngineConfiguration engineConfiguration = new EngineConfiguration(new TablesawStoreFactory());
-        board = new Board(engineConfiguration, csvWriter);
+        EngineConfiguration engineConfiguration = new EngineConfiguration();
+        engineConfiguration.setStoreFactory(new TablesawStoreFactory());
+        board = new Board(engineConfiguration, csvWriter, null, null);
         StaticSelectors staticSelectors = new StaticSelectors(engineConfiguration);
         assigner = new AssignAttendeesToInstitutionsUrizen(board, entityStreamManipulator, entities, randomProvider, radius, staticSelectors);
         board.require(EducationalInstitution.class, Location.class, Named.class, Household.class, Person.class, Attendee.class);

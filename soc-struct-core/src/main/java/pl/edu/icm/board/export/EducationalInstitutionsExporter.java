@@ -1,6 +1,6 @@
 package pl.edu.icm.board.export;
 
-import net.snowyhollows.bento2.annotation.WithFactory;
+import net.snowyhollows.bento.annotation.WithFactory;
 import pl.edu.icm.board.model.EducationalInstitution;
 import pl.edu.icm.board.model.Location;
 import pl.edu.icm.trurl.bin.BinPool;

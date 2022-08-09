@@ -1,6 +1,6 @@
 package pl.edu.icm.board.geography.commune;
 
-import net.snowyhollows.bento2.annotation.WithFactory;
+import net.snowyhollows.bento.annotation.WithFactory;
 
 import java.util.List;
 

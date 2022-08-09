@@ -4,7 +4,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.ints.IntLists;
-import net.snowyhollows.bento2.annotation.WithFactory;
+import net.snowyhollows.bento.annotation.WithFactory;
 import pl.edu.icm.board.Board;
 import pl.edu.icm.board.geography.KilometerGridCell;
 import pl.edu.icm.board.geography.commune.CommuneManager;
@@ -17,6 +17,7 @@ import pl.edu.icm.board.model.Household;
 import pl.edu.icm.board.model.Location;
 import pl.edu.icm.board.model.Person;
 import pl.edu.icm.board.model.Workplace;
+import pl.edu.icm.em.common.DebugTextFileService;
 import pl.edu.icm.trurl.ecs.Entity;
 import pl.edu.icm.trurl.ecs.selector.Selector;
 import pl.edu.icm.trurl.ecs.util.ArraySelector;
@@ -38,18 +39,18 @@ import static pl.edu.icm.trurl.ecs.util.EntityIterator.select;
  * (in the original pdyn format)
  */
 public class PdynExporter {
-    private final DatFileCreator datFileCreator;
+    private final DebugTextFileService debugTextFileService;
     private final Board board;
     private final Int2ObjectOpenHashMap<IntList> attendees = new Int2ObjectOpenHashMap<>(2_000_000);
     private final CommuneManager communeManager;
     private final boolean removeEmptyEduInstitutions;
 
     @WithFactory
-    public PdynExporter(DatFileCreator datFileCreator,
+    public PdynExporter(DebugTextFileService debugTextFileService,
                         Board board,
                         CommuneManager communeManager,
                         boolean removeEmptyEduInstitutions) {
-        this.datFileCreator = datFileCreator;
+        this.debugTextFileService = debugTextFileService;
         this.board = board;
         this.communeManager = communeManager;
         this.removeEmptyEduInstitutions = removeEmptyEduInstitutions;
@@ -135,8 +136,8 @@ public class PdynExporter {
                 countSmallUniversities.get());
 
         var statusExport = Status.of("Going over households and exporting data", 1_000_000);
-        try (var datGd = datFileCreator.create(new File(dir, "gd.dat").getPath());
-             var datAgenci = datFileCreator.create(new File(dir, "agenci.dat").getPath())) {
+        try (var datGd = debugTextFileService.createTextFile(new File(dir, "gd.dat").getPath());
+             var datAgenci = debugTextFileService.createTextFile(new File(dir, "agenci.dat").getPath())) {
 
             var agentId = new AtomicInteger();
             datGd.printlnf("IloscGD %d", countGd.get());
@@ -182,7 +183,7 @@ public class PdynExporter {
 
         var random = new Random();
         var statusZaklady = Status.of("Exporting zaklady.dat", 100_000);
-        try (var datZaklady = datFileCreator.create(new File(dir, "zaklady.dat").getPath())) {
+        try (var datZaklady = debugTextFileService.createTextFile(new File(dir, "zaklady.dat").getPath())) {
             datZaklady.printlnf("%d", countZaklady.get());
             board.getEngine().execute(select(selectorZakladyBuilder).forEach(e -> {
                 var unit = e.get(AdministrationUnit.class);
@@ -201,7 +202,7 @@ public class PdynExporter {
         statusZaklady.done();
 
         var statusEdu = Status.of("Exporting szkoly.dat", 100_000);
-        try (var datEdu = datFileCreator.create(new File(dir, "szkoly.dat").getPath())) {
+        try (var datEdu = debugTextFileService.createTextFile(new File(dir, "szkoly.dat").getPath())) {
             if (removeEmptyEduInstitutions) {
                 board.getEngine().execute(select(selectorKindertardensBuilder).forEach(entity -> {
                     if (attendees.getOrDefault(entity.getId(), IntLists.EMPTY_LIST).isEmpty()) {
@@ -277,7 +278,7 @@ public class PdynExporter {
             }));
         }
         var statusEduInstitutions = Status.of("Exporting " + fileName, 100_000);
-        try (var datEduInstitutions = datFileCreator.create(new File(dir, fileName).getPath())) {
+        try (var datEduInstitutions = debugTextFileService.createTextFile(new File(dir, fileName).getPath())) {
             datEduInstitutions.printlnf("%d", eduInstitutionsCount.get());
             board.getEngine().execute(select(selectorEduInstitutionsBuilder).forEach(entity -> {
                 KilometerGridCell location = KilometerGridCell.fromLocation(entity.get(Location.class));

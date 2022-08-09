@@ -1,6 +1,6 @@
 package pl.edu.icm.board.geography.graph;
 
-import net.snowyhollows.bento2.annotation.WithFactory;
+import net.snowyhollows.bento.annotation.WithFactory;
 import pl.edu.icm.board.util.FileCacheService;
 import pl.edu.icm.trurl.ecs.mapper.Mappers;
 import pl.edu.icm.trurl.store.Store;

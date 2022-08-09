@@ -3,7 +3,8 @@ package pl.edu.icm.board.urizen.population.gm;
 import com.univocity.parsers.common.record.Record;
 import com.univocity.parsers.csv.CsvParser;
 import com.univocity.parsers.csv.CsvParserSettings;
-import net.snowyhollows.bento2.annotation.WithFactory;
+import net.snowyhollows.bento.annotation.WithFactory;
+import net.snowyhollows.bento.config.WorkDir;
 import pl.edu.icm.board.urizen.population.Population;
 import pl.edu.icm.board.util.CacheManager;
 
@@ -16,11 +17,13 @@ import java.util.Map;
 public class GusModelCountyPopulationLoader implements CacheManager.HasCache {
 
     private final List<Record> records = new ArrayList<>();
+    private final WorkDir workDir;
     private final String gmCountyStatsFilename;
 
     @WithFactory
-    public GusModelCountyPopulationLoader(String gmCountyStatsFilename, CacheManager cacheManager) {
+    public GusModelCountyPopulationLoader(String gmCountyStatsFilename, CacheManager cacheManager, WorkDir workDir) {
         this.gmCountyStatsFilename = gmCountyStatsFilename;
+        this.workDir = workDir;
         cacheManager.register(this);
         load();
     }
@@ -49,6 +52,6 @@ public class GusModelCountyPopulationLoader implements CacheManager.HasCache {
         settings.setDelimiterDetectionEnabled(true);
         CsvParser csvParser = new CsvParser(settings);
         File osoby = new File(gmCountyStatsFilename);
-        records.addAll(csvParser.parseAllRecords(osoby));
+        records.addAll(csvParser.parseAllRecords(workDir.openForReading(osoby)));
     }
 }

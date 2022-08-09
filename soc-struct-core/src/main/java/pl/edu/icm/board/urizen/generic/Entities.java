@@ -1,6 +1,6 @@
 package pl.edu.icm.board.urizen.generic;
 
-import net.snowyhollows.bento2.annotation.WithFactory;
+import net.snowyhollows.bento.annotation.WithFactory;
 import pl.edu.icm.board.model.*;
 import pl.edu.icm.board.urizen.household.model.ComplexBlueprint;
 import pl.edu.icm.trurl.ecs.Entity;

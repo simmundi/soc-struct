@@ -1,6 +1,6 @@
 package pl.edu.icm.board.education;
 
-import net.snowyhollows.bento2.annotation.WithFactory;
+import net.snowyhollows.bento.annotation.WithFactory;
 import pl.edu.icm.board.model.EducationLevel;
 
 public class EducationRadiusProvider {

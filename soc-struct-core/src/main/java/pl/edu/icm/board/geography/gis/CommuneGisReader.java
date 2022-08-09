@@ -1,6 +1,7 @@
 package pl.edu.icm.board.geography.gis;
 
-import net.snowyhollows.bento2.annotation.WithFactory;
+import net.snowyhollows.bento.annotation.WithFactory;
+import net.snowyhollows.bento.config.WorkDir;
 import org.geotools.data.collection.SpatialIndexFeatureCollection;
 import org.geotools.data.collection.SpatialIndexFeatureSource;
 import org.geotools.data.simple.SimpleFeatureSource;
@@ -10,6 +11,7 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,10 +20,12 @@ import java.util.Map;
 
 class CommuneGisReader {
     private final String graniceGminFilename;
+    private final WorkDir workDir;
 
     @WithFactory
-    public CommuneGisReader(String graniceGminFilename) {
+    public CommuneGisReader(String graniceGminFilename, WorkDir workDir) {
         this.graniceGminFilename = graniceGminFilename;
+        this.workDir = workDir;
     }
 
     /**
@@ -29,7 +33,7 @@ class CommuneGisReader {
      * @return
      */
     public SimpleFeatureSource communes() {
-        try (InputStream in = new FileInputStream(graniceGminFilename)) {
+        try (InputStream in = workDir.openForReading(new File(graniceGminFilename))) {
             GMLConfiguration gml = new GMLConfiguration();
             Parser parser = new Parser(gml);
             parser.setStrict(false);

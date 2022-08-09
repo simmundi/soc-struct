@@ -18,7 +18,9 @@ class SquaroniaUrizenTest {
     @DisplayName("should generate specific age structure")
     void withAgeGroupShare(){
         //given
-        Board board = new Board(new EngineConfiguration(new TablesawStoreFactory()), null);
+        EngineConfiguration engineConfiguration = new EngineConfiguration();
+        engineConfiguration.setStoreFactory(new TablesawStoreFactory());
+        Board board = new Board(engineConfiguration, null, null, null);
         RandomProvider randomProvider = new RandomProvider(0);
         var squaroniaUrizen = new SquaroniaUrizen(board,3,100,10,50, randomProvider);
 
@@ -38,12 +40,13 @@ class SquaroniaUrizenTest {
         ).rowCount()).isEqualTo(0);
     }
 
-
     @Test
     @DisplayName("shoud build squaronia")
     void build(){
         //given
-        Board board = new Board(new EngineConfiguration(new TablesawStoreFactory()), null);
+        EngineConfiguration engineConfiguration = new EngineConfiguration();
+        engineConfiguration.setStoreFactory(new TablesawStoreFactory());
+        Board board = new Board(engineConfiguration, null, null, null);
         RandomProvider randomProvider = new RandomProvider(0);
         var squaroniaUrizen = new SquaroniaUrizen(board,4,100,10,50, randomProvider);
         //execute
@@ -66,7 +69,6 @@ class SquaroniaUrizenTest {
                 entities.intColumn("age").isNotMissing()
         ).xTabPercents("sex").row(0).getDouble(1)
         ).isCloseTo(0.5, Percentage.withPercentage(3));
-
 
         assertThat(entities.where(
                 entities.intColumn("n").isNotMissing().andNot(

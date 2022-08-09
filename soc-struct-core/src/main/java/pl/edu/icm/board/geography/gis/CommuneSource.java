@@ -1,6 +1,6 @@
 package pl.edu.icm.board.geography.gis;
 
-import net.snowyhollows.bento2.annotation.WithFactory;
+import net.snowyhollows.bento.annotation.WithFactory;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.opengis.feature.simple.SimpleFeature;
 import pl.edu.icm.board.geography.KilometerGridCell;

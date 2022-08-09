@@ -1,18 +1,9 @@
 package pl.edu.icm.board.urizen.place;
 
-import com.univocity.parsers.csv.CsvWriter;
-import com.univocity.parsers.csv.CsvWriterSettings;
-import net.snowyhollows.bento2.Bento;
-import net.snowyhollows.bento2.annotation.WithFactory;
+import net.snowyhollows.bento.annotation.WithFactory;
 import pl.edu.icm.board.geography.prg.AddressPointManager;
 import pl.edu.icm.board.geography.prg.model.GeocodedPoi;
-import pl.edu.icm.board.urizen.place.export.ExportedToCsvEducationalInstitution;
-import pl.edu.icm.board.DefaultConfig;
-import pl.edu.icm.trurl.util.DefaultFilesystem;
-import pl.edu.icm.trurl.util.Filesystem;
-import pl.edu.icm.trurl.visnow.VnPointsExporter;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.function.Consumer;
 

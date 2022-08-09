@@ -63,7 +63,9 @@ class UniversityEntitiesUrizenTest {
                 List.of(bigUniversity));
         when(universityLoader.loadSmallUniversities()).thenReturn(
                 List.of(smallUniversity1, smallUniversity2));
-        board = new Board(new EngineConfiguration(new TablesawStoreFactory()), null);
+        var engineConfig = new EngineConfiguration();
+        engineConfig.setStoreFactory(new TablesawStoreFactory());
+        board = new Board(engineConfig, null, null, null);
         universityEntitiesUrizen =
                 new UniversityEntitiesUrizen(universityLoader,
                         board,
