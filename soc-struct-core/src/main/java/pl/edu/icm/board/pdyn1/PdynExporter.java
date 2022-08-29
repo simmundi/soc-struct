@@ -74,13 +74,13 @@ public class PdynExporter {
         var countSmallUniversities = new AtomicInteger();
         var countBigUniversities = new AtomicInteger();
 
-        var selectorZakladyBuilder = new ArraySelector();
-        var selectorGdBuilder = new ArraySelector();
-        var selectorKindertardensBuilder = new ArraySelector();
-        var selectorPrimarySchoolsBuilder = new ArraySelector();
-        var selectorHighSchoolBuilder = new ArraySelector();
-        var selectorBigUniversitiesBuilder = new ArraySelector();
-        var selectorSmallUniversitiesBuilder = new ArraySelector();
+        var selectorZakladyBuilder = new ArraySelector(10_000_000);
+        var selectorGdBuilder = new ArraySelector(20_000_000);
+        var selectorKindertardensBuilder = new ArraySelector(50_000);
+        var selectorPrimarySchoolsBuilder = new ArraySelector(50_000);
+        var selectorHighSchoolBuilder = new ArraySelector(50_000);
+        var selectorBigUniversitiesBuilder = new ArraySelector(1_000);
+        var selectorSmallUniversitiesBuilder = new ArraySelector(1_000);
 
         var statusCount = Status.of("Counting agents, households and workplaces, edu institutions and universities", 1_000_000);
         householdsAndWorkplacesAndEduInstitutions$().forEach(e -> {
@@ -178,8 +178,11 @@ public class PdynExporter {
                 statusExport.tick();
             }));
         }
-        idExporter.export(new File(dir, "ids.orc").getPath());
         statusExport.done();
+
+        var statusIds = Status.of("Saving agent IDs mapping");
+        idExporter.export(new File(dir, "ids.orc").getPath());
+        statusIds.done();
 
         var cells = communeManager.getCommunes()
                 .stream().collect(Collectors.toUnmodifiableMap(
