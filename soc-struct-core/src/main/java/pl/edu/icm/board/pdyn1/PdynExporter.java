@@ -136,6 +136,7 @@ public class PdynExporter {
                 countSmallUniversities.get());
 
         var statusExport = Status.of("Going over households and exporting data", 1_000_000);
+        var idExporter = new PdynIdExporter(countAgenci.get());
         try (var datGd = debugTextFileService.createTextFile(new File(dir, "gd.dat").getPath());
              var datAgenci = debugTextFileService.createTextFile(new File(dir, "agenci.dat").getPath())) {
 
@@ -151,21 +152,24 @@ public class PdynExporter {
                 datGd.printf("%d", members.size());
                 members.forEach(memberEntity -> {
                     var person = memberEntity.get(Person.class);
-                    var id = agentId.getAndIncrement();
-                    datGd.printf(" %d", id);
+                    var pdyn1Id = agentId.getAndIncrement();
+                    var pdyn2Id = memberEntity.getId();
+
+                    idExporter.saveIdMapping(pdyn1Id, pdyn2Id);
+                    datGd.printf(" %d", pdyn1Id);
                     datAgenci.printlnf("%d %d", person.getAge(), person.getSex().ordinal());
                     var attendee = memberEntity.get(Attendee.class);
                     if (attendee != null) {
                         if (attendee.getInstitution() != null) {
-                            addToAttendees(id, attendee.getInstitution());
+                            addToAttendees(pdyn1Id, attendee.getInstitution());
                         }
                         if (attendee.getSecondaryInstitution() != null) {
-                            addToAttendees(id, attendee.getSecondaryInstitution());
+                            addToAttendees(pdyn1Id, attendee.getSecondaryInstitution());
                         }
                     }
                     var employee = memberEntity.get(Employee.class);
                     if (employee != null) {
-                        addToAttendees(id, employee.getWork());
+                        addToAttendees(pdyn1Id, employee.getWork());
                     }
                 });
                 datGd.println();
@@ -174,6 +178,7 @@ public class PdynExporter {
                 statusExport.tick();
             }));
         }
+        idExporter.export(new File(dir, "ids.orc").getPath());
         statusExport.done();
 
         var cells = communeManager.getCommunes()
