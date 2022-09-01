@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.ints.IntLists;
 import net.snowyhollows.bento.annotation.WithFactory;
+import net.snowyhollows.bento.config.WorkDir;
 import pl.edu.icm.board.Board;
 import pl.edu.icm.board.geography.KilometerGridCell;
 import pl.edu.icm.board.geography.commune.CommuneManager;
@@ -40,6 +41,7 @@ import static pl.edu.icm.trurl.ecs.util.EntityIterator.select;
  */
 public class PdynExporter {
     private final DebugTextFileService debugTextFileService;
+    private final WorkDir workDir;
     private final Board board;
     private final Int2ObjectOpenHashMap<IntList> attendees = new Int2ObjectOpenHashMap<>(2_000_000);
     private final CommuneManager communeManager;
@@ -47,10 +49,12 @@ public class PdynExporter {
 
     @WithFactory
     public PdynExporter(DebugTextFileService debugTextFileService,
+                        WorkDir workDir,
                         Board board,
                         CommuneManager communeManager,
                         boolean removeEmptyEduInstitutions) {
         this.debugTextFileService = debugTextFileService;
+        this.workDir = workDir;
         this.board = board;
         this.communeManager = communeManager;
         this.removeEmptyEduInstitutions = removeEmptyEduInstitutions;
@@ -181,7 +185,7 @@ public class PdynExporter {
         statusExport.done();
 
         var statusIds = Status.of("Saving agent IDs mapping");
-        idExporter.export(new File(dir, "ids.orc").getPath());
+        idExporter.export(new File(dir, "ids.orc").getPath(), workDir);
         statusIds.done();
 
         var cells = communeManager.getCommunes()

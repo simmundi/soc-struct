@@ -1,9 +1,11 @@
 package pl.edu.icm.board.pdyn1;
 
+import net.snowyhollows.bento.config.WorkDir;
 import pl.edu.icm.trurl.io.orc.OrcStoreService;
 import pl.edu.icm.trurl.store.Store;
 import pl.edu.icm.trurl.store.array.ArrayStore;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -20,11 +22,11 @@ public class PdynIdExporter {
         mapper.configureAndAttach(store);
     }
 
-    public void export(String dir) {
+    public void export(String dir, WorkDir workDir) {
         try {
             store.fireUnderlyingDataChanged(0, counter.get());
             OrcStoreService orcStoreService = new OrcStoreService();
-            orcStoreService.write(store, dir);
+            orcStoreService.write(store, workDir.absolutizeFile(new File(dir)).getPath());
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
