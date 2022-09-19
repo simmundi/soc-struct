@@ -185,7 +185,7 @@ public class PdynExporter {
         statusExport.done();
 
         var statusIds = Status.of("Saving agent IDs mapping");
-        idExporter.export(new File(dir, "ids.orc").getPath(), workDir);
+        idExporter.export( "ids.orc");
         statusIds.done();
 
         var cells = communeManager.getCommunes()

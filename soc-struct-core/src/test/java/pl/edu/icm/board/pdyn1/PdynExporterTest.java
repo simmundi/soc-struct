@@ -17,7 +17,6 @@ import pl.edu.icm.trurl.ecs.EngineConfiguration;
 import pl.edu.icm.trurl.store.tablesaw.TablesawStoreFactory;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Paths;
@@ -25,7 +24,6 @@ import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -78,7 +76,6 @@ class PdynExporterTest {
 
         pdynExporter = new PdynExporter(datFileCreator, workDir, board, communeManager, true);
         board.load(PdynExporter.class.getResourceAsStream("/pdyn15.csv"));
-        when(workDir.absolutizeFile(any())).thenReturn(new File("/exporterTest.orc"));
 
         when(communeManager.getCommunes()).thenReturn(List.of(
                 new Commune("1412132", "a", Set.of(KilometerGridCell.fromLegacyPdynCoordinates(111,222))),
