@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.ints.IntLists;
 import net.snowyhollows.bento.annotation.WithFactory;
+import net.snowyhollows.bento.config.WorkDir;
 import pl.edu.icm.board.Board;
 import pl.edu.icm.board.geography.KilometerGridCell;
 import pl.edu.icm.board.geography.commune.CommuneManager;
@@ -40,6 +41,7 @@ import static pl.edu.icm.trurl.ecs.util.EntityIterator.select;
  */
 public class PdynExporter {
     private final DebugTextFileService debugTextFileService;
+    private final WorkDir workDir;
     private final Board board;
     private final Int2ObjectOpenHashMap<IntList> attendees = new Int2ObjectOpenHashMap<>(2_000_000);
     private final CommuneManager communeManager;
@@ -47,10 +49,12 @@ public class PdynExporter {
 
     @WithFactory
     public PdynExporter(DebugTextFileService debugTextFileService,
+                        WorkDir workDir,
                         Board board,
                         CommuneManager communeManager,
                         boolean removeEmptyEduInstitutions) {
         this.debugTextFileService = debugTextFileService;
+        this.workDir = workDir;
         this.board = board;
         this.communeManager = communeManager;
         this.removeEmptyEduInstitutions = removeEmptyEduInstitutions;
@@ -74,13 +78,13 @@ public class PdynExporter {
         var countSmallUniversities = new AtomicInteger();
         var countBigUniversities = new AtomicInteger();
 
-        var selectorZakladyBuilder = new ArraySelector();
-        var selectorGdBuilder = new ArraySelector();
-        var selectorKindertardensBuilder = new ArraySelector();
-        var selectorPrimarySchoolsBuilder = new ArraySelector();
-        var selectorHighSchoolBuilder = new ArraySelector();
-        var selectorBigUniversitiesBuilder = new ArraySelector();
-        var selectorSmallUniversitiesBuilder = new ArraySelector();
+        var selectorZakladyBuilder = new ArraySelector(10_000_000);
+        var selectorGdBuilder = new ArraySelector(20_000_000);
+        var selectorKindertardensBuilder = new ArraySelector(50_000);
+        var selectorPrimarySchoolsBuilder = new ArraySelector(50_000);
+        var selectorHighSchoolBuilder = new ArraySelector(50_000);
+        var selectorBigUniversitiesBuilder = new ArraySelector(1_000);
+        var selectorSmallUniversitiesBuilder = new ArraySelector(1_000);
 
         var statusCount = Status.of("Counting agents, households and workplaces, edu institutions and universities", 1_000_000);
         householdsAndWorkplacesAndEduInstitutions$().forEach(e -> {
@@ -136,6 +140,7 @@ public class PdynExporter {
                 countSmallUniversities.get());
 
         var statusExport = Status.of("Going over households and exporting data", 1_000_000);
+        var idExporter = new PdynIdExporter(countAgenci.get());
         try (var datGd = debugTextFileService.createTextFile(new File(dir, "gd.dat").getPath());
              var datAgenci = debugTextFileService.createTextFile(new File(dir, "agenci.dat").getPath())) {
 
@@ -151,21 +156,24 @@ public class PdynExporter {
                 datGd.printf("%d", members.size());
                 members.forEach(memberEntity -> {
                     var person = memberEntity.get(Person.class);
-                    var id = agentId.getAndIncrement();
-                    datGd.printf(" %d", id);
+                    var pdyn1Id = agentId.getAndIncrement();
+                    var pdyn2Id = memberEntity.getId();
+
+                    idExporter.saveIdMapping(pdyn1Id, pdyn2Id);
+                    datGd.printf(" %d", pdyn1Id);
                     datAgenci.printlnf("%d %d", person.getAge(), person.getSex().ordinal());
                     var attendee = memberEntity.get(Attendee.class);
                     if (attendee != null) {
                         if (attendee.getInstitution() != null) {
-                            addToAttendees(id, attendee.getInstitution());
+                            addToAttendees(pdyn1Id, attendee.getInstitution());
                         }
                         if (attendee.getSecondaryInstitution() != null) {
-                            addToAttendees(id, attendee.getSecondaryInstitution());
+                            addToAttendees(pdyn1Id, attendee.getSecondaryInstitution());
                         }
                     }
                     var employee = memberEntity.get(Employee.class);
                     if (employee != null) {
-                        addToAttendees(id, employee.getWork());
+                        addToAttendees(pdyn1Id, employee.getWork());
                     }
                 });
                 datGd.println();
@@ -175,6 +183,10 @@ public class PdynExporter {
             }));
         }
         statusExport.done();
+
+        var statusIds = Status.of("Saving agent IDs mapping");
+        idExporter.export( "ids.orc");
+        statusIds.done();
 
         var cells = communeManager.getCommunes()
                 .stream().collect(Collectors.toUnmodifiableMap(

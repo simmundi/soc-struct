@@ -1,5 +1,6 @@
 package pl.edu.icm.board.pdyn1;
 
+import net.snowyhollows.bento.config.WorkDir;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,6 +30,8 @@ import static org.mockito.Mockito.when;
 class PdynExporterTest {
     @Mock
     DebugTextFileService datFileCreator;
+    @Mock
+    WorkDir workDir;
     @Mock
     CommuneManager communeManager;
 
@@ -71,7 +74,7 @@ class PdynExporterTest {
         bigUniversities = new DebugTextFile(new PrintWriter(bigUniversitiesStream));
         smallUniversities = new DebugTextFile(new PrintWriter(smallUniversitiesStream));
 
-        pdynExporter = new PdynExporter(datFileCreator, board, communeManager, true);
+        pdynExporter = new PdynExporter(datFileCreator, workDir, board, communeManager, true);
         board.load(PdynExporter.class.getResourceAsStream("/pdyn15.csv"));
 
         when(communeManager.getCommunes()).thenReturn(List.of(
