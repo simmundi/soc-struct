@@ -42,12 +42,11 @@ public class CommuneManager {
                 .collect(groupingBy(
                         CommuneStoreItem::getTeryt,
                         Collectors.toList()))
-                .values()
-                .stream().forEach(cells -> {
+                .values().forEach(cells -> {
                             var commune = new Commune(cells.get(0).getTeryt(), cells.get(0).getName(), cells.stream().map(
                                     cell -> KilometerGridCell.fromPl1992ENKilometers(cell.getE(), cell.getN())
                             ).collect(Collectors.toSet()));
-                            commune.getCells().stream()
+                            commune.getCells()
                                     .forEach(cell -> setCommuneAt(cell, commune));
                             communesByTeryt.put(commune.getTeryt(), commune);
                         }
@@ -90,7 +89,7 @@ public class CommuneManager {
             return fixTeryt(String.format("%.6s3", teryt));
         }
 
-        // teryt częściowy do terytu gminy (i.e. tylko części miejskiej lub tylko wiejskiej)
+        // Teryt częściowy do terytu gminy (i.e. tylko części miejskiej lub tylko wiejskiej)
         if (teryt.endsWith("5") || teryt.endsWith("4")) {
             return fixTeryt(String.format("%.6s3", teryt));
         }
