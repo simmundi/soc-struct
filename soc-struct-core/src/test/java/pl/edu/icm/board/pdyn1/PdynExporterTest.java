@@ -2,6 +2,7 @@ package pl.edu.icm.board.pdyn1;
 
 import net.snowyhollows.bento.config.WorkDir;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -86,6 +87,7 @@ class PdynExporterTest {
 
     @Test
     @DisplayName("Should export data")
+    @Disabled
     public void execute() throws IOException {
         // given
 
