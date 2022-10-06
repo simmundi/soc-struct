@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -35,6 +37,8 @@ class PdynExporterTest {
     WorkDir workDir;
     @Mock
     CommuneManager communeManager;
+    @Mock
+    PdynIdExporter idExporter;
 
     ByteArrayOutputStream gdStream = new ByteArrayOutputStream();
     DebugTextFile gd;
@@ -75,7 +79,12 @@ class PdynExporterTest {
         bigUniversities = new DebugTextFile(new PrintWriter(bigUniversitiesStream));
         smallUniversities = new DebugTextFile(new PrintWriter(smallUniversitiesStream));
 
-        pdynExporter = new PdynExporter(datFileCreator, workDir, board, communeManager, true);
+        pdynExporter = new PdynExporter(datFileCreator,
+                workDir,
+                board,
+                communeManager,
+                idExporter,
+                true);
         board.load(PdynExporter.class.getResourceAsStream("/pdyn15.csv"));
 
         when(communeManager.getCommunes()).thenReturn(List.of(
@@ -83,11 +92,11 @@ class PdynExporterTest {
                 new Commune("1061011", "b", Set.of(KilometerGridCell.fromLegacyPdynCoordinates(333,444))),
                 new Commune("0810021", "c", Set.of(KilometerGridCell.fromLegacyPdynCoordinates(555,555)))
         ));
+        doNothing().when(idExporter).saveToFile(anyString());
     }
 
     @Test
     @DisplayName("Should export data")
-    @Disabled
     public void execute() throws IOException {
         // given
 

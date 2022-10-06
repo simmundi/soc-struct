@@ -45,6 +45,7 @@ public class PdynExporter {
     private final Board board;
     private final Int2ObjectOpenHashMap<IntList> attendees = new Int2ObjectOpenHashMap<>(2_000_000);
     private final CommuneManager communeManager;
+    private final PdynIdExporter idExporter;
     private final boolean removeEmptyEduInstitutions;
 
     @WithFactory
@@ -52,11 +53,13 @@ public class PdynExporter {
                         WorkDir workDir,
                         Board board,
                         CommuneManager communeManager,
+                        PdynIdExporter idExporter,
                         boolean removeEmptyEduInstitutions) {
         this.debugTextFileService = debugTextFileService;
         this.workDir = workDir;
         this.board = board;
         this.communeManager = communeManager;
+        this.idExporter = idExporter;
         this.removeEmptyEduInstitutions = removeEmptyEduInstitutions;
         board.require(Household.class,
                 Person.class,
@@ -140,7 +143,7 @@ public class PdynExporter {
                 countSmallUniversities.get());
 
         var statusExport = Status.of("Going over households and exporting data", 1_000_000);
-        var idExporter = new PdynIdExporter(countAgenci.get());
+        idExporter.create(countAgenci.get());
         try (var datGd = debugTextFileService.createTextFile(new File(dir, "gd.dat").getPath());
              var datAgenci = debugTextFileService.createTextFile(new File(dir, "agenci.dat").getPath())) {
 
@@ -185,7 +188,7 @@ public class PdynExporter {
         statusExport.done();
 
         var statusIds = Status.of("Saving agent IDs mapping");
-        idExporter.export( "ids.orc");
+        idExporter.saveToFile( "ids.orc");
         statusIds.done();
 
         var cells = communeManager.getCommunes()

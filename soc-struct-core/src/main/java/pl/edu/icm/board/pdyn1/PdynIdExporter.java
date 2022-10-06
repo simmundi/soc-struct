@@ -1,5 +1,6 @@
 package pl.edu.icm.board.pdyn1;
 
+import net.snowyhollows.bento.annotation.WithFactory;
 import pl.edu.icm.trurl.io.orc.OrcStoreService;
 import pl.edu.icm.trurl.store.Store;
 import pl.edu.icm.trurl.store.array.ArrayStore;
@@ -9,18 +10,22 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class PdynIdExporter {
 
-    private final ExportedIdMapper mapper;
-    private final AtomicInteger counter;
-    private final Store store;
+    private ExportedIdMapper mapper;
+    private AtomicInteger counter;
+    private Store store;
 
-    public PdynIdExporter (int capacity) {
+    @WithFactory
+    public PdynIdExporter () {
+    }
+
+    public void create(int capacity) {
         counter = new AtomicInteger(0);
         mapper = new ExportedIdMapper();
         store = new ArrayStore(capacity);
         mapper.configureAndAttach(store);
     }
 
-    public void export(String dir) {
+    public void saveToFile(String dir) {
         try {
             store.fireUnderlyingDataChanged(0, counter.get());
             OrcStoreService orcStoreService = new OrcStoreService();
