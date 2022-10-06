@@ -2,16 +2,17 @@ package pl.edu.icm.board.pdyn1;
 
 import net.snowyhollows.bento.config.WorkDir;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pl.edu.icm.board.Board;
+import pl.edu.icm.board.MockRandomProvider;
 import pl.edu.icm.board.geography.KilometerGridCell;
 import pl.edu.icm.board.geography.commune.Commune;
 import pl.edu.icm.board.geography.commune.CommuneManager;
+import pl.edu.icm.board.util.RandomProvider;
 import pl.edu.icm.em.common.DebugTextFile;
 import pl.edu.icm.em.common.DebugTextFileService;
 import pl.edu.icm.trurl.ecs.EngineConfiguration;
@@ -24,7 +25,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Set;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -64,6 +65,7 @@ class PdynExporterTest {
     DebugTextFile smallUniversities;
 
     PdynExporter pdynExporter;
+    private final RandomProvider randomProvider = new MockRandomProvider();
 
     @BeforeEach
     public void before() throws IOException {
@@ -83,8 +85,9 @@ class PdynExporterTest {
                 workDir,
                 board,
                 communeManager,
+                true,
                 idExporter,
-                true);
+                randomProvider);
         board.load(PdynExporter.class.getResourceAsStream("/pdyn15.csv"));
 
         when(communeManager.getCommunes()).thenReturn(List.of(
