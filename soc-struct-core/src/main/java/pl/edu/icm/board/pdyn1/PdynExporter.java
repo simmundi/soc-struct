@@ -6,18 +6,12 @@ import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.ints.IntLists;
 import net.snowyhollows.bento.annotation.WithFactory;
 import net.snowyhollows.bento.config.WorkDir;
+import org.apache.commons.math3.random.RandomGenerator;
 import pl.edu.icm.board.Board;
 import pl.edu.icm.board.geography.KilometerGridCell;
 import pl.edu.icm.board.geography.commune.CommuneManager;
-import pl.edu.icm.board.model.AdministrationUnit;
-import pl.edu.icm.board.model.Attendee;
-import pl.edu.icm.board.model.EducationLevel;
-import pl.edu.icm.board.model.EducationalInstitution;
-import pl.edu.icm.board.model.Employee;
-import pl.edu.icm.board.model.Household;
-import pl.edu.icm.board.model.Location;
-import pl.edu.icm.board.model.Person;
-import pl.edu.icm.board.model.Workplace;
+import pl.edu.icm.board.model.*;
+import pl.edu.icm.board.util.RandomProvider;
 import pl.edu.icm.em.common.DebugTextFileService;
 import pl.edu.icm.trurl.ecs.Entity;
 import pl.edu.icm.trurl.ecs.selector.Selector;
@@ -26,8 +20,8 @@ import pl.edu.icm.trurl.util.Status;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -48,19 +42,22 @@ public class PdynExporter {
     private final PdynIdExporter idExporter;
     private final boolean removeEmptyEduInstitutions;
 
+    private final RandomGenerator random;
     @WithFactory
     public PdynExporter(DebugTextFileService debugTextFileService,
                         WorkDir workDir,
                         Board board,
                         CommuneManager communeManager,
+                        boolean removeEmptyEduInstitutions,
                         PdynIdExporter idExporter,
-                        boolean removeEmptyEduInstitutions) {
+                        RandomProvider randomProvider) {
         this.debugTextFileService = debugTextFileService;
         this.workDir = workDir;
         this.board = board;
         this.communeManager = communeManager;
         this.idExporter = idExporter;
         this.removeEmptyEduInstitutions = removeEmptyEduInstitutions;
+        this.random = randomProvider.getRandomGenerator(PdynExporter.class);
         board.require(Household.class,
                 Person.class,
                 Workplace.class,
@@ -188,7 +185,7 @@ public class PdynExporter {
         statusExport.done();
 
         var statusIds = Status.of("Saving agent IDs mapping");
-        idExporter.saveToFile( "ids.orc");
+        idExporter.saveToFile(Path.of(dir,"ids_mapping.orc").toString());
         statusIds.done();
 
         var cells = communeManager.getCommunes()
@@ -196,7 +193,6 @@ public class PdynExporter {
                         c -> c.getTeryt(),
                         c -> new ArrayList<>(c.getCells())));
 
-        var random = new Random();
         var statusZaklady = Status.of("Exporting zaklady.dat", 100_000);
         try (var datZaklady = debugTextFileService.createTextFile(new File(dir, "zaklady.dat").getPath())) {
             datZaklady.printlnf("%d", countZaklady.get());
