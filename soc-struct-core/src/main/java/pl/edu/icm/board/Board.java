@@ -49,14 +49,14 @@ public class Board  {
         require(components);
         Status sts = Status.of("Loading board from " + absolutize(sourceForStatus));
         Engine engine = getEngine();
-        getLazyOrcStoreService().read(engine.getComponentStore(), absolutize(inputFile));
+        getLazyOrcStoreService().read(engine.getStore(), absolutize(inputFile));
         sts.done();
     }
 
     public void saveOrc(String outputPath) throws IOException {
         Status sts = Status.of("Saving population data to " + absolutize(outputPath));
-        getEngine().getComponentStore().fireUnderlyingDataChanged(0, getEngine().getCount(), getEngine());
-        getLazyOrcStoreService().write(getEngine().getComponentStore(), absolutize(outputPath));
+        getEngine().getStore().fireUnderlyingDataChanged(0, getEngine().getCount(), getEngine());
+        getLazyOrcStoreService().write(getEngine().getStore(), absolutize(outputPath));
         sts.done();
     }
 
@@ -64,14 +64,13 @@ public class Board  {
         require(components);
         Status sts = Status.of("Loading board from " + sourceForStatus);
         Engine engine = getEngine();
-        new CsvReader().load(inputStream, engine.getComponentStore());
+        new CsvReader().load(inputStream, engine.getStore());
         sts.done();
     }
-
     public void save(String outputPath) throws IOException {
         Status sts = Status.of("Saving population data to " + outputPath);
-        getEngine().getComponentStore().fireUnderlyingDataChanged(0, getEngine().getCount(), getEngine());
-        csvWriter.writeCsv(outputPath, getEngine().getComponentStore());
+        getEngine().getStore().fireUnderlyingDataChanged(0, getEngine().getCount(), getEngine());
+        csvWriter.writeCsv(outputPath, getEngine().getStore());
         sts.done();
     }
 

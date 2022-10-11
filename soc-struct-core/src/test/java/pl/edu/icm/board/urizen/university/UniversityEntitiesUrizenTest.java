@@ -41,7 +41,7 @@ class UniversityEntitiesUrizenTest {
     @BeforeEach
     void initStructure() throws IOException {
 
-        /* population:
+        /* Population:
 
         ..........
         ....H.....
@@ -78,7 +78,7 @@ class UniversityEntitiesUrizenTest {
     @Test
     void buildEntities() throws IOException {
         universityEntitiesUrizen.buildEntities();
-        TablesawStore tablesawStore = (TablesawStore) board.getEngine().getComponentStore();
+        TablesawStore tablesawStore = (TablesawStore) board.getEngine().getStore();
         var entitiesTable = tablesawStore.asTable("entities");
         var universityColumns = entitiesTable
                 .select(entitiesTable.column("level"), entitiesTable.column("pupilCount"), entitiesTable.column("n"), entitiesTable.column("e"))
