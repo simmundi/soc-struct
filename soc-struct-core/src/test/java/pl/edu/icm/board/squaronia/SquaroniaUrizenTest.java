@@ -26,9 +26,8 @@ class SquaroniaUrizenTest {
 
         //execute
         squaroniaUrizen.withAgeGroupShare(AgeRange.AGE_0_4,1).withAgeGroupShare(AgeRange.AGE_15_19,1).build();
-
         //given
-        var entities = ((TablesawStore)board.getEngine().getComponentStore()).asTable("entities");
+        var entities = ((TablesawStore)board.getEngine().getStore()).asTable("entities");
 
         //assert
         assertThat(entities.where(
@@ -52,7 +51,7 @@ class SquaroniaUrizenTest {
         //execute
         squaroniaUrizen.withAgeGroupShare(AgeRange.AGE_0_4,1).build();
         //given
-        var entities = ((TablesawStore)board.getEngine().getComponentStore()).asTable("entities");
+        var entities = ((TablesawStore)board.getEngine().getStore()).asTable("entities");
 
         //assert
         assertThat(entities.where(

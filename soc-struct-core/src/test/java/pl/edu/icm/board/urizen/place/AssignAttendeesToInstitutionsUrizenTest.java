@@ -58,7 +58,7 @@ class AssignAttendeesToInstitutionsUrizenTest {
     @DisplayName("Should assign attendees to educational institutions")
     void test () {
         assigner.assignToInstitutions();
-        var entities = ((TablesawStore)board.getEngine().getComponentStore()).asTable("entities");
+        var entities = ((TablesawStore)board.getEngine().getStore()).asTable("entities");
 
         assertThat(whereAttends(entities, "p").rowCount()).isEqualTo(1);
         assertThat(whereAttends(entities, "m").rowCount()).isEqualTo(1);

@@ -56,7 +56,7 @@ class AssignPatientsToHealthcareUrizenTest {
     @DisplayName("Should assign people to healthcare units")
     void test () {
         assigner.assignToHealthcare();
-        var entities = ((TablesawStore)board.getEngine().getComponentStore()).asTable("entities");
+        var entities = ((TablesawStore)board.getEngine().getStore()).asTable("entities");
 
         assertThat(whereAssigned(entities, "9").rowCount()).isEqualTo(2);
         assertThat(whereAssigned(entities, "a").rowCount()).isEqualTo(3);
