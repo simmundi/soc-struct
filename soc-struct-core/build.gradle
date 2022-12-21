@@ -1,6 +1,6 @@
 dependencies {
     annotationProcessor "net.snowyhollows.bento:bento-generator:${bentoVersion}"
-    annotationProcessor 'pl.edu.icm.em:trurl-generator:1.1-SNAPSHOT'
+    annotationProcessor "pl.edu.icm.em:trurl-generator:${trurlVersion}"
 
     api "pl.edu.icm.em:trurl-core:${trurlVersion}"
     api project(":soc-struct-model")
@@ -11,8 +11,8 @@ dependencies {
     api "org.geotools:gt-xml:${geotoolsVersion}"
 
     implementation project(":em-common")
-    implementation 'pl.edu.icm.em:trurl-orc:1.1-SNAPSHOT'
-    implementation 'pl.edu.icm.em:trurl-xml:1.1-SNAPSHOT'
+    implementation "pl.edu.icm.em:trurl-orc:${trurlVersion}"
+    implementation "pl.edu.icm.em:trurl-xml:${trurlVersion}"
     implementation "com.graphhopper:graphhopper-core:${grasshopperVersion}"
     implementation "com.univocity:univocity-parsers:${univocityVersion}"
     implementation "it.unimi.dsi:fastutil:${fastutilVersion}"
@@ -20,7 +20,7 @@ dependencies {
 
     runtimeOnly "org.postgresql:postgresql:${postgresVersion}"
 
-    testImplementation 'pl.edu.icm.em:trurl-store-tablesaw:1.1-SNAPSHOT'
+    testImplementation "pl.edu.icm.em:trurl-store-tablesaw:${trurlVersion}"
 }
 
 publishing {
