@@ -18,27 +18,26 @@
 
 package pl.edu.icm.board.model;
 
-import pl.edu.icm.trurl.ecs.Entity;
 import pl.edu.icm.trurl.ecs.annotation.WithMapper;
 
 @WithMapper
-public class HouseholdChores {
-    private Entity responsibleForWalkingChildren;
-    private float totalFamilyCost;
+public class Chores {
 
-    public Entity getResponsibleForWalkingChildren() {
-        return responsibleForWalkingChildren;
+    private byte chores;
+
+    public enum Chore {
+        WALKING_KIDS_TO_SCHOOL
     }
 
-    public void setResponsibleForWalkingChildren(Entity responsibleForWalkingChildren) {
-        this.responsibleForWalkingChildren = responsibleForWalkingChildren;
+    public boolean hasChore(Chore chore) {
+        return (chores & (1 << chore.ordinal())) != 0;
     }
 
-    public float getTotalFamilyCost() {
-        return totalFamilyCost;
+    public void assign(Chore chore) {
+        chores |= (1 << chore.ordinal());
     }
 
-    public void setTotalFamilyCost(float totalFamilyCost) {
-        this.totalFamilyCost = totalFamilyCost;
+    public void removeChore(Chore chore) {
+        chores &= ~(1 << chore.ordinal());
     }
 }
