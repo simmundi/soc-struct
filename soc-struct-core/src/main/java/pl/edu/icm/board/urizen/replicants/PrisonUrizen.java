@@ -20,9 +20,8 @@ package pl.edu.icm.board.urizen.replicants;
 
 import net.snowyhollows.bento.annotation.WithFactory;
 import org.apache.commons.math3.random.RandomDataGenerator;
-import pl.edu.icm.board.Board;
+import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.agesex.AgeSexFromDistributionPicker;
-import pl.edu.icm.board.geography.KilometerGridCell;
 import pl.edu.icm.board.model.*;
 import pl.edu.icm.board.urizen.generic.Entities;
 import pl.edu.icm.board.urizen.household.model.AgeRange;
@@ -39,7 +38,7 @@ import java.util.List;
  *
  **/
 public class PrisonUrizen {
-    private final Board board;
+    private final EngineIo engineIo;
     private final ReplicantPrototypes prototypes;
     private final RandomDataGenerator random;
     private final int prisonRoomSize;
@@ -52,19 +51,19 @@ public class PrisonUrizen {
     private final PrisonGeodecoder prisonGeodecoder;
     @WithFactory
     public PrisonUrizen(
-            Board board,
+            EngineIo engineIo,
             ReplicantPrototypes prototypes,
             Entities entities, ReplicantsPopulation replicantsPopulation,
             AgeSexFromDistributionPicker ageSexFromDistributionPicker,
             RandomProvider randomProvider,
             PrisonGeodecoder prisonGeodecoder,
             int prisonRoomSize) {
-        this.board = board;
+        this.engineIo = engineIo;
         this.prototypes = prototypes;
         this.entities = entities;
         this.ageSexFromDistributionPicker = ageSexFromDistributionPicker;
         this.prisonRoomSize = prisonRoomSize;
-        this.board.require(Household.class, Person.class, Location.class, Replicant.class);
+        this.engineIo.require(Household.class, Person.class, Location.class, Replicant.class);
         this.sexes = replicantsPopulation.getPopulation().getPeopleBySex();
         this.sexesM = sexes.createSubPool(Person.Sex.M);
         this.sexesK = sexes.createSubPool(Person.Sex.K);
@@ -85,7 +84,7 @@ public class PrisonUrizen {
     }
 
     private void generatePrison(PrisonFromCsv.Type type, String name, Location location, int prisonSize) {
-        board.getEngine().execute(sessionFactory -> {
+        engineIo.getEngine().execute(sessionFactory -> {
             Session session = sessionFactory.create();
             Entity entity = entities.createEmptyComplex(session, prisonSize);
             Complex complex = entity.get(Complex.class);

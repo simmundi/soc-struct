@@ -22,7 +22,7 @@ import com.univocity.parsers.csv.CsvParser;
 import com.univocity.parsers.csv.CsvParserSettings;
 import net.snowyhollows.bento.annotation.WithFactory;
 import net.snowyhollows.bento.config.WorkDir;
-import pl.edu.icm.board.Board;
+import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.geography.KilometerGridCell;
 import pl.edu.icm.board.geography.commune.Commune;
 import pl.edu.icm.board.geography.commune.CommuneManager;
@@ -42,7 +42,7 @@ import java.util.Set;
 public class WorkplacesInCommunes {
 
     private final WorkDir workDir;
-    private final Board board;
+    private final EngineIo engineIo;
     private final CommuneManager communeManager;
     private final ProfessionalActivityAssessor professionalActivityAssessor;
     private double employmentRate;
@@ -52,14 +52,14 @@ public class WorkplacesInCommunes {
     private final Map<Commune, EmploymentInCommune> employment = new HashMap<>();
 
     @WithFactory
-    public WorkplacesInCommunes(WorkDir workDir, Board board, CommuneManager communeManager, ProfessionalActivityAssessor professionalActivityAssessor, String przeplywyLudnosciFilename, int totalSlotsInWorkContexts) {
+    public WorkplacesInCommunes(WorkDir workDir, EngineIo engineIo, CommuneManager communeManager, ProfessionalActivityAssessor professionalActivityAssessor, String przeplywyLudnosciFilename, int totalSlotsInWorkContexts) {
         this.workDir = workDir;
-        this.board = board;
+        this.engineIo = engineIo;
         this.communeManager = communeManager;
         this.professionalActivityAssessor = professionalActivityAssessor;
         this.przeplywyLudnosciFilename = przeplywyLudnosciFilename;
         this.totalSlotsInWorkContexts = totalSlotsInWorkContexts;
-        board.require(Household.class, Person.class, Location.class);
+        engineIo.require(Household.class, Person.class, Location.class);
     }
 
     public EmploymentInCommune getEmploymentDataFor(Commune commune) {
@@ -77,7 +77,7 @@ public class WorkplacesInCommunes {
 
         var status = Status.of("Finding potential employees", 1_000_000);
 
-        board.getEngine().streamDetached()
+        engineIo.getEngine().streamDetached()
                 .filter(e -> e.get(Household.class) != null)
                 .forEach(e -> {
                     status.tick();

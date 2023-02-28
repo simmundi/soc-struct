@@ -25,7 +25,7 @@ import it.unimi.dsi.fastutil.ints.IntLists;
 import net.snowyhollows.bento.annotation.WithFactory;
 import net.snowyhollows.bento.config.WorkDir;
 import org.apache.commons.math3.random.RandomGenerator;
-import pl.edu.icm.board.Board;
+import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.geography.KilometerGridCell;
 import pl.edu.icm.board.geography.commune.CommuneManager;
 import pl.edu.icm.board.model.*;
@@ -54,7 +54,7 @@ import static pl.edu.icm.trurl.ecs.util.EntityIterator.select;
 public class PdynExporter {
     private final DebugTextFileService debugTextFileService;
     private final WorkDir workDir;
-    private final Board board;
+    private final EngineIo engineIo;
     private final Int2ObjectOpenHashMap<IntList> attendees = new Int2ObjectOpenHashMap<>(2_000_000);
     private final CommuneManager communeManager;
     private final PdynIdExporter idExporter;
@@ -64,19 +64,19 @@ public class PdynExporter {
     @WithFactory
     public PdynExporter(DebugTextFileService debugTextFileService,
                         WorkDir workDir,
-                        Board board,
+                        EngineIo engineIo,
                         CommuneManager communeManager,
                         boolean removeEmptyEduInstitutions,
                         PdynIdExporter idExporter,
                         RandomProvider randomProvider) {
         this.debugTextFileService = debugTextFileService;
         this.workDir = workDir;
-        this.board = board;
+        this.engineIo = engineIo;
         this.communeManager = communeManager;
         this.idExporter = idExporter;
         this.removeEmptyEduInstitutions = removeEmptyEduInstitutions;
         this.random = randomProvider.getRandomGenerator(PdynExporter.class);
-        board.require(Household.class,
+        engineIo.require(Household.class,
                 Person.class,
                 Workplace.class,
                 Location.class,
@@ -166,7 +166,7 @@ public class PdynExporter {
             datGd.printlnf("IloscGD %d", countGd.get());
             datAgenci.printlnf("IloscAgentow %d", countAgenci.get());
 
-            board.getEngine().execute(select(selectorGdBuilder).forEach(householdEntity -> {
+            engineIo.getEngine().execute(select(selectorGdBuilder).forEach(householdEntity -> {
                 var household = householdEntity.get(Household.class);
                 var cell = KilometerGridCell.fromLocation(householdEntity.get(Location.class));
                 var members = household.getMembers();
@@ -214,7 +214,7 @@ public class PdynExporter {
         var statusZaklady = Status.of("Exporting zaklady.dat", 100_000);
         try (var datZaklady = debugTextFileService.createTextFile(new File(dir, "zaklady.dat").getPath())) {
             datZaklady.printlnf("%d", countZaklady.get());
-            board.getEngine().execute(select(selectorZakladyBuilder).forEach(e -> {
+            engineIo.getEngine().execute(select(selectorZakladyBuilder).forEach(e -> {
                 var unit = e.get(AdministrationUnit.class);
                 var possibilities = cells.get(unit.getTeryt());
                 var cell = possibilities.get(random.nextInt(possibilities.size()));
@@ -233,12 +233,12 @@ public class PdynExporter {
         var statusEdu = Status.of("Exporting szkoly.dat", 100_000);
         try (var datEdu = debugTextFileService.createTextFile(new File(dir, "szkoly.dat").getPath())) {
             if (removeEmptyEduInstitutions) {
-                board.getEngine().execute(select(selectorKindertardensBuilder).forEach(entity -> {
+                engineIo.getEngine().execute(select(selectorKindertardensBuilder).forEach(entity -> {
                     if (attendees.getOrDefault(entity.getId(), IntLists.EMPTY_LIST).isEmpty()) {
                         countKindergartens.decrementAndGet();
                     }
                 }));
-                board.getEngine().execute(select(selectorPrimarySchoolsBuilder).forEach(entity -> {
+                engineIo.getEngine().execute(select(selectorPrimarySchoolsBuilder).forEach(entity -> {
                     if (attendees.getOrDefault(entity.getId(), IntLists.EMPTY_LIST).isEmpty()) {
                         countPrimarySchools.decrementAndGet();
                     }
@@ -249,7 +249,7 @@ public class PdynExporter {
             datEdu.printlnf("LiczbaGimnazjow 0");
 
             // nurseries
-            board.getEngine().execute(select(selectorKindertardensBuilder).forEach(e -> {
+            engineIo.getEngine().execute(select(selectorKindertardensBuilder).forEach(e -> {
                 var cell = KilometerGridCell.fromLocation(e.get(Location.class));
                 var nurseryAttendees = attendees.getOrDefault(e.getId(), IntLists.EMPTY_LIST).toIntArray();
                 if (!removeEmptyEduInstitutions || nurseryAttendees.length > 0) {
@@ -264,7 +264,7 @@ public class PdynExporter {
             }));
 
             // schools
-            board.getEngine().execute(select(selectorPrimarySchoolsBuilder).forEach(e -> {
+            engineIo.getEngine().execute(select(selectorPrimarySchoolsBuilder).forEach(e -> {
                 var cell = KilometerGridCell.fromLocation(e.get(Location.class));
                 var primaryAttendees = attendees.getOrDefault(e.getId(), IntLists.EMPTY_LIST).toIntArray();
                 if (!removeEmptyEduInstitutions || primaryAttendees.length > 0) {
@@ -300,7 +300,7 @@ public class PdynExporter {
                                      String fileName, String eduInstitutionsName) throws IOException {
 
         if (removeEmptyEduInstitutions) {
-            board.getEngine().execute(select(selectorEduInstitutionsBuilder).forEach(entity -> {
+            engineIo.getEngine().execute(select(selectorEduInstitutionsBuilder).forEach(entity -> {
                 if (attendees.getOrDefault(entity.getId(), IntLists.EMPTY_LIST).isEmpty()) {
                     eduInstitutionsCount.decrementAndGet();
                 }
@@ -309,7 +309,7 @@ public class PdynExporter {
         var statusEduInstitutions = Status.of("Exporting " + fileName, 100_000);
         try (var datEduInstitutions = debugTextFileService.createTextFile(new File(dir, fileName).getPath())) {
             datEduInstitutions.printlnf("%d", eduInstitutionsCount.get());
-            board.getEngine().execute(select(selectorEduInstitutionsBuilder).forEach(entity -> {
+            engineIo.getEngine().execute(select(selectorEduInstitutionsBuilder).forEach(entity -> {
                 KilometerGridCell location = KilometerGridCell.fromLocation(entity.get(Location.class));
                 var universityAttendees = attendees.getOrDefault(entity.getId(), IntLists.EMPTY_LIST).toIntArray();
                 if (!removeEmptyEduInstitutions || universityAttendees.length != 0) {
@@ -327,7 +327,7 @@ public class PdynExporter {
     }
 
     private Stream<Entity> householdsAndWorkplacesAndEduInstitutions$() {
-        return board.getEngine()
+        return engineIo.getEngine()
                 .streamDetached()
                 .filter(e -> e.get(Household.class) != null ||
                         e.get(Workplace.class) != null ||

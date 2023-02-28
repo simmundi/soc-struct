@@ -32,7 +32,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class Board  {
+public class EngineIo {
     private OrcStoreService lazyOrcStoreService;
     private final EngineConfiguration engineConfiguration;
     private final CsvWriter csvWriter;
@@ -40,7 +40,7 @@ public class Board  {
     private final String rootPath;
 
     @WithFactory
-    public Board(EngineConfiguration engineConfiguration, CsvWriter csvWriter, WorkDir workDir, String rootPath) {
+    public EngineIo(EngineConfiguration engineConfiguration, CsvWriter csvWriter, WorkDir workDir, String rootPath) {
         this.engineConfiguration = engineConfiguration;
         this.csvWriter = csvWriter;
         this.workDir = workDir;
@@ -97,7 +97,7 @@ public class Board  {
     }
 
     public void addListener(EngineCreationListener engineCreationListener) {
-        engineConfiguration.addEngineCreationListeners(engineCreationListener);
+        engineConfiguration.addEngineCreationListener(engineCreationListener);
     }
 
     private OrcStoreService getLazyOrcStoreService() {

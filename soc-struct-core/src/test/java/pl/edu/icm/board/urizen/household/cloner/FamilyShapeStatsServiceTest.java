@@ -18,7 +18,6 @@
 
 package pl.edu.icm.board.urizen.household.cloner;
 
-import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -27,7 +26,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import pl.edu.icm.board.Board;
+import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.EntityMocker;
 import pl.edu.icm.board.agesex.AgeSexFromDistributionPicker;
 import pl.edu.icm.board.model.AdministrationUnit;
@@ -46,7 +45,7 @@ import static org.mockito.Mockito.when;
 class FamilyShapeStatsServiceTest {
 
     @Mock
-    Board board;
+    EngineIo engineIo;
 
     @Mock
     Engine engine;
@@ -63,7 +62,7 @@ class FamilyShapeStatsServiceTest {
     void configure() {
         mock = new EntityMocker(null, Person.class, AdministrationUnit.class, Household.class);
 
-        when(board.getEngine()).thenReturn(engine);
+        when(engineIo.getEngine()).thenReturn(engine);
         when(engine.streamDetached()).thenReturn(Stream.of(
                 // młode małżeństwo
                 mock.entity(1, mock.person(27, Person.Sex.K)),

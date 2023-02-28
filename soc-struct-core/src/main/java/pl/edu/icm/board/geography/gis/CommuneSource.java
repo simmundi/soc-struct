@@ -64,7 +64,7 @@ public class CommuneSource {
 
         processGisData(terytGrid, terytToNameMap);
 
-        Mapper<CommuneStoreItem> gridItemMapper = Mappers.create(CommuneStoreItem.class);
+        Mapper<CommuneStoreItem> gridItemMapper = new Mappers().create(CommuneStoreItem.class);
         gridItemMapper.configureStore(store);
         gridItemMapper.attachStore(store);
 

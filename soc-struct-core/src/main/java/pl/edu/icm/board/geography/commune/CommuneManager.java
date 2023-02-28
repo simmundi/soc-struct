@@ -44,8 +44,8 @@ public class CommuneManager {
 
     @WithFactory
     public CommuneManager(FileCacheService fileCacheService, CommuneSource communeSource) {
-        Store store = new ArrayStore();
-        var gridItemMapper = Mappers.create(CommuneStoreItem.class);
+        Store store = new ArrayStore(1024);
+        var gridItemMapper = new Mappers().create(CommuneStoreItem.class);
         gridItemMapper.configureStore(store);
         fileCacheService
                 .computeIfAbsent("gminy", store, communeSource::load);

@@ -52,7 +52,7 @@ public class GraphSource {
         graph.loadExisting();
         var baseGraph = graph.getBaseGraph();
 
-        Mapper<GraphStoreItem> graphItemMapper = Mappers.create(GraphStoreItem.class);
+        Mapper<GraphStoreItem> graphItemMapper = new Mappers().create(GraphStoreItem.class);
         graphItemMapper.configureStore(store);
         graphItemMapper.attachStore(store);
 

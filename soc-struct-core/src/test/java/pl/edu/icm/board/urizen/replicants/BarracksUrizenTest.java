@@ -25,7 +25,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import pl.edu.icm.board.Board;
+import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.MockRandomProvider;
 import pl.edu.icm.board.agesex.AgeSexFromDistributionPicker;
 import pl.edu.icm.board.model.Complex;
@@ -52,7 +52,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class BarracksUrizenTest {
     @Mock
-    private Board board;
+    private EngineIo engineIo;
     @Mock
     private ReplicantsPopulation replicantsPopulation;
     @Mock
@@ -102,7 +102,7 @@ class BarracksUrizenTest {
         when(entity2.get(Complex.class)).thenReturn(new Complex());
         when(prototypes.barracksRoom(same(session), any(), any())).thenReturn(entity);
         when(entity.get(Household.class)).thenReturn(new Household());
-        when(board.getEngine()).thenReturn(engine);
+        when(engineIo.getEngine()).thenReturn(engine);
         when(populationDensityLoader.sample(anyDouble())).thenReturn(KilometerGridCell.fromLegacyPdynCoordinates(200, 200));
         doAnswer(params -> {
             EntitySystem system = params.getArgument(0);
@@ -122,7 +122,7 @@ class BarracksUrizenTest {
         int maxRooms = 10;
         int maxJailCount = (int) ((double) soldiers / maxSoldiersInBarracks);
         BarracksUrizen barracksUrizen = new BarracksUrizen(
-                board, prototypes, entities, replicantsPopulation, populationDensityLoader, ageSexFromDistributionPicker, randomProvider,
+                engineIo, prototypes, entities, replicantsPopulation, populationDensityLoader, ageSexFromDistributionPicker, randomProvider,
                 soldiers, roomSize, maxRooms
         );
 

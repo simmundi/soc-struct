@@ -19,14 +19,13 @@
 package pl.edu.icm.board.geography.commune;
 
 import net.snowyhollows.bento.annotation.WithFactory;
-import pl.edu.icm.board.Board;
+import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.geography.KilometerGridCell;
 import pl.edu.icm.board.geography.density.PopulationDensityLoader;
 import pl.edu.icm.board.model.Household;
 import pl.edu.icm.board.model.Location;
 import pl.edu.icm.trurl.ecs.util.EntityIterator;
 import pl.edu.icm.trurl.ecs.util.Selectors;
-import pl.edu.icm.trurl.ecs.util.Systems;
 import pl.edu.icm.trurl.util.Status;
 
 import java.util.HashMap;
@@ -36,17 +35,17 @@ public class PopulationService {
     private final Map<String, Integer> populationByTeryt = new HashMap<>();
     private final PopulationDensityLoader populationDensityLoader;
     private final CommuneManager communeManager;
-    private final Board board;
+    private final EngineIo engineIo;
     private final Selectors selectors;
 
     @WithFactory
-    public PopulationService(Board board,
+    public PopulationService(EngineIo engineIo,
                              CommuneManager communeManager,
                              PopulationDensityLoader populationDensityLoader,
                              Selectors selectors) {
         this.populationDensityLoader = populationDensityLoader;
         this.communeManager = communeManager;
-        this.board = board;
+        this.engineIo = engineIo;
         this.selectors = selectors;
     }
 
@@ -56,7 +55,7 @@ public class PopulationService {
         }
         populationDensityLoader.loadActualPopulationFromEngine();
         var status = Status.of("loading population", 1_000_000);
-        board.getEngine().execute(EntityIterator.select(selectors.allWithComponents(Household.class, Location.class)).forEach(Household.class, Location.class, (entity, household, location) -> {
+        engineIo.getEngine().execute(EntityIterator.select(selectors.allWithComponents(Household.class, Location.class)).forEach(Household.class, Location.class, (entity, household, location) -> {
             var teryt = communeManager.communeAt(KilometerGridCell.fromLocation(location)).getTeryt();
             var size = household.getMembers().size();
             if (isACityWithPowiatRights(teryt)) {

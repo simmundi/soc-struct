@@ -20,7 +20,7 @@ package pl.edu.icm.board.urizen.replicants;
 
 import net.snowyhollows.bento.annotation.WithFactory;
 import org.apache.commons.math3.random.RandomDataGenerator;
-import pl.edu.icm.board.Board;
+import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.agesex.AgeSexFromDistributionPicker;
 import pl.edu.icm.board.model.AdministrationUnit;
 import pl.edu.icm.board.geography.KilometerGridCell;
@@ -50,7 +50,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public class ImmigrantsSpotUrizen {
-    private final Board board;
+    private final EngineIo engineIo;
     private final PopulationDensityLoader populationDensityLoader;
     private final ReplicantPrototypes prototypes;
     private final RandomDataGenerator random;
@@ -68,7 +68,7 @@ public class ImmigrantsSpotUrizen {
 
     @WithFactory
     public ImmigrantsSpotUrizen(
-            Board board,
+            EngineIo engineIo,
             CommuneManager communeManager,
             EntityStreamManipulator entityStreamManipulator,
             ReplicantPrototypes prototypes,
@@ -79,13 +79,13 @@ public class ImmigrantsSpotUrizen {
             AgeSexFromDistributionPicker ageSexFromDistributionPicker,
             TerytsOfBigCities terytsOfBigCities,
             int immigrantsSpotReplicantsCount, int immigrantsSpotRoomSize, int immigrantsSpotMaxRooms) {
-        this.board = board;
+        this.engineIo = engineIo;
         this.prototypes = prototypes;
         this.populationDensityLoader = populationDensityLoader;
         this.immigrantsSpotReplicantsCount = immigrantsSpotReplicantsCount;
         this.immigrantsSpotRoomSize = immigrantsSpotRoomSize;
         this.immigrantsSpotMaxRooms = immigrantsSpotMaxRooms;
-        this.board.require(Household.class, Person.class, Location.class, Replicant.class, Workplace.class,
+        this.engineIo.require(Household.class, Person.class, Location.class, Replicant.class, Workplace.class,
                 AdministrationUnit.class, Employee.class);
         this.communeManager = communeManager;
         this.entityStreamManipulator = entityStreamManipulator;
@@ -133,7 +133,7 @@ public class ImmigrantsSpotUrizen {
     public void fabricate() throws FileNotFoundException {
         populationDensityLoader.load();
         BinPoolsByShape<Commune, Entity> workplacesByCommunes = entityStreamManipulator.groupIntoShapes(
-                board.getEngine().streamDetached()
+                engineIo.getEngine().streamDetached()
                         .filter(e -> e.get(Workplace.class) != null),
                 e -> e.get(Workplace.class).getEmployees(),
                 e -> Stream.of(
@@ -170,7 +170,7 @@ public class ImmigrantsSpotUrizen {
     }
 
     private void generateRoom(int inhabitants, KilometerGridCell cell, BinPool<Entity> workplaces) {
-        board.getEngine().execute(sessionFactory -> {
+        engineIo.getEngine().execute(sessionFactory -> {
             Session session = sessionFactory.create();
             List<Entity> dependents = prototypes.immigrantsSpotRoom(session, cell).get(Household.class).getMembers();
             AgeRange ageRangePicked = agesOver18.sample(random.getRandomGenerator().nextDouble())

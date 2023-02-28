@@ -1,6 +1,6 @@
 # pdyn1.5 v1.1
 
-The _pdyn1.5 v1.1_ version of the board data model consists of 10 components:
+The _pdyn1.5 v1.1_ version of the engineIo data model consists of 10 components:
 ![components diagram](img/components.png)
 
 ## Components

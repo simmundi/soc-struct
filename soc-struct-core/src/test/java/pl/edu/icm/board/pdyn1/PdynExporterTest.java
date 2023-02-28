@@ -18,6 +18,7 @@
 
 package pl.edu.icm.board.pdyn1;
 
+import net.snowyhollows.bento.config.Configurer;
 import net.snowyhollows.bento.config.WorkDir;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -25,7 +26,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import pl.edu.icm.board.Board;
+import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.MockRandomProvider;
 import pl.edu.icm.board.geography.KilometerGridCell;
 import pl.edu.icm.board.geography.commune.Commune;
@@ -34,6 +35,7 @@ import pl.edu.icm.board.util.RandomProvider;
 import pl.edu.icm.em.common.DebugTextFile;
 import pl.edu.icm.em.common.DebugTextFileService;
 import pl.edu.icm.trurl.ecs.EngineConfiguration;
+import pl.edu.icm.trurl.ecs.EngineConfigurationFactory;
 import pl.edu.icm.trurl.store.tablesaw.TablesawStoreFactory;
 
 import java.io.ByteArrayOutputStream;
@@ -87,9 +89,9 @@ class PdynExporterTest {
 
     @BeforeEach
     public void before() throws IOException {
-        EngineConfiguration engineConfiguration = new EngineConfiguration();
-        engineConfiguration.setStoreFactory(new TablesawStoreFactory());
-        Board board = new Board(engineConfiguration, null, null, null);
+        EngineConfiguration engineConfiguration = new Configurer().setParam("trurl.engine.storeFactory", TablesawStoreFactory.class.getName()).getConfig().get(EngineConfigurationFactory.IT);
+
+        EngineIo engineIo = new EngineIo(engineConfiguration, null, null, null);
 
         gd = new DebugTextFile(new PrintWriter(gdStream));
         agenci = new DebugTextFile(new PrintWriter(agenciStream));
@@ -101,12 +103,12 @@ class PdynExporterTest {
 
         pdynExporter = new PdynExporter(datFileCreator,
                 workDir,
-                board,
+                engineIo,
                 communeManager,
                 true,
                 idExporter,
                 randomProvider);
-        board.load(PdynExporter.class.getResourceAsStream("/pdyn15.csv"));
+        engineIo.load(PdynExporter.class.getResourceAsStream("/pdyn15.csv"));
 
         when(communeManager.getCommunes()).thenReturn(List.of(
                 new Commune("1412132", "a", Set.of(KilometerGridCell.fromLegacyPdynCoordinates(111,222))),

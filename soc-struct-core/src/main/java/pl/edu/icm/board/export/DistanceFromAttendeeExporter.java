@@ -19,8 +19,8 @@
 package pl.edu.icm.board.export;
 
 import net.snowyhollows.bento.annotation.WithFactory;
-import pl.edu.icm.board.Board;
-import pl.edu.icm.board.BoardFactory;
+import pl.edu.icm.board.EngineIo;
+import pl.edu.icm.board.EngineIoFactory;
 import pl.edu.icm.em.common.EmConfig;
 import pl.edu.icm.board.model.Attendee;
 import pl.edu.icm.board.model.EducationalInstitution;
@@ -39,22 +39,22 @@ import static pl.edu.icm.trurl.ecs.util.EntityIterator.select;
 
 public class DistanceFromAttendeeExporter {
 
-    private final Board board;
+    private final EngineIo engineIo;
     private final String odleglosciPath;
     private final Selectors selectors;
 
     @WithFactory
-    public DistanceFromAttendeeExporter(Board board,
+    public DistanceFromAttendeeExporter(EngineIo engineIo,
                                         String odleglosciPath,
                                         Selectors selectors) {
         this.odleglosciPath = odleglosciPath;
         this.selectors = selectors;
-        board.require(Household.class, Location.class, Attendee.class, EducationalInstitution.class, Person.class);
-        this.board = board;
+        engineIo.require(Household.class, Location.class, Attendee.class, EducationalInstitution.class, Person.class);
+        this.engineIo = engineIo;
     }
 
     public void export() throws IOException {
-        Engine engine = board.getEngine();
+        Engine engine = engineIo.getEngine();
         var exporter = VnPointsExporter.create(
                 ExportedAttendee.class,
                 odleglosciPath);
@@ -99,10 +99,10 @@ public class DistanceFromAttendeeExporter {
 
     public static void main(String[] args) throws IOException {
         var config = EmConfig.create(args);
-        var board = config.get(BoardFactory.IT);
+        var io = config.get(EngineIoFactory.IT);
         var exporter = config.get(DistanceFromAttendeeExporterFactory.IT);
 
-        board.loadOrc("output/5_people_households_edu_assigned.orc");
+        io.loadOrc("output/5_people_households_edu_assigned.orc");
         exporter.export();
     }
 }

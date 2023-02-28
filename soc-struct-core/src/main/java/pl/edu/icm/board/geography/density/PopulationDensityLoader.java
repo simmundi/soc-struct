@@ -20,7 +20,7 @@ package pl.edu.icm.board.geography.density;
 
 import com.univocity.parsers.common.record.Record;
 import net.snowyhollows.bento.annotation.WithFactory;
-import pl.edu.icm.board.Board;
+import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.geography.KilometerGridCell;
 import pl.edu.icm.board.model.Household;
 import pl.edu.icm.board.model.Location;
@@ -49,14 +49,14 @@ public class PopulationDensityLoader {
     private final List<KilometerGridCell> cellList = new ArrayList<>();
     private final Set<KilometerGridCell> cellSet = new HashSet<>();
     private final Map<KilometerGridCell, Integer> densityMap = new HashMap<>();
-    private final Board board;
+    private final EngineIo engineIo;
     private final Selectors selectors;
 
     @WithFactory
-    public PopulationDensityLoader(BoardCsvLoader boardCsvLoader, String gmPopulationGridFilename, Board board, Selectors selectors) {
+    public PopulationDensityLoader(BoardCsvLoader boardCsvLoader, String gmPopulationGridFilename, EngineIo engineIo, Selectors selectors) {
         this.boardCsvLoader = boardCsvLoader;
         this.gmPopulationGridFilename = gmPopulationGridFilename;
-        this.board = board;
+        this.engineIo = engineIo;
         this.selectors = selectors;
     }
 
@@ -80,7 +80,7 @@ public class PopulationDensityLoader {
             cellList.clear();
             cellSet.clear();
         }
-        Engine engine = board.getEngine();
+        Engine engine = engineIo.getEngine();
         var status = Status.of("loading population density from engine", 500000);
         engine.execute(EntityIterator.select(selectors.allWithComponents(Household.class, Location.class)).dontPersist().forEach(Household.class, Location.class, (entity, members, location) -> {
             var size = members.getMembers().size();

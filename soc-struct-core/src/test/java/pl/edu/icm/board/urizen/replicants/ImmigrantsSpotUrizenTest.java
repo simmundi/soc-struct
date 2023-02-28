@@ -25,7 +25,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import pl.edu.icm.board.Board;
+import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.EntityMocker;
 import pl.edu.icm.board.MockRandomProvider;
 import pl.edu.icm.board.agesex.AgeSexFromDistributionPicker;
@@ -67,7 +67,7 @@ import static org.mockito.Mockito.*;
 class ImmigrantsSpotUrizenTest {
     public static final String TERYT_WARSAW = "1465011";
     @Mock
-    private Board board;
+    private EngineIo engineIo;
     @Mock
     private ReplicantsPopulation replicantsPopulation;
     @Mock
@@ -129,7 +129,7 @@ class ImmigrantsSpotUrizenTest {
         when(population.getPeopleBySex()).thenReturn(sexBinPool);
         when(prototypes.immigrantsSpotRoom(same(session), any())).thenReturn(entity);
         when(entity.get(Household.class)).thenReturn(new Household());
-        when(board.getEngine()).thenReturn(engine);
+        when(engineIo.getEngine()).thenReturn(engine);
         doAnswer(params -> {
             EntitySystem system = params.getArgument(0);
             system.execute(sessionFactory);
@@ -175,7 +175,7 @@ class ImmigrantsSpotUrizenTest {
 
         int ImmigrantsRoomCount = (int) Math.ceil((double) immigrants / roomSize);
         ImmigrantsSpotUrizen immigrantsSpotUrizen = new ImmigrantsSpotUrizen(
-                board,
+                engineIo,
                 communeManager,
                 new EntityStreamManipulator(),
                 prototypes,

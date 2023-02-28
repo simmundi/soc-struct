@@ -25,7 +25,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import pl.edu.icm.board.Board;
+import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.geography.KilometerGridCell;
 import pl.edu.icm.board.util.BoardCsvLoader;
 import pl.edu.icm.trurl.ecs.util.Selectors;
@@ -46,7 +46,7 @@ class PopulationDensityLoaderTest {
     BoardCsvLoader boardCsvLoader;
 
     @Mock
-    Board board;
+    EngineIo engineIo;
 
     @Mock
     Record recordA;
@@ -59,7 +59,7 @@ class PopulationDensityLoaderTest {
         // given
         when(boardCsvLoader.stream("test")).thenReturn(List.of(recordA));
         when(recordA.getString("id_oczka")).thenReturn("N12E12");
-        PopulationDensityLoader populationDensityLoader = new PopulationDensityLoader(boardCsvLoader, "test", board, selectors);
+        PopulationDensityLoader populationDensityLoader = new PopulationDensityLoader(boardCsvLoader, "test", engineIo, selectors);
 
         // when
         populationDensityLoader.load();
@@ -75,7 +75,7 @@ class PopulationDensityLoaderTest {
         when(boardCsvLoader.stream("test")).thenReturn(List.of(recordA, recordB));
         when(recordA.getString("id_oczka")).thenReturn("N1E1");
         when(recordB.getString("id_oczka")).thenReturn("N2E2");
-        PopulationDensityLoader populationDensityLoader = new PopulationDensityLoader(boardCsvLoader, "test", board, selectors);
+        PopulationDensityLoader populationDensityLoader = new PopulationDensityLoader(boardCsvLoader, "test", engineIo, selectors);
         populationDensityLoader.load();
 
         // when
@@ -94,7 +94,7 @@ class PopulationDensityLoaderTest {
         when(boardCsvLoader.stream("test")).thenReturn(List.of(recordA, recordB));
         when(recordA.getString("id_oczka")).thenReturn("N1E1");
         when(recordB.getString("id_oczka")).thenReturn("N2E2");
-        PopulationDensityLoader populationDensityLoader = new PopulationDensityLoader(boardCsvLoader, "test", board, selectors);
+        PopulationDensityLoader populationDensityLoader = new PopulationDensityLoader(boardCsvLoader, "test", engineIo, selectors);
         populationDensityLoader.load();
 
         // when

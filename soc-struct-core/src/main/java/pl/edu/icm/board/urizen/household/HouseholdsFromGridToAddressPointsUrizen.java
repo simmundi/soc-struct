@@ -23,7 +23,7 @@ import com.google.common.collect.MultimapBuilder;
 import com.google.common.collect.Multimaps;
 import net.snowyhollows.bento.annotation.WithFactory;
 import org.apache.commons.math3.random.RandomGenerator;
-import pl.edu.icm.board.Board;
+import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.geography.KilometerGridCell;
 import pl.edu.icm.board.geography.prg.AddressPointManager;
 import pl.edu.icm.board.model.Household;
@@ -37,25 +37,25 @@ import pl.edu.icm.trurl.util.Status;
 
 public class HouseholdsFromGridToAddressPointsUrizen {
     private final AddressPointManager addressPointsManager;
-    private final Board board;
+    private final EngineIo engineIo;
     private final RandomGenerator random;
     private final Entities entities;
     private int failures;
 
     @WithFactory
     public HouseholdsFromGridToAddressPointsUrizen(AddressPointManager addressPointsManager,
-                                                   Board board,
+                                                   EngineIo engineIo,
                                                    RandomProvider randomProvider,
                                                    Entities entities) {
         this.addressPointsManager = addressPointsManager;
-        this.board = board;
+        this.engineIo = engineIo;
         this.random = randomProvider.getRandomGenerator(HouseholdsFromGridToAddressPointsUrizen.class);
         this.entities = entities;
     }
 
     public int assignHouseholds() {
         var statusHouseholds = Status.of("extracting households", 100000);
-        var householdsIdInKilometerGridCell = board.getEngine().streamDetached()
+        var householdsIdInKilometerGridCell = engineIo.getEngine().streamDetached()
                 .filter(e -> e.get(Household.class) != null && e.get(Location.class) != null)
                 .peek(e -> statusHouseholds.tick())
                 .collect(Multimaps.toMultimap(
@@ -91,7 +91,7 @@ public class HouseholdsFromGridToAddressPointsUrizen {
 
         var status2 = Status.of("Adjusting households", 500000);
 
-        board.getEngine().execute(sessionFactory -> {
+        engineIo.getEngine().execute(sessionFactory -> {
             Session session = sessionFactory.create();
             BlueprintByKilometerCell.forEach(
                         (key, value) -> entities.createBuildingFromBlueprint(session, value)

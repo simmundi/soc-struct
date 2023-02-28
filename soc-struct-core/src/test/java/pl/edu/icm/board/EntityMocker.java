@@ -18,26 +18,30 @@
 
 package pl.edu.icm.board;
 
+import net.snowyhollows.bento.Bento;
 import pl.edu.icm.board.model.AdministrationUnit;
 import pl.edu.icm.board.model.Household;
 import pl.edu.icm.board.model.Person;
 import pl.edu.icm.trurl.ecs.Entity;
 import pl.edu.icm.trurl.ecs.MapperSet;
 import pl.edu.icm.trurl.ecs.Session;
+import pl.edu.icm.trurl.ecs.mapper.Mappers;
 import pl.edu.icm.trurl.ecs.util.DynamicComponentAccessor;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 public class EntityMocker {
 
+    private final Bento bento = Bento.createRoot();
     private final MapperSet mapperSet;
     private final Session session;
     private Map<Integer, Entity> entities = new HashMap<>();
 
     public EntityMocker(Session session, Class<?>... componentClasses) {
 
-        this.mapperSet = new MapperSet(new DynamicComponentAccessor(componentClasses));
+        this.mapperSet = new MapperSet(new DynamicComponentAccessor(Arrays.asList(componentClasses)), new Mappers(bento));
         this.session = session;
     }
 

@@ -19,7 +19,7 @@
 package pl.edu.icm.board.export.vn.poi;
 
 import net.snowyhollows.bento.annotation.WithFactory;
-import pl.edu.icm.board.Board;
+import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.model.*;
 import java.io.IOException;
 import java.util.EnumMap;
@@ -27,7 +27,7 @@ import java.util.Map;
 
 public class HealthcareExporter {
 
-    private final Board board;
+    private final EngineIo engineIo;
     private final PoiExporter poiExporter;
     private final String healthcareExportFilename;
 
@@ -37,16 +37,16 @@ public class HealthcareExporter {
     ));
 
     @WithFactory
-    public HealthcareExporter(Board board, PoiExporter poiExporter, String healthcareExportFilename) {
-        this.board = board;
+    public HealthcareExporter(EngineIo engineIo, PoiExporter poiExporter, String healthcareExportFilename) {
+        this.engineIo = engineIo;
         this.poiExporter = poiExporter;
         this.healthcareExportFilename = healthcareExportFilename;
 
-        board.require(Location.class, Healthcare.class);
+        engineIo.require(Location.class, Healthcare.class);
     }
 
     public void export() throws IOException {
-        var engine = board.getEngine();
+        var engine = engineIo.getEngine();
         poiExporter.export(healthcareExportFilename,
                 engine
                         .streamDetached()

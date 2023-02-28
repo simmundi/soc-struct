@@ -28,8 +28,8 @@ public class GraphManager {
 
     @WithFactory
     GraphManager(FileCacheService fileCacheService, GraphSource graphSource) {
-        Store store = new ArrayStore();
-        var graphItemMapper = Mappers.create(GraphStoreItem.class);
+        Store store = new ArrayStore(1024);
+        var graphItemMapper = new Mappers().create(GraphStoreItem.class);
         graphItemMapper.configureStore(store);
         fileCacheService
                 .computeIfAbsent("graph", store, graphSource::load);

@@ -20,7 +20,7 @@ package pl.edu.icm.board.urizen.replicants;
 
 import net.snowyhollows.bento.annotation.WithFactory;
 import org.apache.commons.math3.random.RandomDataGenerator;
-import pl.edu.icm.board.Board;
+import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.agesex.AgeSexFromDistributionPicker;
 import pl.edu.icm.board.model.Complex;
 import pl.edu.icm.board.geography.KilometerGridCell;
@@ -44,7 +44,7 @@ import java.util.List;
  * https://stat.gov.pl/files/gfx/portalinformacyjny/pl/defaultaktualnosci/5487/18/3/1/zaklady_stacjonarne_pomocy_spolecznej_w_2018.pdf
  */
 public class NursingHomeUrizen {
-    private final Board board;
+    private final EngineIo engineIo;
     private final PopulationDensityLoader populationDensityLoader;
     private final ReplicantPrototypes prototypes;
     private final RandomDataGenerator random;
@@ -58,13 +58,13 @@ public class NursingHomeUrizen {
 
     @WithFactory
     public NursingHomeUrizen(
-            Board board,
+            EngineIo engineIo,
             ReplicantPrototypes prototypes,
             Entities entities, ReplicantsPopulation replicantsPopulation,
             PopulationDensityLoader populationDensityLoader,
             AgeSexFromDistributionPicker ageSexFromDistributionPicker, RandomProvider randomProvider,
             int nursingHomeReplicantsCount, int nursingHomeRoomSize, int nursingHomeMaxRooms) {
-        this.board = board;
+        this.engineIo = engineIo;
         this.prototypes = prototypes;
         this.entities = entities;
         this.populationDensityLoader = populationDensityLoader;
@@ -72,7 +72,7 @@ public class NursingHomeUrizen {
         this.nursingHomeReplicantsCount = nursingHomeReplicantsCount;
         this.nursingHomeRoomSize = nursingHomeRoomSize;
         this.nursingHomeMaxRooms = nursingHomeMaxRooms;
-        this.board.require(Household.class, Person.class, Location.class, Replicant.class);
+        this.engineIo.require(Household.class, Person.class, Location.class, Replicant.class);
         this.sexes = replicantsPopulation.getPopulation().getPeopleBySex();
         this.ages = replicantsPopulation.getPopulation().getPeopleByAge().createSubPool(
                 AgeRange.AGE_70_74,
@@ -95,7 +95,7 @@ public class NursingHomeUrizen {
     }
 
     private void generateNursingHome(int nursingHomeSize) {
-        board.getEngine().execute(sessionFactory -> {
+        engineIo.getEngine().execute(sessionFactory -> {
             Session session = sessionFactory.create();
             Entity entity = entities.createEmptyComplex(session, nursingHomeSize);
             Complex complex = entity.get(Complex.class);
