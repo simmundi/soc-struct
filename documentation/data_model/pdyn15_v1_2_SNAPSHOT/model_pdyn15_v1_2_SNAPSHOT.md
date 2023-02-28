@@ -1,6 +1,6 @@
 # pdyn1.5 v1.2_SNAPSHOT
 
-The _pdyn1.5 v1.2 SNAPSHOT_ version of the board data model consists of 11 components:
+The _pdyn1.5 v1.2 SNAPSHOT_ version of the engineIo data model consists of 11 components:
 ![components diagram](img/components.png)
 
 ## Components

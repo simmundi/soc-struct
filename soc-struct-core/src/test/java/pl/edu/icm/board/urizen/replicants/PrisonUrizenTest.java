@@ -25,7 +25,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import pl.edu.icm.board.Board;
+import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.MockRandomProvider;
 import pl.edu.icm.board.agesex.AgeSexFromDistributionPicker;
 import pl.edu.icm.board.geography.prg.model.AddressLookupResult;
@@ -55,7 +55,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class PrisonUrizenTest {
     @Mock
-    private Board board;
+    private EngineIo engineIo;
     @Mock
     private ReplicantsPopulation replicantsPopulation;
     @Mock
@@ -105,7 +105,7 @@ class PrisonUrizenTest {
         when(entity2.get(Complex.class)).thenReturn(new Complex());
         when(prototypes.prisonRoom(same(session), any(), any())).thenReturn(entity);
         when(entity.get(Household.class)).thenReturn(new Household());
-        when(board.getEngine()).thenReturn(engine);
+        when(engineIo.getEngine()).thenReturn(engine);
         doAnswer(params -> {
             EntitySystem system = params.getArgument(0);
             system.execute(sessionFactory);
@@ -130,7 +130,7 @@ class PrisonUrizenTest {
         int roomSize = 2;
 
         PrisonUrizen prisonUrizen = new PrisonUrizen(
-                board, prototypes, entities, replicantsPopulation, ageSexFromDistributionPicker, randomProvider,
+                engineIo, prototypes, entities, replicantsPopulation, ageSexFromDistributionPicker, randomProvider,
                 prisonGeodecoder, roomSize
         );
 

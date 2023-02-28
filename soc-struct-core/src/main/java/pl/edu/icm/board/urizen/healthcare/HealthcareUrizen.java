@@ -19,7 +19,7 @@
 package pl.edu.icm.board.urizen.healthcare;
 
 import net.snowyhollows.bento.annotation.WithFactory;
-import pl.edu.icm.board.Board;
+import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.model.*;
 import pl.edu.icm.board.urizen.generic.Entities;
 import pl.edu.icm.trurl.ecs.Session;
@@ -27,17 +27,17 @@ import pl.edu.icm.trurl.ecs.Session;
 import java.io.IOException;
 
 public class HealthcareUrizen {
-    private final Board board;
+    private final EngineIo engineIo;
     private final Entities entities;
     private final HealthcareGeodecoder healthcareGeodecoder;
     @WithFactory
     public HealthcareUrizen(
-            Board board,
+            EngineIo engineIo,
             Entities entities,
             HealthcareGeodecoder healthcareGeodecoder) {
-        this.board = board;
+        this.engineIo = engineIo;
         this.entities = entities;
-        this.board.require(Location.class);
+        this.engineIo.require(Location.class);
         this.healthcareGeodecoder = healthcareGeodecoder;
     }
 
@@ -55,7 +55,7 @@ public class HealthcareUrizen {
 
     private void generateHealthcareUnit(HealthcareType type, String dateOfClosure, Location location) {
         if (type == HealthcareType.POZ && dateOfClosure.equals("NULL")) {
-            board.getEngine().execute(sessionFactory -> {
+            engineIo.getEngine().execute(sessionFactory -> {
                 Session session = sessionFactory.create();
                 entities.createHealthcare(session, type, location.getN(), location.getE());
                 session.close();

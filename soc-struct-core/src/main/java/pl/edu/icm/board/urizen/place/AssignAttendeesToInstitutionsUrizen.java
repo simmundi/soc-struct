@@ -20,7 +20,7 @@ package pl.edu.icm.board.urizen.place;
 
 import net.snowyhollows.bento.annotation.WithFactory;
 import org.apache.commons.math3.random.RandomGenerator;
-import pl.edu.icm.board.Board;
+import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.education.AssigningMethod;
 import pl.edu.icm.board.model.EducationLevel;
 import pl.edu.icm.board.education.EducationRadiusProvider;
@@ -47,7 +47,7 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public class AssignAttendeesToInstitutionsUrizen {
-    private final Board board;
+    private final EngineIo engineIo;
     private final EntityStreamManipulator entityStreamManipulator;
     private final Entities entities;
     private final RandomGenerator random;
@@ -55,23 +55,23 @@ public class AssignAttendeesToInstitutionsUrizen {
     private final StaticSelectors staticSelectors;
 
     @WithFactory
-    public AssignAttendeesToInstitutionsUrizen(Board board,
+    public AssignAttendeesToInstitutionsUrizen(EngineIo engineIo,
                                                EntityStreamManipulator entityStreamManipulator,
                                                Entities entities,
                                                RandomProvider randomProvider,
                                                EducationRadiusProvider radius,
                                                StaticSelectors staticSelectors) {
-        this.board = board;
+        this.engineIo = engineIo;
         this.entityStreamManipulator = entityStreamManipulator;
         this.entities = entities;
         this.staticSelectors = staticSelectors;
-        board.require(EducationalInstitution.class, Location.class, Named.class, Household.class, Person.class);
+        engineIo.require(EducationalInstitution.class, Location.class, Named.class, Household.class, Person.class);
         this.random = randomProvider.getRandomGenerator(AssignAttendeesToInstitutionsUrizen.class);
         this.radius = radius;
     }
 
     public void assignToInstitutions() {
-        Engine engine = board.getEngine();
+        Engine engine = engineIo.getEngine();
         var statusIndexing = Status.of("Indexing households");
         Selector householdsSelector = staticSelectors
                 .select(staticSelectors.config().withMandatoryComponents(Household.class).withInitialSize(14_000_000).build());
@@ -108,7 +108,7 @@ public class AssignAttendeesToInstitutionsUrizen {
                         Predicate<Person> predicate,
                         AssigningMethod assigningMethod,
                         EducationLevel level) {
-        Engine engine = board.getEngine();
+        Engine engine = engineIo.getEngine();
         var status = Status.of("Assigning attendees for level: " + level.name(), 500000);
         engine.execute(EntityIterator.select(householdsSelector).forEach(householdEntity -> {
             try {
@@ -150,7 +150,7 @@ public class AssignAttendeesToInstitutionsUrizen {
 
     private BinPoolsByShape<EducationInstitutionShape, Entity> mapPossibilities(int radius, Predicate<EducationalInstitution> predicate) {
         var status = Status.of("Mapping slots in educational institutions", 1000000);
-        Engine engine = board.getEngine();
+        Engine engine = engineIo.getEngine();
         var result = entityStreamManipulator.groupIntoShapes(
                 engine.streamDetached()
                         .filter(entity -> entity.get(EducationalInstitution.class) != null && predicate.test(entity.get(EducationalInstitution.class))),

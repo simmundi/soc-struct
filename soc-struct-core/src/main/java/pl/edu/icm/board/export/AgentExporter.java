@@ -19,7 +19,7 @@
 package pl.edu.icm.board.export;
 
 import net.snowyhollows.bento.annotation.WithFactory;
-import pl.edu.icm.board.Board;
+import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.model.Household;
 import pl.edu.icm.board.model.Location;
 import pl.edu.icm.board.model.Person;
@@ -38,8 +38,8 @@ public class AgentExporter {
     private final Selectors selectors;
 
     @WithFactory
-    public AgentExporter(Board board, Selectors selectors) {
-        this.engine = board.getEngine();
+    public AgentExporter(EngineIo engineIo, Selectors selectors) {
+        this.engine = engineIo.getEngine();
         this.selectors = selectors;
     }
 

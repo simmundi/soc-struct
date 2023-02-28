@@ -20,7 +20,7 @@ package pl.edu.icm.board.urizen.replicants;
 
 import net.snowyhollows.bento.annotation.WithFactory;
 import org.apache.commons.math3.random.RandomDataGenerator;
-import pl.edu.icm.board.Board;
+import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.agesex.AgeSexFromDistributionPicker;
 import pl.edu.icm.board.geography.KilometerGridCell;
 import pl.edu.icm.board.model.Location;
@@ -38,7 +38,7 @@ import java.io.FileNotFoundException;
 import java.util.List;
 
 public class ClergyHouseUrizen {
-    private final Board board;
+    private final EngineIo engineIo;
     private final PopulationDensityLoader populationDensityLoader;
     private final ReplicantPrototypes prototypes;
     private final RandomDataGenerator random;
@@ -50,18 +50,18 @@ public class ClergyHouseUrizen {
 
     @WithFactory
     public ClergyHouseUrizen(
-            Board board,
+            EngineIo engineIo,
             ReplicantPrototypes prototypes,
             ReplicantsPopulation replicantsPopulation,
             PopulationDensityLoader populationDensityLoader,
             AgeSexFromDistributionPicker ageSexFromDistributionPicker, int clergyHouseReplicantsCount, int clergyHouseRoomSize, RandomProvider randomProvider) {
-        this.board = board;
+        this.engineIo = engineIo;
         this.prototypes = prototypes;
         this.populationDensityLoader = populationDensityLoader;
         this.ageSexFromDistributionPicker = ageSexFromDistributionPicker;
         this.clergyHouseReplicantsCount = clergyHouseReplicantsCount;
         this.clergyHouseRoomSize = clergyHouseRoomSize;
-        this.board.require(Household.class, Person.class, Location.class, Replicant.class);
+        this.engineIo.require(Household.class, Person.class, Location.class, Replicant.class);
         this.sexes = replicantsPopulation.getPopulation().getPeopleBySex().createSubPool(Person.Sex.M);
         this.ages = replicantsPopulation.getPopulation().getPeopleByAge().createSubPool(
                 AgeRange.AGE_25_29,
@@ -99,7 +99,7 @@ public class ClergyHouseUrizen {
     }
 
     private void generateRoom(int inhabitants, KilometerGridCell cell) {
-        board.getEngine().execute(sessionFactory -> {
+        engineIo.getEngine().execute(sessionFactory -> {
             Session session = sessionFactory.create();
             List<Entity> dependents = prototypes.clergyHouseRoom(session, cell).get(Household.class).getMembers();
             for (int i = 0; i < inhabitants; i++) {

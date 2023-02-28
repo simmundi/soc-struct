@@ -20,7 +20,7 @@ package pl.edu.icm.board.export.vn.poi;
 
 import com.google.common.util.concurrent.AtomicLongMap;
 import net.snowyhollows.bento.annotation.WithFactory;
-import pl.edu.icm.board.Board;
+import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.model.Complex;
 import pl.edu.icm.board.model.EducationLevel;
 import pl.edu.icm.board.model.EducationalInstitution;
@@ -39,7 +39,7 @@ import java.util.Map;
 
 public class PoiReports {
 
-    private final Board board;
+    private final EngineIo engineIo;
     private final PoiExporter poiExporter;
 
     private final static Map<EducationLevel, Type> levelsToTypes = new EnumMap<>(Map.of(
@@ -64,13 +64,13 @@ public class PoiReports {
     private final String othersFilename;
 
     @WithFactory
-    public PoiReports(Board board, PoiExporter poiExporter, String educationFilename, String workplacesFilename, String othersFilename) {
-        this.board = board;
+    public PoiReports(EngineIo engineIo, PoiExporter poiExporter, String educationFilename, String workplacesFilename, String othersFilename) {
+        this.engineIo = engineIo;
         this.poiExporter = poiExporter;
         this.educationFilename = educationFilename;
         this.workplacesFilename = workplacesFilename;
         this.othersFilename = othersFilename;
-        board.require(
+        engineIo.require(
                 Household.class,
                 EducationalInstitution.class,
                 Location.class,
@@ -84,7 +84,7 @@ public class PoiReports {
     public void generateReports() throws IOException {
         var slotsTaken = AtomicLongMap.<Integer>create();
 
-        var engine = board.getEngine();
+        var engine = engineIo.getEngine();
         var status = Status.of("aggregating attendees and employees in pois", 1_000_000);
         engine.streamDetached().forEach(entity -> {
             entity

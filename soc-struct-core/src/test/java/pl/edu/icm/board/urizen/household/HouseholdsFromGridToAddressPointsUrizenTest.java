@@ -18,13 +18,14 @@
 
 package pl.edu.icm.board.urizen.household;
 
+import net.snowyhollows.bento.config.Configurer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import pl.edu.icm.board.Board;
+import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.MockRandomProvider;
 import pl.edu.icm.board.geography.prg.AddressPointManager;
 import pl.edu.icm.board.geography.prg.model.AddressPoint;
@@ -35,6 +36,7 @@ import pl.edu.icm.board.model.Person;
 import pl.edu.icm.board.urizen.generic.Entities;
 import pl.edu.icm.board.util.RandomProvider;
 import pl.edu.icm.trurl.ecs.EngineConfiguration;
+import pl.edu.icm.trurl.ecs.EngineConfigurationFactory;
 import pl.edu.icm.trurl.ecs.Entity;
 import pl.edu.icm.trurl.store.tablesaw.TablesawStoreFactory;
 
@@ -48,7 +50,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class HouseholdsFromGridToAddressPointsUrizenTest {
-    private Board board;
+    private EngineIo engineIo;
     @Mock
     private AddressPointManager addressPointsManager;
     @Spy
@@ -57,11 +59,11 @@ class HouseholdsFromGridToAddressPointsUrizenTest {
 
     @BeforeEach
     void setup() throws IOException {
-        var engineConfiguration = new EngineConfiguration();
-        engineConfiguration.setStoreFactory(new TablesawStoreFactory());
-        board = new Board(engineConfiguration, null, null, null);
+        EngineConfiguration engineConfiguration = new Configurer().setParam("trurl.engine.storeFactory", TablesawStoreFactory.class.getName()).getConfig().get(EngineConfigurationFactory.IT);
 
-        board.load(HouseholdsFromGridToAddressPointsUrizenTest.class.getResourceAsStream("/fromgridtoaddresspoint.csv"),
+        engineIo = new EngineIo(engineConfiguration, null, null, null);
+
+        engineIo.load(HouseholdsFromGridToAddressPointsUrizenTest.class.getResourceAsStream("/fromgridtoaddresspoint.csv"),
                 Person.class, Household.class, Complex.class, Location.class);
         var ap1 = new AddressPoint();
         ap1.setEasting(638846);
@@ -78,17 +80,17 @@ class HouseholdsFromGridToAddressPointsUrizenTest {
     void assignHouseholds() {
         // given
         var urizen = new HouseholdsFromGridToAddressPointsUrizen(addressPointsManager,
-                board, randomProvider, entities);
+                engineIo, randomProvider, entities);
         // execute
         urizen.assignHouseholds();
-        var householdsInComplexes = board.getEngine().streamDetached()
+        var householdsInComplexes = engineIo.getEngine().streamDetached()
                 .filter(e -> e.get(Complex.class) != null)
                 .map(e -> e.get(Complex.class)
                         .getHouseholds().stream()
                         .map(Entity::getId)
                         .collect(Collectors.toList())).collect(Collectors.toList());
 
-        var householdsInBoard = board.getEngine().streamDetached()
+        var householdsInBoard = engineIo.getEngine().streamDetached()
                 .filter(e -> e.get(Household.class) != null).map(Entity::getId).collect(Collectors.toList());
         // assert
         assertThat(householdsInComplexes.get(0)).isEqualTo(List.of(householdsInBoard.get(2)));

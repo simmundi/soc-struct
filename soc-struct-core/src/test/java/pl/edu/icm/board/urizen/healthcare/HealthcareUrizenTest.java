@@ -25,7 +25,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import pl.edu.icm.board.Board;
+import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.geography.prg.model.AddressLookupResult;
 import pl.edu.icm.board.geography.prg.model.GeocodedPoi;
 import pl.edu.icm.board.model.HealthcareType;
@@ -45,7 +45,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class HealthcareUrizenTest {
     @Mock
-    private Board board;
+    private EngineIo engineIo;
     @Mock
     private Engine engine;
     @Mock
@@ -67,7 +67,7 @@ class HealthcareUrizenTest {
 
     @BeforeEach
     void before() throws IOException {
-        when(board.getEngine()).thenReturn(engine);
+        when(engineIo.getEngine()).thenReturn(engine);
         when(sessionFactory.create()).thenReturn(session);
         doAnswer(params -> {
             EntitySystem system = params.getArgument(0);
@@ -96,7 +96,7 @@ class HealthcareUrizenTest {
     @Test
     @DisplayName("Should create proper number of entities")
     void fabricate() {
-        HealthcareUrizen healthcareUrizen = new HealthcareUrizen(board, entities, healthcareGeodecoder);
+        HealthcareUrizen healthcareUrizen = new HealthcareUrizen(engineIo, entities, healthcareGeodecoder);
 
         // execute
         healthcareUrizen.fabricate();

@@ -18,6 +18,7 @@
 
 package pl.edu.icm.board.urizen.place;
 
+import net.snowyhollows.bento.config.Configurer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,7 +27,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import pl.edu.icm.board.Board;
+import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.MockRandomProvider;
 import pl.edu.icm.board.geography.density.PopulationDensityLoader;
 import pl.edu.icm.board.model.*;
@@ -34,6 +35,7 @@ import pl.edu.icm.board.urizen.generic.Entities;
 import pl.edu.icm.board.urizen.generic.EntityStreamManipulator;
 import pl.edu.icm.board.util.RandomProvider;
 import pl.edu.icm.trurl.ecs.EngineConfiguration;
+import pl.edu.icm.trurl.ecs.EngineConfigurationFactory;
 import pl.edu.icm.trurl.ecs.util.StaticSelectors;
 import pl.edu.icm.trurl.store.tablesaw.TablesawStore;
 import pl.edu.icm.trurl.store.tablesaw.TablesawStoreFactory;
@@ -48,7 +50,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class AssignPatientsToHealthcareUrizenTest {
     private AssignPatientsToHealthcareUrizen assigner;
-    Board board;
+    EngineIo engineIo;
     @Spy
     private EntityStreamManipulator entityStreamManipulator = new EntityStreamManipulator();
     @Spy
@@ -60,13 +62,12 @@ class AssignPatientsToHealthcareUrizenTest {
 
     @BeforeEach
     void before() throws IOException {
-        EngineConfiguration engineConfiguration = new EngineConfiguration();
-        engineConfiguration.setStoreFactory(new TablesawStoreFactory());
-        board = Mockito.spy(new Board(engineConfiguration, null, null, null));
+        EngineConfiguration engineConfiguration = new Configurer().setParam("trurl.engine.storeFactory", TablesawStoreFactory.class.getName()).getConfig().get(EngineConfigurationFactory.IT);
+        engineIo = Mockito.spy(new EngineIo(engineConfiguration, null, null, null));
         StaticSelectors staticSelectors = new StaticSelectors(engineConfiguration);
-        assigner = new AssignPatientsToHealthcareUrizen(board, entities, entityStreamManipulator, randomProvider, populationDensityLoader, staticSelectors);
-        board.require(Healthcare.class, Location.class, Named.class, Household.class, Person.class, Patient.class);
-        board.load(AssignAttendeesToInstitutionsUrizen.class.getResourceAsStream("/healthcareAssignerTest.csv"));
+        assigner = new AssignPatientsToHealthcareUrizen(engineIo, entities, entityStreamManipulator, randomProvider, populationDensityLoader, staticSelectors);
+        engineIo.require(Healthcare.class, Location.class, Named.class, Household.class, Person.class, Patient.class);
+        engineIo.load(AssignAttendeesToInstitutionsUrizen.class.getResourceAsStream("/healthcareAssignerTest.csv"));
         when(populationDensityLoader.isPopulated(any())).thenReturn(true);
     }
 
@@ -74,7 +75,7 @@ class AssignPatientsToHealthcareUrizenTest {
     @DisplayName("Should assign people to healthcare units")
     void test () {
         assigner.assignToHealthcare();
-        var entities = ((TablesawStore)board.getEngine().getStore()).asTable("entities");
+        var entities = ((TablesawStore) engineIo.getEngine().getStore()).asTable("entities");
 
         assertThat(whereAssigned(entities, "9").rowCount()).isEqualTo(2);
         assertThat(whereAssigned(entities, "a").rowCount()).isEqualTo(3);

@@ -50,9 +50,9 @@ public class AddressPointManager {
     private final CommuneManager communeManager;
     private final RandomGenerator random;
     private final StreetNameNormalizer streetNameNormalizer;
-    private final Store addressPointsStore = new ArrayStore();
+    private final Store addressPointsStore = new ArrayStore(1024);
     private final int[] index;
-    private final IndexedAddressPointMapper indexedAddressPointMapper = new IndexedAddressPointMapper();
+    private final IndexedAddressPointMapper indexedAddressPointMapper = new IndexedAddressPointMapper(null);
 
     @WithFactory
     public AddressPointManager(AddressPointSource addressPointSource,

@@ -20,7 +20,7 @@ package pl.edu.icm.board.urizen.place;
 
 import net.snowyhollows.bento.annotation.WithFactory;
 import org.apache.commons.math3.random.RandomGenerator;
-import pl.edu.icm.board.Board;
+import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.geography.KilometerGridCell;
 import pl.edu.icm.board.geography.density.PopulationDensityLoader;
 import pl.edu.icm.board.model.*;
@@ -41,7 +41,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 public class AssignPatientsToHealthcareUrizen {
-    private final Board board;
+    private final EngineIo engineIo;
     private final Entities entities;
     private final EntityStreamManipulator entityStreamManipulator;
     private final RandomGenerator random;
@@ -49,19 +49,19 @@ public class AssignPatientsToHealthcareUrizen {
     private final StaticSelectors staticSelectors;
 
     @WithFactory
-    public AssignPatientsToHealthcareUrizen(Board board,
+    public AssignPatientsToHealthcareUrizen(EngineIo engineIo,
                                             Entities entities,
                                             EntityStreamManipulator entityStreamManipulator,
                                             RandomProvider randomProvider,
                                             PopulationDensityLoader populationDensityLoader,
                                             StaticSelectors staticSelectors) {
-        this.board = board;
+        this.engineIo = engineIo;
         this.entities = entities;
         this.entityStreamManipulator = entityStreamManipulator;
         this.random = randomProvider.getRandomGenerator(AssignPatientsToHealthcareUrizen.class);
         this.populationDensityLoader = populationDensityLoader;
         this.staticSelectors = staticSelectors;
-        board.require(
+        engineIo.require(
                 Household.class,
                 Named.class,
                 Person.class,
@@ -78,7 +78,7 @@ public class AssignPatientsToHealthcareUrizen {
     }
 
     public void assignToHealthcare() {
-        Engine engine = board.getEngine();
+        Engine engine = engineIo.getEngine();
         var statusIndexing = Status.of("Indexing households");
         Selector householdsSelector = staticSelectors.select(staticSelectors.config()
                 .withMandatoryComponents(Household.class)
@@ -93,7 +93,7 @@ public class AssignPatientsToHealthcareUrizen {
     }
 
     private Set<KilometerGridCell> assign(Selector householdsSelector, BinPoolsByShape<KilometerGridCell, Entity> healthcareUnits) {
-        Engine engine = board.getEngine();
+        Engine engine = engineIo.getEngine();
         Set<KilometerGridCell> unassignedCells = new HashSet<>();
         var status = Status.of("Assigning patients to healthcare units", 500000);
         engine.execute(EntityIterator.select(householdsSelector).forEach(householdEntity -> {
@@ -138,7 +138,7 @@ public class AssignPatientsToHealthcareUrizen {
     private BinPoolsByShape<KilometerGridCell, Entity> mapPossibilities(int radius) {
         int skip = 2000 * radius * radius;
         var status = Status.of("Mapping slots in healthcare: radius = " + radius + " km", skip);
-        Engine engine = board.getEngine();
+        Engine engine = engineIo.getEngine();
         var result = entityStreamManipulator.groupIntoShapes(
                 engine.streamDetached()
                         .filter(entity -> entity.get(Healthcare.class) != null),
@@ -158,7 +158,7 @@ public class AssignPatientsToHealthcareUrizen {
     private BinPoolsByShape<KilometerGridCell, Entity> mapPossibilities(Set<KilometerGridCell> cells, int radius) {
         int skip = 2000000;
         var status = Status.of("Final mapping of slots in healthcare", skip);
-        Engine engine = board.getEngine();
+        Engine engine = engineIo.getEngine();
         var result = entityStreamManipulator.groupIntoShapes(
                 engine.streamDetached()
                         .filter(entity -> entity.get(Healthcare.class) != null),

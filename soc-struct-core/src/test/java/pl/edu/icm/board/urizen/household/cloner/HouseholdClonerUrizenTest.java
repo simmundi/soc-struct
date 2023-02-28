@@ -27,7 +27,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import pl.edu.icm.board.Board;
+import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.EntityMocker;
 import pl.edu.icm.board.MockRandomProvider;
 import pl.edu.icm.board.agesex.AgeSexFromDistributionPicker;
@@ -63,7 +63,7 @@ class HouseholdClonerUrizenTest {
     @Mock
     Session session;
     @Mock
-    Board board;
+    EngineIo engineIo;
     @Mock
     CountyPopulationLoader countyPopulationLoader;
     @Spy
@@ -85,7 +85,7 @@ class HouseholdClonerUrizenTest {
     void configure() {
         mock = new EntityMocker(session, Household.class, Person.class, AdministrationUnit.class);
 
-        when(board.getEngine()).thenReturn(engine);
+        when(engineIo.getEngine()).thenReturn(engine);
         doAnswer(call -> {
             ((EntitySystem) call.getArgument(0)).execute(sessionFactory);
             return null;

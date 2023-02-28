@@ -18,12 +18,13 @@
 
 package pl.edu.icm.board.urizen.university;
 
+import net.snowyhollows.bento.config.Configurer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import pl.edu.icm.board.Board;
+import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.model.Named;
 import pl.edu.icm.board.geography.KilometerGridCell;
 import pl.edu.icm.board.model.Location;
@@ -32,6 +33,7 @@ import pl.edu.icm.board.model.Attendee;
 import pl.edu.icm.board.model.Person;
 import pl.edu.icm.board.urizen.generic.Entities;
 import pl.edu.icm.trurl.ecs.EngineConfiguration;
+import pl.edu.icm.trurl.ecs.EngineConfigurationFactory;
 import pl.edu.icm.trurl.store.tablesaw.TablesawStore;
 import pl.edu.icm.trurl.store.tablesaw.TablesawStoreFactory;
 import tech.tablesaw.api.Row;
@@ -48,7 +50,7 @@ class UniversityEntitiesUrizenTest {
 
     @Mock
     UniversityLoader universityLoader;
-    Board board;
+    EngineIo engineIo;
     UniversityEntitiesUrizen universityEntitiesUrizen;
 
     University bigUniversity = new University(KilometerGridCell.fromLegacyPdynCoordinates(5, 2).toLocation(), 2);
@@ -81,22 +83,21 @@ class UniversityEntitiesUrizenTest {
                 List.of(bigUniversity));
         when(universityLoader.loadSmallUniversities()).thenReturn(
                 List.of(smallUniversity1, smallUniversity2));
-        var engineConfig = new EngineConfiguration();
-        engineConfig.setStoreFactory(new TablesawStoreFactory());
-        board = new Board(engineConfig, null, null, null);
+        EngineConfiguration engineConfig = new Configurer().setParam("trurl.engine.storeFactory", TablesawStoreFactory.class.getName()).getConfig().get(EngineConfigurationFactory.IT);
+        engineIo = new EngineIo(engineConfig, null, null, null);
         universityEntitiesUrizen =
                 new UniversityEntitiesUrizen(universityLoader,
-                        board,
+                        engineIo,
                         new Entities(),
                         2);
-        board.require(Person.class, Named.class, Household.class, Attendee.class);
-        board.load(UniversityEntitiesUrizen.class.getResourceAsStream("/universitiesTest.csv"));
+        engineIo.require(Person.class, Named.class, Household.class, Attendee.class);
+        engineIo.load(UniversityEntitiesUrizen.class.getResourceAsStream("/universitiesTest.csv"));
     }
 
     @Test
     void buildEntities() throws IOException {
         universityEntitiesUrizen.buildEntities();
-        TablesawStore tablesawStore = (TablesawStore) board.getEngine().getStore();
+        TablesawStore tablesawStore = (TablesawStore) engineIo.getEngine().getStore();
         var entitiesTable = tablesawStore.asTable("entities");
         var universityColumns = entitiesTable
                 .select(entitiesTable.column("level"), entitiesTable.column("pupilCount"), entitiesTable.column("n"), entitiesTable.column("e"))

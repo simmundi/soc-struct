@@ -23,7 +23,7 @@ import pl.edu.icm.board.model.EducationLevel;
 import pl.edu.icm.board.model.EducationalInstitution;
 import pl.edu.icm.board.model.Location;
 import pl.edu.icm.board.urizen.generic.Entities;
-import pl.edu.icm.board.Board;
+import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.model.Named;
 import pl.edu.icm.board.model.AdministrationUnit;
 import pl.edu.icm.trurl.ecs.Session;
@@ -34,21 +34,21 @@ import java.io.IOException;
 public class EducationalInstitutionEntitiesUrizen {
 
     private final EducationInstitutionGeodecoder educationInstitutionGeodecoder;
-    private final Board board;
+    private final EngineIo engineIo;
     private final Entities entities;
 
     @WithFactory
-    public EducationalInstitutionEntitiesUrizen(EducationInstitutionGeodecoder educationInstitutionGeodecoder, Board board, Entities entities) {
+    public EducationalInstitutionEntitiesUrizen(EducationInstitutionGeodecoder educationInstitutionGeodecoder, EngineIo engineIo, Entities entities) {
         this.educationInstitutionGeodecoder = educationInstitutionGeodecoder;
-        this.board = board;
+        this.engineIo = engineIo;
         this.entities = entities;
 
-        this.board.require(EducationalInstitution.class, Named.class, Location.class, AdministrationUnit.class);
+        this.engineIo.require(EducationalInstitution.class, Named.class, Location.class, AdministrationUnit.class);
     }
 
     public void buildEntities() {
         var status = Status.of("Adding institutions");
-        board.getEngine().execute(sessionFactory -> {
+        engineIo.getEngine().execute(sessionFactory -> {
             Session session = sessionFactory.create();
             try {
                 educationInstitutionGeodecoder.foreach(geodecoded -> {

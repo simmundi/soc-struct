@@ -19,7 +19,7 @@
 package pl.edu.icm.board.urizen.household.cloner;
 
 import net.snowyhollows.bento.annotation.WithFactory;
-import pl.edu.icm.board.Board;
+import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.agesex.AgeSexFromDistributionPicker;
 import pl.edu.icm.board.model.AdministrationUnit;
 import pl.edu.icm.board.model.Household;
@@ -43,14 +43,14 @@ import java.util.concurrent.atomic.AtomicInteger;
  * </ul>
  */
 public class FamilyShapeStatsService {
-    private final Board board;
+    private final EngineIo engineIo;
     private final AgeSexFromDistributionPicker ageSexFromDistributionPicker;
 
     @WithFactory
-    public FamilyShapeStatsService(Board board, AgeSexFromDistributionPicker ageSexFromDistributionPicker) {
-        this.board = board;
+    public FamilyShapeStatsService(EngineIo engineIo, AgeSexFromDistributionPicker ageSexFromDistributionPicker) {
+        this.engineIo = engineIo;
         this.ageSexFromDistributionPicker = ageSexFromDistributionPicker;
-        board.require(
+        engineIo.require(
                 Household.class,
                 AdministrationUnit.class,
                 Person.class,
@@ -61,7 +61,7 @@ public class FamilyShapeStatsService {
         FamilyShapeStats familyShapeStats = new FamilyShapeStats();
         var status = Status.of("Finding family statistics", 1_000_000);
         Map<HouseholdShape, Bin> shapes = new HashMap<>();
-        board
+        engineIo
                 .getEngine()
                 .streamDetached()
                 .map(e -> HouseholdShape.tryCreate(e, ageSexFromDistributionPicker))

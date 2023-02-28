@@ -23,7 +23,7 @@ import com.google.common.collect.MultimapBuilder;
 import com.google.common.collect.Multimaps;
 import net.snowyhollows.bento.annotation.WithFactory;
 import org.apache.commons.math3.random.RandomGenerator;
-import pl.edu.icm.board.Board;
+import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.geography.KilometerGridCell;
 import pl.edu.icm.board.geography.commune.CommuneManager;
 import pl.edu.icm.board.geography.prg.AddressPointManager;
@@ -44,7 +44,7 @@ import static pl.edu.icm.trurl.ecs.util.EntityIterator.select;
 public class WorkplacesFromCommunesToAddressPointsUrizen {
     private final AddressPointManager addressPointsManager;
     private final CommuneManager communeManager;
-    private final Board board;
+    private final EngineIo engineIo;
     private final RandomGenerator random;
     private ListMultimap<String, AddressPoint> map;
     private final Selectors selectors;
@@ -53,11 +53,11 @@ public class WorkplacesFromCommunesToAddressPointsUrizen {
 
     @WithFactory
     public WorkplacesFromCommunesToAddressPointsUrizen(AddressPointManager addressPointsManager,
-                                                       CommuneManager communeManager, Board board,
+                                                       CommuneManager communeManager, EngineIo engineIo,
                                                        RandomProvider randomProvider, Selectors selectors, DebugTextFileService debugTextFileService) {
         this.addressPointsManager = addressPointsManager;
         this.communeManager = communeManager;
-        this.board = board;
+        this.engineIo = engineIo;
         this.random = randomProvider.getRandomGenerator(WorkplacesFromCommunesToAddressPointsUrizen.class);
         this.selectors = selectors;
         this.debugTextFileService = debugTextFileService;
@@ -84,7 +84,7 @@ public class WorkplacesFromCommunesToAddressPointsUrizen {
             throw new IllegalStateException(e);
         }
         var status2 = Status.of("Adjusting workplaces", 500000);
-        board.getEngine().execute(select(selectors.allWithComponents(Workplace.class, AdministrationUnit.class)).forEach(Workplace.class, AdministrationUnit.class, (entity, h, u) -> {
+        engineIo.getEngine().execute(select(selectors.allWithComponents(Workplace.class, AdministrationUnit.class)).forEach(Workplace.class, AdministrationUnit.class, (entity, h, u) -> {
             var options = map.get(u.getTeryt());
             if (options.size() == 0) {
                 status2.problem("No address point in " + u.getTeryt());

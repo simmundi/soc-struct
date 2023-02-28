@@ -25,7 +25,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import pl.edu.icm.board.Board;
+import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.MockRandomProvider;
 import pl.edu.icm.board.agesex.AgeSexFromDistributionPicker;
 import pl.edu.icm.board.geography.KilometerGridCell;
@@ -50,7 +50,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class ClergyHouseUrizenTest {
     @Mock
-    private Board board;
+    private EngineIo engineIo;
     @Mock
     private ReplicantsPopulation replicantsPopulation;
     @Mock
@@ -98,7 +98,7 @@ class ClergyHouseUrizenTest {
         when(population.getPeopleBySex()).thenReturn(sexBinPool);
         when(prototypes.clergyHouseRoom(same(session), any())).thenReturn(entity);
         when(entity.get(Household.class)).thenReturn(new Household());
-        when(board.getEngine()).thenReturn(engine);
+        when(engineIo.getEngine()).thenReturn(engine);
         when(populationDensityLoader.sample(anyDouble())).thenReturn(KilometerGridCell.fromLegacyPdynCoordinates(200, 200));
         doAnswer(params -> {
             EntitySystem system = params.getArgument(0);
@@ -114,7 +114,7 @@ class ClergyHouseUrizenTest {
         int presbyteries = 51;
         int roomSize = 2;
         ClergyHouseUrizen clergyHouseUrizen = new ClergyHouseUrizen(
-                board, prototypes, replicantsPopulation, populationDensityLoader, ageSexFromDistributionPicker, presbyteries, roomSize, randomProvider
+                engineIo, prototypes, replicantsPopulation, populationDensityLoader, ageSexFromDistributionPicker, presbyteries, roomSize, randomProvider
         );
 
         // execute

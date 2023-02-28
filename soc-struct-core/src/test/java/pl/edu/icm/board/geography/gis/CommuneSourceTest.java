@@ -61,7 +61,7 @@ class CommuneSourceTest {
     FeaturesInEnvelope featuresB;
 
     @Spy
-    Store store = new ArrayStore();
+    Store store = new ArrayStore(1024);
 
     @Mock
     SimpleFeature featureA;

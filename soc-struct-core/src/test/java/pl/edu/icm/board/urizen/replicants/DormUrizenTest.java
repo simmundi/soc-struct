@@ -27,7 +27,7 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
-import pl.edu.icm.board.Board;
+import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.EntityMocker;
 import pl.edu.icm.board.MockRandomProvider;
 import pl.edu.icm.board.agesex.AgeSexFromDistributionPicker;
@@ -62,7 +62,7 @@ import static org.mockito.Mockito.*;
 class DormUrizenTest {
     private final AtomicInteger ids = new AtomicInteger(10000);
     @Mock
-    private Board board;
+    private EngineIo engineIo;
     @Mock
     private ReplicantsPopulation replicantsPopulation;
     @Mock
@@ -118,7 +118,7 @@ class DormUrizenTest {
                 entityMocker.entity(ids.incrementAndGet())
         );
         when(entity.get(Household.class)).thenReturn(new Household());
-        when(board.getEngine()).thenReturn(engine);
+        when(engineIo.getEngine()).thenReturn(engine);
         when(populationDensityLoader.isPopulated(any())).thenReturn(true);
         doAnswer(params -> {
             EntitySystem system = params.getArgument(0);
@@ -146,7 +146,7 @@ class DormUrizenTest {
     public void fabricate() throws FileNotFoundException {
         // given
         DormUrizen dormUrizen = new DormUrizen(
-                board,
+                engineIo,
                 prototypes,
                 entities, entityStreamManipulator,
                 populationDensityLoader,

@@ -18,12 +18,13 @@
 
 package pl.edu.icm.board.urizen.place;
 
+import net.snowyhollows.bento.config.Configurer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import pl.edu.icm.board.Board;
+import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.MockRandomProvider;
 import pl.edu.icm.board.model.EducationalInstitution;
 import pl.edu.icm.board.education.EducationRadiusProvider;
@@ -37,6 +38,7 @@ import pl.edu.icm.board.urizen.generic.EntityStreamManipulator;
 import pl.edu.icm.board.util.RandomProvider;
 import pl.edu.icm.trurl.csv.CsvWriter;
 import pl.edu.icm.trurl.ecs.EngineConfiguration;
+import pl.edu.icm.trurl.ecs.EngineConfigurationFactory;
 import pl.edu.icm.trurl.ecs.util.StaticSelectors;
 import pl.edu.icm.trurl.store.tablesaw.TablesawStore;
 import pl.edu.icm.trurl.store.tablesaw.TablesawStoreFactory;
@@ -48,7 +50,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class AssignAttendeesToInstitutionsUrizenTest {
 
-    Board board;
+    EngineIo engineIo;
     @Mock
     CsvWriter csvWriter;
     @Spy
@@ -63,20 +65,20 @@ class AssignAttendeesToInstitutionsUrizenTest {
 
     @BeforeEach
     void before() throws IOException {
-        EngineConfiguration engineConfiguration = new EngineConfiguration();
-        engineConfiguration.setStoreFactory(new TablesawStoreFactory());
-        board = new Board(engineConfiguration, csvWriter, null, null);
+        EngineConfiguration engineConfiguration = new Configurer().setParam("trurl.engine.storeFactory", TablesawStoreFactory.class.getName()).getConfig().get(EngineConfigurationFactory.IT);
+
+        engineIo = new EngineIo(engineConfiguration, csvWriter, null, null);
         StaticSelectors staticSelectors = new StaticSelectors(engineConfiguration);
-        assigner = new AssignAttendeesToInstitutionsUrizen(board, entityStreamManipulator, entities, randomProvider, radius, staticSelectors);
-        board.require(EducationalInstitution.class, Location.class, Named.class, Household.class, Person.class, Attendee.class);
-        board.load(AssignAttendeesToInstitutionsUrizen.class.getResourceAsStream("/assignerTest.csv"));
+        assigner = new AssignAttendeesToInstitutionsUrizen(engineIo, entityStreamManipulator, entities, randomProvider, radius, staticSelectors);
+        engineIo.require(EducationalInstitution.class, Location.class, Named.class, Household.class, Person.class, Attendee.class);
+        engineIo.load(AssignAttendeesToInstitutionsUrizen.class.getResourceAsStream("/assignerTest.csv"));
     }
 
     @Test
     @DisplayName("Should assign attendees to educational institutions")
     void test () {
         assigner.assignToInstitutions();
-        var entities = ((TablesawStore)board.getEngine().getStore()).asTable("entities");
+        var entities = ((TablesawStore) engineIo.getEngine().getStore()).asTable("entities");
 
         assertThat(whereAttends(entities, "p").rowCount()).isEqualTo(1);
         assertThat(whereAttends(entities, "m").rowCount()).isEqualTo(1);

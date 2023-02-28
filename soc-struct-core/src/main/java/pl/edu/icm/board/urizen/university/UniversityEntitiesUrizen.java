@@ -19,7 +19,7 @@
 package pl.edu.icm.board.urizen.university;
 
 import net.snowyhollows.bento.annotation.WithFactory;
-import pl.edu.icm.board.Board;
+import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.model.EducationLevel;
 import pl.edu.icm.board.model.EducationalInstitution;
 import pl.edu.icm.board.model.Named;
@@ -31,22 +31,22 @@ import pl.edu.icm.trurl.util.Status;
 
 public class UniversityEntitiesUrizen {
     private final UniversityLoader universityLoader;
-    private final Board board;
+    private final EngineIo engineIo;
     private final Entities entities;
     private final double universityRadius;
 
     @WithFactory
     public UniversityEntitiesUrizen(UniversityLoader universityLoader,
-                                    Board board,
+                                    EngineIo engineIo,
                                     Entities entities,
                                     int universityRadius) {
 
         this.universityLoader = universityLoader;
-        this.board = board;
+        this.engineIo = engineIo;
         this.entities = entities;
         this.universityRadius = universityRadius;
 
-        board.require(
+        engineIo.require(
                 EducationalInstitution.class,
                 Location.class,
                 Named.class,
@@ -55,7 +55,7 @@ public class UniversityEntitiesUrizen {
 
     public void buildEntities() {
         var status = Status.of("Building universities");
-        board.getEngine().execute(sessionFactory -> {
+        engineIo.getEngine().execute(sessionFactory -> {
             Session session = sessionFactory.create();
             var bigUniversities = universityLoader.loadBigUniversities();
             var smallUniversities = universityLoader.loadSmallUniversities();

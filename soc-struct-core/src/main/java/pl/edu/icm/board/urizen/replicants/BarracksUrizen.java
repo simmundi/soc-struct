@@ -20,7 +20,7 @@ package pl.edu.icm.board.urizen.replicants;
 
 import net.snowyhollows.bento.annotation.WithFactory;
 import org.apache.commons.math3.random.RandomDataGenerator;
-import pl.edu.icm.board.Board;
+import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.agesex.AgeSexFromDistributionPicker;
 import pl.edu.icm.board.model.Complex;
 import pl.edu.icm.board.geography.KilometerGridCell;
@@ -40,7 +40,7 @@ import java.io.FileNotFoundException;
 import java.util.List;
 
 public class BarracksUrizen {
-    private final Board board;
+    private final EngineIo engineIo;
     private final PopulationDensityLoader populationDensityLoader;
     private final ReplicantPrototypes prototypes;
     private final RandomDataGenerator random;
@@ -54,13 +54,13 @@ public class BarracksUrizen {
 
     @WithFactory
     public BarracksUrizen(
-            Board board,
+            EngineIo engineIo,
             ReplicantPrototypes prototypes,
             Entities entities, ReplicantsPopulation replicantsPopulation,
             PopulationDensityLoader populationDensityLoader,
             AgeSexFromDistributionPicker ageSexFromDistributionPicker, RandomProvider randomProvider,
             int barracksReplicantsCount, int barracksRoomSize, int barracksMaxRooms) {
-        this.board = board;
+        this.engineIo = engineIo;
         this.prototypes = prototypes;
         this.entities = entities;
         this.populationDensityLoader = populationDensityLoader;
@@ -68,7 +68,7 @@ public class BarracksUrizen {
         this.barracksReplicantsCount = barracksReplicantsCount;
         this.barracksRoomSize = barracksRoomSize;
         this.barracksMaxRooms = barracksMaxRooms;
-        this.board.require(Household.class, Person.class, Location.class, Replicant.class);
+        this.engineIo.require(Household.class, Person.class, Location.class, Replicant.class);
         this.sexes = replicantsPopulation.getPopulation().getPeopleBySex();
         this.ages = replicantsPopulation.getPopulation().getPeopleByAge().createSubPool(
                 AgeRange.AGE_20_24,
@@ -94,7 +94,7 @@ public class BarracksUrizen {
     }
 
     private void generateBarracks(int barracksSize) {
-        board.getEngine().execute(sessionFactory -> {
+        engineIo.getEngine().execute(sessionFactory -> {
             Session session = sessionFactory.create();
             Entity entity = entities.createEmptyComplex(session, barracksSize);
             Complex complex = entity.get(Complex.class);

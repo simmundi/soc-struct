@@ -21,7 +21,7 @@ The structure can also be:
 ## Versions of the data model
 
 The data model evolves with needs of dependent projects and the availability
-of resources. The git repository of the board project represents only the latest version,
+of resources. The git repository of the engineIo project represents only the latest version,
 but since structures generated with the older versions can exist and still be used somewhere,
 all the release versions are described in separate, parallel documents:
 

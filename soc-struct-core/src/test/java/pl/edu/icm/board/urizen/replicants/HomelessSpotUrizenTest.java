@@ -25,7 +25,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import pl.edu.icm.board.Board;
+import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.MockRandomProvider;
 import pl.edu.icm.board.agesex.AgeSexFromDistributionPicker;
 import pl.edu.icm.board.geography.KilometerGridCell;
@@ -50,7 +50,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class HomelessSpotUrizenTest {
     @Mock
-    private Board board;
+    private EngineIo engineIo;
     @Mock
     private ReplicantsPopulation replicantsPopulation;
     @Mock
@@ -100,7 +100,7 @@ class HomelessSpotUrizenTest {
         when(population.getPeopleBySex()).thenReturn(sexBinPool);
         when(prototypes.homelessSpotRoom(same(session), any())).thenReturn(entity);
         when(entity.get(Household.class)).thenReturn(new Household());
-        when(board.getEngine()).thenReturn(engine);
+        when(engineIo.getEngine()).thenReturn(engine);
         when(populationDensityLoader.sample(anyDouble())).thenReturn(KilometerGridCell.fromLegacyPdynCoordinates(200, 200));
         doAnswer(params -> {
             EntitySystem system = params.getArgument(0);
@@ -121,7 +121,7 @@ class HomelessSpotUrizenTest {
         int percentOfMan = 83;
         int maxSpotsCount = (int) ((double) homeless / maxHomelessPeopleInSpot);
         HomelessSpotUrizen homelessSpotUrizen = new HomelessSpotUrizen(
-                board, prototypes, replicantsPopulation, populationDensityLoader, ageSexFromDistributionPicker, randomProvider,
+                engineIo, prototypes, replicantsPopulation, populationDensityLoader, ageSexFromDistributionPicker, randomProvider,
                 homeless, homelessSpotSize, maxSpots, percentOfMan
         );
 

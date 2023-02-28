@@ -22,7 +22,7 @@ import net.snowyhollows.bento.annotation.WithFactory;
 import net.snowyhollows.bento.config.WorkDir;
 import org.apache.commons.math3.distribution.ZipfDistribution;
 import org.apache.commons.math3.random.RandomGenerator;
-import pl.edu.icm.board.Board;
+import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.geography.KilometerGridCell;
 import pl.edu.icm.board.geography.commune.Commune;
 import pl.edu.icm.board.geography.commune.CommuneManager;
@@ -60,7 +60,7 @@ public class WorkplacesUrizen {
     private final WorkplacesInCommunes workplacesInCommunes;
     private final CommuneManager communeManager;
     private final EntityStreamManipulator entityStreamManipulator;
-    private final Board board;
+    private final EngineIo engineIo;
     private final ProfessionalActivityAssessor professionalActivityAssessor;
     private final RandomGenerator random;
     private final Selectors selectors;
@@ -71,7 +71,7 @@ public class WorkplacesUrizen {
     @WithFactory
     public WorkplacesUrizen(
             WorkplacesInCommunes workplacesInCommunes,
-            Board board,
+            EngineIo engineIo,
             int publicSectorZipfN,
             String publicSectorZipfS,
             int publicSectorTotal,
@@ -83,7 +83,7 @@ public class WorkplacesUrizen {
             ProfessionalActivityAssessor professionalActivityAssessor,
             RandomProvider randomProvider, Selectors selectors, DebugTextFileService debugTextFileService) {
         this.workplacesInCommunes = workplacesInCommunes;
-        this.board = board;
+        this.engineIo = engineIo;
         this.workDir = workDir;
         this.communeManager = communeManager;
         this.entityStreamManipulator = entityStreamManipulator;
@@ -99,7 +99,7 @@ public class WorkplacesUrizen {
         accumulateEmpoyeeSlots(privateSectorTotal, new ZipfDistribution(privateSectorZipfN, Double.parseDouble(privateSectorZipfS)));
         smearOneSlot();
 
-        board.require(Workplace.class, AdministrationUnit.class, Employee.class);
+        engineIo.require(Workplace.class, AdministrationUnit.class, Employee.class);
     }
 
     private void smearOneSlot() {
@@ -126,7 +126,7 @@ public class WorkplacesUrizen {
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
-        var engine = board.getEngine();
+        var engine = engineIo.getEngine();
         BinPool<Commune> employees = new BinPool<>();
         for (Commune commune : communeManager.getCommunes()) {
             employees.add(commune, workplacesInCommunes.getEmploymentDataFor(commune).getWorkplaces());
@@ -165,7 +165,7 @@ public class WorkplacesUrizen {
         Status status = Status.of("grouping workplaces by communes");
         Map<Commune, Integer> slotsInExistingWorplaces = new HashMap<>();
         BinPoolsByShape<Commune, Entity> workplacesByCommunes = entityStreamManipulator.groupIntoShapes(
-                board.getEngine().streamDetached()
+                engineIo.getEngine().streamDetached()
                         .filter(e -> e.get(Workplace.class) != null),
                 e -> e.get(Workplace.class).getEmployees(),
                 e -> Stream.of(
@@ -216,7 +216,7 @@ public class WorkplacesUrizen {
         AtomicInteger unemployed = new AtomicInteger();
         AtomicInteger errors = new AtomicInteger();
         Status.of("Assigning " + workplacesByCommunes.getAllBins().getTotalCount() + " workplaces", 100000);
-        board.getEngine().execute(select(selectors.allWithComponents(Household.class, Location.class)).forEach(Household.class, Location.class, (e, household, location) -> {
+        engineIo.getEngine().execute(select(selectors.allWithComponents(Household.class, Location.class)).forEach(Household.class, Location.class, (e, household, location) -> {
 
             KilometerGridCell cell = KilometerGridCell.fromLocation(location);
             var commune = communeManager.communeAt(cell);

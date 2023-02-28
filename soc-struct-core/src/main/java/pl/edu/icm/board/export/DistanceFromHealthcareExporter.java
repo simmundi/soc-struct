@@ -19,8 +19,8 @@
 package pl.edu.icm.board.export;
 
 import net.snowyhollows.bento.annotation.WithFactory;
-import pl.edu.icm.board.Board;
-import pl.edu.icm.board.BoardFactory;
+import pl.edu.icm.board.EngineIo;
+import pl.edu.icm.board.EngineIoFactory;
 import pl.edu.icm.em.common.EmConfig;
 import pl.edu.icm.board.model.*;
 import pl.edu.icm.trurl.ecs.Engine;
@@ -35,22 +35,22 @@ import static pl.edu.icm.trurl.ecs.util.EntityIterator.select;
 
 public class DistanceFromHealthcareExporter {
 
-    private final Board board;
+    private final EngineIo engineIo;
     private final String healthcareDistanceExportFilename;
     private final Selectors selectors;
 
     @WithFactory
-    public DistanceFromHealthcareExporter(Board board,
+    public DistanceFromHealthcareExporter(EngineIo engineIo,
                                           String healthcareDistanceExportFilename,
                                           Selectors selectors) {
         this.healthcareDistanceExportFilename = healthcareDistanceExportFilename;
         this.selectors = selectors;
-        board.require(Household.class, Location.class, Patient.class, Healthcare.class, Person.class);
-        this.board = board;
+        engineIo.require(Household.class, Location.class, Patient.class, Healthcare.class, Person.class);
+        this.engineIo = engineIo;
     }
 
     public void export() throws IOException {
-        Engine engine = board.getEngine();
+        Engine engine = engineIo.getEngine();
         var exporter = VnPointsExporter.create(
                 ExportedPatient.class,
                 healthcareDistanceExportFilename);
@@ -96,10 +96,10 @@ public class DistanceFromHealthcareExporter {
                 .loadConfigDir("input/config/healthcare")
                 .loadConfigDir("input/config/board")
                 .getConfig();
-        var board = config.get(BoardFactory.IT);
+        var io = config.get(EngineIoFactory.IT);
         var exporter = config.get(DistanceFromHealthcareExporterFactory.IT);
 
-        board.load("output/added_healthcare.csv");
+        io.load("output/added_healthcare.csv");
         exporter.export();
     }
 }

@@ -19,7 +19,7 @@
 package pl.edu.icm.board.squaronia;
 
 import org.apache.commons.math3.random.RandomGenerator;
-import pl.edu.icm.board.Board;
+import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.model.Location;
 import pl.edu.icm.board.model.Household;
 import pl.edu.icm.board.model.Person;
@@ -40,7 +40,7 @@ public class SquaroniaUrizen {
     private int numberOfWoman;
     private int numberOfMan;
 
-    private final Board board;
+    private final EngineIo engineIo;
 
     private BinPool<AgeRange> ageRangeBinPool = null;
     private BinPool<Person.Sex> sexPoll = null;
@@ -48,13 +48,13 @@ public class SquaroniaUrizen {
     private final RandomGenerator random;
 
 
-    public SquaroniaUrizen(Board board,
+    public SquaroniaUrizen(EngineIo engineIo,
                            int familySize,
                            int populationSize,
                            int borderLength,
                            float percentOfWoman,
                            RandomProvider randomProvider) {
-        this.board = board;
+        this.engineIo = engineIo;
         this.withPopulationSize(populationSize);
         this.withFamilySize(familySize);
         this.withPercentOfWoman(percentOfWoman);
@@ -140,7 +140,7 @@ public class SquaroniaUrizen {
           numberOfMan = populationSize - numberOfWoman;
         }
         generateSexPoll();
-        board.require(Household.class, Location.class, Person.class);
+        engineIo.require(Household.class, Location.class, Person.class);
         createHouseholdsWithCitizens();
     }
 
@@ -156,7 +156,7 @@ public class SquaroniaUrizen {
     }
 
     private void createHouseholdsWithCitizens() {
-        var engine = board.getEngine();
+        var engine = engineIo.getEngine();
         engine.execute(sessionFactory-> {
             Session session = sessionFactory.create();
             Status statshaushold = Status.of("Building Squaronia's households",10000);

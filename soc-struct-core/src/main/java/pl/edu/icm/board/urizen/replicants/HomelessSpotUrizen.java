@@ -20,7 +20,7 @@ package pl.edu.icm.board.urizen.replicants;
 
 import net.snowyhollows.bento.annotation.WithFactory;
 import org.apache.commons.math3.random.RandomDataGenerator;
-import pl.edu.icm.board.Board;
+import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.agesex.AgeSexFromDistributionPicker;
 import pl.edu.icm.board.geography.KilometerGridCell;
 import pl.edu.icm.board.model.Location;
@@ -39,7 +39,7 @@ import java.io.FileNotFoundException;
 import java.util.List;
 
 public class HomelessSpotUrizen {
-    private final Board board;
+    private final EngineIo engineIo;
     private final PopulationDensityLoader populationDensityLoader;
     private final ReplicantPrototypes prototypes;
     private final RandomDataGenerator random;
@@ -55,13 +55,13 @@ public class HomelessSpotUrizen {
 
     @WithFactory
     public HomelessSpotUrizen(
-            Board board,
+            EngineIo engineIo,
             ReplicantPrototypes prototypes,
             ReplicantsPopulation replicantsPopulation,
             PopulationDensityLoader populationDensityLoader,
             AgeSexFromDistributionPicker ageSexFromDistributionPicker, RandomProvider randomProvider,
             int homelessSpotReplicantsCount, int homelessSpotRoomSize, int homelessSpotMaxInSingleGridCell, int homelessSpotPercentOfMale) {
-        this.board = board;
+        this.engineIo = engineIo;
         this.prototypes = prototypes;
         this.populationDensityLoader = populationDensityLoader;
         this.ageSexFromDistributionPicker = ageSexFromDistributionPicker;
@@ -69,7 +69,7 @@ public class HomelessSpotUrizen {
         this.homelessSpotRoomSize = homelessSpotRoomSize;
         this.homelessSpotMaxInSingleGridCell = homelessSpotMaxInSingleGridCell;
         this.homelessSpotPercentOfMale = homelessSpotPercentOfMale;
-        this.board.require(Household.class, Person.class, Location.class, Replicant.class);
+        this.engineIo.require(Household.class, Person.class, Location.class, Replicant.class);
         this.sexSubPoolM = replicantsPopulation.getPopulation().getPeopleBySex().createSubPool(Person.Sex.M);
         this.sexSubPoolK = replicantsPopulation.getPopulation().getPeopleBySex().createSubPool(Person.Sex.K);
         this.ages = replicantsPopulation.getPopulation().getPeopleByAge().createSubPool(
@@ -112,7 +112,7 @@ public class HomelessSpotUrizen {
     }
 
     private void generateRoom(int inhabitants, KilometerGridCell cell) {
-        board.getEngine().execute(sessionFactory -> {
+        engineIo.getEngine().execute(sessionFactory -> {
             Session session = sessionFactory.create();
             List<Entity> dependents = prototypes.homelessSpotRoom(session, cell).get(Household.class).getMembers();
             Bin<Person.Sex> sex;

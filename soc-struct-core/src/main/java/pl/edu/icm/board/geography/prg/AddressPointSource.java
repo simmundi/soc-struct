@@ -53,7 +53,7 @@ public class AddressPointSource {
     }
 
     public void load(Store addressPointStore) {
-        var mapper = Mappers.create(IndexedAddressPoint.class);
+        var mapper = new Mappers().create(IndexedAddressPoint.class);
         mapper.configureStore(addressPointStore);
         mapper.attachStore(addressPointStore);
 

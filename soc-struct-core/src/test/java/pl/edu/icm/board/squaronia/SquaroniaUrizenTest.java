@@ -18,12 +18,16 @@
 
 package pl.edu.icm.board.squaronia;
 
+import net.snowyhollows.bento.config.Configurer;
 import org.assertj.core.data.Percentage;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import pl.edu.icm.board.Board;
+import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.util.RandomProvider;
 import pl.edu.icm.trurl.ecs.EngineConfiguration;
+import pl.edu.icm.trurl.ecs.EngineConfigurationFactory;
+import pl.edu.icm.trurl.store.StoreFactory;
+import pl.edu.icm.trurl.store.StoreFactoryFactory;
 import pl.edu.icm.trurl.store.tablesaw.TablesawStore;
 import pl.edu.icm.trurl.store.tablesaw.TablesawStoreFactory;
 
@@ -36,16 +40,16 @@ class SquaroniaUrizenTest {
     @DisplayName("should generate specific age structure")
     void withAgeGroupShare(){
         //given
-        EngineConfiguration engineConfiguration = new EngineConfiguration();
-        engineConfiguration.setStoreFactory(new TablesawStoreFactory());
-        Board board = new Board(engineConfiguration, null, null, null);
+        EngineConfiguration engineConfiguration = new Configurer().setParam("trurl.engine.storeFactory", TablesawStoreFactory.class.getName()).getConfig().get(EngineConfigurationFactory.IT);
+
+        EngineIo engineIo = new EngineIo(engineConfiguration, null, null, null);
         RandomProvider randomProvider = new RandomProvider(0);
-        var squaroniaUrizen = new SquaroniaUrizen(board,3,100,10,50, randomProvider);
+        var squaroniaUrizen = new SquaroniaUrizen(engineIo,3,100,10,50, randomProvider);
 
         //execute
         squaroniaUrizen.withAgeGroupShare(AgeRange.AGE_0_4,1).withAgeGroupShare(AgeRange.AGE_15_19,1).build();
         //given
-        var entities = ((TablesawStore)board.getEngine().getStore()).asTable("entities");
+        var entities = ((TablesawStore) engineIo.getEngine().getStore()).asTable("entities");
 
         //assert
         assertThat(entities.where(
@@ -61,15 +65,15 @@ class SquaroniaUrizenTest {
     @DisplayName("shoud build squaronia")
     void build(){
         //given
-        EngineConfiguration engineConfiguration = new EngineConfiguration();
-        engineConfiguration.setStoreFactory(new TablesawStoreFactory());
-        Board board = new Board(engineConfiguration, null, null, null);
+        EngineConfiguration engineConfiguration = new Configurer().setParam("trurl.engine.storeFactory", TablesawStoreFactory.class.getName()).getConfig().get(EngineConfigurationFactory.IT);
+
+        EngineIo engineIo = new EngineIo(engineConfiguration, null, null, null);
         RandomProvider randomProvider = new RandomProvider(0);
-        var squaroniaUrizen = new SquaroniaUrizen(board,4,100,10,50, randomProvider);
+        var squaroniaUrizen = new SquaroniaUrizen(engineIo,4,100,10,50, randomProvider);
         //execute
         squaroniaUrizen.withAgeGroupShare(AgeRange.AGE_0_4,1).build();
         //given
-        var entities = ((TablesawStore)board.getEngine().getStore()).asTable("entities");
+        var entities = ((TablesawStore) engineIo.getEngine().getStore()).asTable("entities");
 
         //assert
         assertThat(entities.where(

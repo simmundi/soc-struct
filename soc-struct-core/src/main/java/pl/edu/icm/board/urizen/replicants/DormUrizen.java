@@ -20,7 +20,7 @@ package pl.edu.icm.board.urizen.replicants;
 
 import net.snowyhollows.bento.annotation.WithFactory;
 import org.apache.commons.math3.random.RandomGenerator;
-import pl.edu.icm.board.Board;
+import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.agesex.AgeSexFromDistributionPicker;
 import pl.edu.icm.board.model.Complex;
 import pl.edu.icm.board.model.EducationalInstitution;
@@ -52,7 +52,7 @@ import java.util.stream.Collectors;
  * universities are allowed to live there.
  */
 public class DormUrizen {
-    private final Board board;
+    private final EngineIo engineIo;
     private final ReplicantPrototypes prototypes;
     private final EntityStreamManipulator entityStreamManipulator;
     private final PopulationDensityLoader populationDensityLoader;
@@ -66,7 +66,7 @@ public class DormUrizen {
     private Entities entities;
 
     @WithFactory
-    public DormUrizen(Board board,
+    public DormUrizen(EngineIo engineIo,
                       ReplicantPrototypes replicantPrototypes,
                       Entities entities, EntityStreamManipulator entityStreamManipulator,
                       PopulationDensityLoader populationDensityLoader,
@@ -77,7 +77,7 @@ public class DormUrizen {
                       int dormRoomSize,
                       int dormMaxRooms,
                       int dormToUniversityMaxDistance) {
-        this.board = board;
+        this.engineIo = engineIo;
         this.prototypes = replicantPrototypes;
         this.entities = entities;
         this.entityStreamManipulator = entityStreamManipulator;
@@ -89,14 +89,14 @@ public class DormUrizen {
         this.dormMaxRooms = dormMaxRooms;
         this.dormToUniversityMaxDistance = dormToUniversityMaxDistance;
         this.random = randomProvider.getRandomGenerator(DormUrizen.class);
-        this.board.require(Person.class, Household.class, Replicant.class, Attendee.class);
+        this.engineIo.require(Person.class, Household.class, Replicant.class, Attendee.class);
     }
 
     public void fabricate() throws FileNotFoundException {
         this.populationDensityLoader.load();
         var status = Status.of("building university map", 1000);
         BinPoolsByShape<KilometerGridCell, Entity> slotsInDorms = entityStreamManipulator.groupIntoShapes(
-                board.getEngine().streamDetached().filter(this::isEntityAUniversity),
+                engineIo.getEngine().streamDetached().filter(this::isEntityAUniversity),
                 this::studentCount,
                 entityStreamManipulator.cellsInRadius$(dormToUniversityMaxDistance)
         );
@@ -123,7 +123,7 @@ public class DormUrizen {
         if (acceptableCells.isEmpty()) {
             throw new IllegalStateException("University " + selectedUniversity.getId() + " has no acceptable neighbourhood");
         }
-        board.getEngine().execute(sessionFactory -> {
+        engineIo.getEngine().execute(sessionFactory -> {
             Session session = sessionFactory.create();
             Entity entity = entities.createEmptyComplex(session, size);
             Complex complex = entity.get(Complex.class);

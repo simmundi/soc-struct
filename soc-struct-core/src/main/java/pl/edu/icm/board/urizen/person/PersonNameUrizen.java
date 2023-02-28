@@ -20,7 +20,7 @@ package pl.edu.icm.board.urizen.person;
 
 import net.snowyhollows.bento.annotation.WithFactory;
 import org.apache.commons.math3.random.RandomGenerator;
-import pl.edu.icm.board.Board;
+import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.model.Named;
 import pl.edu.icm.board.model.Household;
 import pl.edu.icm.board.model.Person;
@@ -34,20 +34,20 @@ import pl.edu.icm.trurl.util.Status;
 import static pl.edu.icm.trurl.ecs.util.EntityIterator.select;
 
 public class PersonNameUrizen {
-    private final Board board;
+    private final EngineIo engineIo;
     private final NamesSource namesSource;
     private final RandomGenerator random;
     private final Selectors selectors;
 
     @WithFactory
-    public PersonNameUrizen(Board board,
+    public PersonNameUrizen(EngineIo engineIo,
                             NamesSource namesSource,
                             RandomProvider randomProvider,
                             Selectors selectors) {
-        this.board = board;
+        this.engineIo = engineIo;
         this.namesSource = namesSource;
         this.selectors = selectors;
-        board.require(Named.class, Household.class, Person.class);
+        engineIo.require(Named.class, Household.class, Person.class);
         this.random = randomProvider.getRandomGenerator(PersonNameUrizen.class);
     }
 
@@ -55,7 +55,7 @@ public class PersonNameUrizen {
         Status stats = Status.of("Giving names", 1_000_000);
         NamePools names = namesSource.load();
 
-        board.getEngine().execute(select(createHouseholdSelector()).forEach(entity -> {
+        engineIo.getEngine().execute(select(createHouseholdSelector()).forEach(entity -> {
             Bin<String> lastNameBin = names.surnames.sample(random.nextDouble());
             Household household = entity.get(Household.class);
             for (Entity memberEntity : household.getMembers()) {
