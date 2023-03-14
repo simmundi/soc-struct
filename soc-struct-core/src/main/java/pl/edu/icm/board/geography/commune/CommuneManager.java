@@ -22,6 +22,7 @@ import net.snowyhollows.bento.annotation.WithFactory;
 import pl.edu.icm.board.geography.KilometerGridCell;
 import pl.edu.icm.board.geography.gis.CommuneSource;
 import pl.edu.icm.board.geography.gis.CommuneStoreItem;
+import pl.edu.icm.board.model.Location;
 import pl.edu.icm.board.util.FileCacheService;
 import pl.edu.icm.trurl.ecs.mapper.Mappers;
 import pl.edu.icm.trurl.store.Store;
@@ -77,6 +78,10 @@ public class CommuneManager {
         int col = cell.getLegacyPdynCol();
         int row = cell.getLegacyPdynRow();
         return isWithinGrid(col, row) ? grid[communeIndex(col, row)] : nowhere;
+    }
+
+    public Commune communeAt(Location location) {
+        return communeAt(KilometerGridCell.fromLocation(location));
     }
 
     public Optional<Commune> communeForTeryt(String teryt) {

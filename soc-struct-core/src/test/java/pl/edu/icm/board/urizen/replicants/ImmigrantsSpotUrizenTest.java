@@ -143,7 +143,7 @@ class ImmigrantsSpotUrizenTest {
         when(terytsOfBigCities.getAllTeryts()).thenReturn(List.of(TERYT_WARSAW));
         cells.add(KilometerGridCell.fromPl1992ENMeters(647, 487));
         when(communeManager.communeForTeryt(anyString())).thenReturn(Optional.of(new Commune(TERYT_WARSAW, "Warszawa", Set.of(KilometerGridCell.fromPl1992ENMeters(647, 487)))));
-        when(communeManager.communeAt(any())).thenReturn(new Commune(TERYT_WARSAW, "Warszawa", Set.of(KilometerGridCell.fromPl1992ENMeters(647, 487))));
+        when(communeManager.communeAt(any(KilometerGridCell.class))).thenReturn(new Commune(TERYT_WARSAW, "Warszawa", Set.of(KilometerGridCell.fromPl1992ENMeters(647, 487))));
         when(prototypes.immigrantsSpotResident(any(), any(), anyInt())).thenReturn(immigrant());
     }
 
