@@ -18,6 +18,9 @@
 
 package pl.edu.icm.em.common.math.pdf;
 
+import net.snowyhollows.bento.soft.SoftEnum;
+import net.snowyhollows.bento.soft.SoftEnumManager;
+
 import java.util.Arrays;
 
 /**
@@ -26,19 +29,19 @@ import java.util.Arrays;
  *
  * The labels are represented by instances of a single Enum.
  *
- * EnumDiscretePDF can be used to build and represent a discrete probability distribution.
+ * SoftEnumDiscretePDF can be used to build and represent a discrete probability distribution.
  *
  * @param <Label>
  */
-public class EnumDiscretePDF<Label extends Enum<Label>> {
+public class SoftEnumDiscretePDF<Label extends SoftEnum> {
     private final float[] values;
+    private final SoftEnumManager<Label> softEnumManager;
     private boolean normalized;
-    private final Class<Label> keyType;
 
-    public EnumDiscretePDF(Class<Label> keyType) {
-        values = new float[keyType.getEnumConstants().length];
+    public SoftEnumDiscretePDF(SoftEnumManager<Label> softEnumManager) {
+        values = new float[softEnumManager.values().size()];
+        this.softEnumManager = softEnumManager;
         normalized = false;
-        this.keyType = keyType;
     }
 
     /**
@@ -144,7 +147,28 @@ public class EnumDiscretePDF<Label extends Enum<Label>> {
         Label value = null;
         for (int i = 0; i < values.length; i++) {
             if (values[i] != 0.0f) {
-                value = keyType.getEnumConstants()[i];
+                value = softEnumManager.getByOrdinal(i);
+                cumulativeProbability += values[i];
+                if (random < cumulativeProbability) break;
+            }
+        }
+        return value;
+    }
+
+    /**
+     * Samples an outcome from EnumSampleSpace.
+     * EnumSampleSpace does not have to be normalized before.
+     * Returns defaultOutcome when nothing else matches given random value.
+     *
+     * @param random value
+     * @return Label of an outcome
+     */
+    public Label sampleUnnormalized(double random) {
+        float cumulativeProbability = 0.0f;
+        Label value = null;
+        for (int i = 0; i < values.length; i++) {
+            if (values[i] != 0.0f) {
+                value = softEnumManager.getByOrdinal(i);
                 cumulativeProbability += values[i];
                 if (random < cumulativeProbability) break;
             }
@@ -205,7 +229,7 @@ public class EnumDiscretePDF<Label extends Enum<Label>> {
      *
      * @param discretePDF
      */
-    public void multiply(EnumDiscretePDF<Label> discretePDF) {
+    public void multiply(SoftEnumDiscretePDF<Label> discretePDF) {
         for (int i = 0; i < values.length; i++) {
             values[i] *= discretePDF.values[i];
         }

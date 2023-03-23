@@ -26,17 +26,17 @@ import java.util.Map;
  *
  * @param <Label>
  */
-public class MapSampleSpace<Label> {
+public class GenericDiscretePDF<Label> {
     private final Map<Label, Float> outcomes;
     private boolean normalized;
     private Label defaultOutcome;
 
-    public MapSampleSpace() {
+    public GenericDiscretePDF() {
         outcomes = new HashMap<>();
         normalized = false;
     }
 
-    public MapSampleSpace(Label defaultOutcome) {
+    public GenericDiscretePDF(Label defaultOutcome) {
         outcomes = new HashMap<>();
         normalized = false;
         this.defaultOutcome = defaultOutcome;
