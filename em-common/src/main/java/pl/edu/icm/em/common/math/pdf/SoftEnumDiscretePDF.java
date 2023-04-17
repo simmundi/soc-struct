@@ -236,6 +236,18 @@ public class SoftEnumDiscretePDF<Label extends SoftEnum> {
         normalized = false;
     }
 
+    /**
+     * Becomes a copy of the given discretePDF.
+     *
+     * @param discretePDF
+     */
+    public void copy(SoftEnumDiscretePDF<Label> discretePDF) {
+        for (int i = 0; i < values.length; i++) {
+            values[i] = discretePDF.values[i];
+        }
+        normalized = discretePDF.normalized;
+    }
+
     @Override
     public String toString() {
         return "discretePDF{" +
