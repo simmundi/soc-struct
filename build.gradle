@@ -72,6 +72,7 @@ subprojects {
         orcVersion = '1.7.0'
         hadoopVersion = '3.3.1'
         tablesawVersion = '0.38.1'
+        typesafeConfigVersion = '1.4.2'
 
         junitVersion = '4.12'
         mockitoVersion = '3.11.2'

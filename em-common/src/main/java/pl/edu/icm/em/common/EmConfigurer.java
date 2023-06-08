@@ -18,20 +18,25 @@
 
 package pl.edu.icm.em.common;
 
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
 import net.snowyhollows.bento.Bento;
 import net.snowyhollows.bento.BentoFactory;
 import net.snowyhollows.bento.config.Configurer;
 import net.snowyhollows.bento.config.WorkDir;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.function.Consumer;
 
-class EmConfigurer extends Configurer {
+public class EmConfigurer extends Configurer {
     private final Consumer<EmConfigurer> postConfigure;
+    private final File rootPath;
     private boolean postConfigured;
 
-    public EmConfigurer(WorkDir workDir, Consumer<EmConfigurer> postConfigure) {
+    public EmConfigurer(WorkDir workDir, File rootPath, Consumer<EmConfigurer> postConfigure) {
         super(workDir);
+        this.rootPath = rootPath;
         this.postConfigure = postConfigure;
     }
 
@@ -43,50 +48,66 @@ class EmConfigurer extends Configurer {
     }
 
     @Override
-    public Configurer initialize(BentoFactory<?>... factories) {
+    public EmConfigurer initialize(BentoFactory<?>... factories) {
         maybePostConfigure();
-        return super.initialize(factories);
+        super.initialize(factories);
+        return this;
     }
 
     @Override
-    public <T> Configurer use(BentoFactory<T> factory, Consumer<T> user) {
+    public <T> EmConfigurer use(BentoFactory<T> factory, Consumer<T> user) {
         maybePostConfigure();
-        return super.use(factory, user);
+        super.use(factory, user);
+        return this;
     }
 
     @Override
-    public <T> Configurer useWithIo(BentoFactory<T> factory, IoConsumer<T> user) throws IOException {
+    public <T> EmConfigurer useWithIo(BentoFactory<T> factory, IoConsumer<T> user) throws IOException {
         maybePostConfigure();
-        return super.useWithIo(factory, user);
+        super.useWithIo(factory, user);
+        return this;
     }
 
     @Override
-    public Configurer loadConfigDir(String dirPath) throws IOException {
+    public EmConfigurer loadConfigDir(String dirPath) throws IOException {
         try {
             assertNotPostConfigured();
-            return super.loadConfigDir(dirPath);
+            super.loadConfigDir(dirPath);
         } catch (NullPointerException npe) {
             System.err.println("Config path not found in the working directory");
-            return this;
         }
+        return this;
     }
 
     @Override
-    public Configurer loadConfigFile(String filename) throws IOException {
+    public EmConfigurer loadConfigFile(String filename) throws IOException {
         assertNotPostConfigured();
-        return super.loadConfigFile(filename);
+        super.loadConfigFile(filename);
+        return this;
+    }
+
+    public EmConfigurer loadHoconFile(String filename) throws IOException {
+        File file = new File(filename);
+        file = file.isAbsolute() ? file : new File(rootPath.getAbsolutePath(), file.getPath());
+        Config config = ConfigFactory.parseFile(file);
+        config.entrySet().forEach(entry -> {
+            setParam(entry.getKey(), entry.getValue().unwrapped().toString());
+        });
+        return this;
     }
 
     @Override
-    public Configurer setParam(String key, Object value) {
+    public EmConfigurer setParam(String key, Object value) {
         assertNotPostConfigured();
-        return super.setParam(key, value);
+        super.setParam(key, value);
+        return this;
     }
 
     @Override
-    public Configurer overrideParam(String key, Object value) {
+    public EmConfigurer overrideParam(String key, Object value) {
         assertNotPostConfigured();
-        return super.overrideParam(key, value);
+        super.overrideParam(key, value);
+        return this;
     }
 
     private void maybePostConfigure() {

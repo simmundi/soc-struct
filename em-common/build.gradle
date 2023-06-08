@@ -7,6 +7,7 @@ dependencies {
     implementation "net.snowyhollows.bento:bento-core:${bentoVersion}"
     implementation "commons-cli:commons-cli:1.5.0"
     implementation "com.google.guava:guava:${guavaVersion}"
+    implementation "com.typesafe:config:${typesafeConfigVersion}"
 }
 
 publishing {

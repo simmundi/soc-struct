@@ -44,7 +44,14 @@ public class EmConfig {
     private EmConfig() {
     }
 
-    public static Configurer configurer(String[] args) throws IOException {
+    public static EmConfigurer debugConfigurer(String[] args) throws IOException {
+        String[] newArgs = new String[args.length + 1];
+        System.arraycopy(args, 0, newArgs, 0, args.length);
+        newArgs[args.length] = "--list-properties";
+        return configurer(newArgs);
+    }
+
+    public static EmConfigurer configurer(String[] args) throws IOException {
         CommandLine line = parseCommandLine(args);
         String rootPath = Stream.of(
                         ofNullable(line.getOptionValue(homeOption)),
@@ -55,7 +62,8 @@ public class EmConfig {
             emBentoInspector = new EmBentoInspector();
             Bento.inspector = emBentoInspector;
         }
-        return new EmConfigurer(new DefaultWorkDir(new File(rootPath)), configurer -> postConfigure(line, configurer))
+        File root = new File(rootPath);
+        return new EmConfigurer(new DefaultWorkDir(root), root, configurer -> postConfigure(line, configurer))
                 .loadConfigDir("input/config")
                 .setParam("rootPath", rootPath);
     }
@@ -81,17 +89,21 @@ public class EmConfig {
                 }
             }
             if (line.hasOption(listProperties)) {
-                System.out.println();
-                System.out.println("Effective properties:");
-                System.out.println("=====================");
-                emBentoInspector.values().forEach(entry ->
-                        System.out.printf("%s = %s%n", entry.getKey(), entry.getValue())
-                );
-                System.out.println();
+                debugProperties();
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static void debugProperties() {
+        System.out.println();
+        System.out.println("Effective properties:");
+        System.out.println("=====================");
+        emBentoInspector.values().forEach(entry ->
+            System.out.printf("%s = %s%n", entry.getKey(), entry.getValue())
+        );
+        System.out.println();
     }
 
     private static CommandLine parseCommandLine(String[] args) {
