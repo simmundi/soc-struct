@@ -18,22 +18,16 @@
 
 package pl.edu.icm.em.common;
 
+import net.snowyhollows.bento.Bento;
 import net.snowyhollows.bento.config.Configurer;
 import net.snowyhollows.bento.config.DefaultWorkDir;
-import net.snowyhollows.bento.Bento;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.stream.Stream;
 
 import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
@@ -52,12 +46,11 @@ public class EmConfig {
 
     public static Configurer configurer(String[] args) throws IOException {
         CommandLine line = parseCommandLine(args);
-        String rootPath = List.of(
+        String rootPath = Stream.of(
                         ofNullable(line.getOptionValue(homeOption)),
                         ofNullable(System.getenv("EM_HOME")),
                         of("."))
-                .stream()
-                .filter(Optional::isPresent).findFirst().get().get();
+                .filter(Optional::isPresent).findFirst().get().orElseThrow();
         if (line.hasOption(listProperties)) {
             emBentoInspector = new EmBentoInspector();
             Bento.inspector = emBentoInspector;
@@ -91,9 +84,9 @@ public class EmConfig {
                 System.out.println();
                 System.out.println("Effective properties:");
                 System.out.println("=====================");
-                emBentoInspector.values().forEach(entry -> {
-                    System.out.println(String.format("%s = %s", entry.getKey(), entry.getValue()));
-                });
+                emBentoInspector.values().forEach(entry ->
+                        System.out.printf("%s = %s%n", entry.getKey(), entry.getValue())
+                );
                 System.out.println();
             }
         } catch (IOException e) {
@@ -111,8 +104,10 @@ public class EmConfig {
                         .desc("reads a single property file, e.g. -Finput/config/healthcare/healthcare.properties")
                         .hasArg()
                         .build())
-                .addOption(homeOption = Option.builder("home")
-                        .desc("sets home directory, e.g. -home ../pdyn-stack")
+                .addOption(homeOption = Option.builder()
+                        .longOpt("home")
+                        .argName("dir")
+                        .desc("sets home directory, e.g. --home=../pdyn-stack")
                         .hasArg()
                         .build())
                 .addOption(listProperties = Option.builder("lp")
@@ -127,6 +122,7 @@ public class EmConfig {
             CommandLineParser parser = new DefaultParser();
             return parser.parse(options, args);
         } catch (ParseException exp) {
+            System.out.println(exp.getMessage());
             HelpFormatter formatter = new HelpFormatter();
             formatter.printHelp("em", options);
             System.exit(1);
