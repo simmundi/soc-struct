@@ -22,3 +22,8 @@ publishing {
         }
     }
 }
+
+tasks.register('downloadSocstruct', JavaExec) {
+    mainClass = 'pl.edu.icm.em.common.SocStructDownloader'
+    classpath = sourceSets.main.runtimeClasspath
+}
