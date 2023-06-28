@@ -24,6 +24,6 @@ publishing {
 }
 
 tasks.register('downloadSocstruct', JavaExec) {
-    mainClass = 'pl.edu.icm.em.common.SocStructDownloader'
+    mainClass = 'pl.edu.icm.em.common.downloader.SocStructDownloader'
     classpath = sourceSets.main.runtimeClasspath
 }
