@@ -43,7 +43,7 @@ public class RandomProvider {
     public RandomDataGenerator getRandomDataGenerator(String label) {
         return this.randomGeneratorMap.computeIfAbsent(label, k -> {
             RandomDataGenerator random = new RandomDataGenerator();
-            random.reSeed(this.randomProviderSeed + label.hashCode());
+            random.reSeed(this.randomProviderSeed + this.randomGeneratorMap.size());
             return random;
         });
     }
@@ -61,7 +61,7 @@ public class RandomProvider {
     }
 
     private RandomForChunkProvider getRandomForChunkProvider(String label) {
-        return this.randomDataForChunkProviderMap.computeIfAbsent(label, i -> new RandomForChunkProvider(this.randomProviderSeed + i.hashCode()));
+        return this.randomDataForChunkProviderMap.computeIfAbsent(label, i -> new RandomForChunkProvider(this.randomProviderSeed + this.randomGeneratorMap.size()));
     }
 
     public RandomForChunkProvider getRandomForChunkProvider(Class<?> label) {

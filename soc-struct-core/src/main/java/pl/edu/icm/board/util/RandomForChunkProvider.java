@@ -37,6 +37,6 @@ public class RandomForChunkProvider implements Function<Chunk, RandomGenerator> 
     @Override
     public RandomGenerator apply(Chunk chunk) {
         var chunkId = chunk.getChunkInfo().getChunkId();
-        return chunkToRandomGeneratorMap.computeIfAbsent(chunkId, i -> new Well19937c(initialSeed + i));
+        return chunkToRandomGeneratorMap.computeIfAbsent(chunkId, i -> new Well19937c(initialSeed + i*100));
     }
 }

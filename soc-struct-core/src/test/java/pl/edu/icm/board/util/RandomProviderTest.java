@@ -73,7 +73,7 @@ class RandomProviderTest {
         var randomForChunkProvider = randomProvider.getRandomForChunkProvider(RandomProviderTest.class);
         var randomGenerator = randomForChunkProvider.apply(chunk);
         var doubleArray = IntStream.range(0, 20).mapToDouble(i -> randomGenerator.nextDouble()).toArray();
-        var randomGenerator2 = new Well19937c(2137 + RandomProviderTest.class.getCanonicalName().hashCode());
+        var randomGenerator2 = new Well19937c(2137);
         //assert
         assertThat(IntStream.range(0, 20).mapToDouble(i -> randomGenerator2.nextDouble()).toArray()).containsExactly(doubleArray);
     }
