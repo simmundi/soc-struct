@@ -31,6 +31,8 @@ import pl.edu.icm.trurl.util.Status;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 public class EngineIo {
     private OrcStoreService lazyOrcStoreService;
@@ -73,7 +75,7 @@ public class EngineIo {
 
     public void saveOrc(String outputPath) throws IOException {
         Status sts = Status.of("Saving population data to " + absolutize(outputPath));
-        getEngine().getStore().fireUnderlyingDataChanged(0, getEngine().getCount(), getEngine());
+        getEngine().getStore().fireUnderlyingDataChanged(0, getMaxCount(), getEngine());
         getLazyOrcStoreService().write(getEngine().getStore(), absolutize(outputPath));
         sts.done();
     }
@@ -87,7 +89,7 @@ public class EngineIo {
     }
     public void save(String outputPath) throws IOException {
         Status sts = Status.of("Saving population data to " + outputPath);
-        getEngine().getStore().fireUnderlyingDataChanged(0, getEngine().getCount(), getEngine());
+        getEngine().getStore().fireUnderlyingDataChanged(0, getMaxCount(), getEngine());
         csvWriter.writeCsv(outputPath, getEngine().getStore());
         sts.done();
     }
@@ -109,6 +111,14 @@ public class EngineIo {
 
     private String absolutize(String path) {
         return new File(rootPath, path).getAbsolutePath();
+    }
+
+    private int getMaxCount() {
+        AtomicInteger count = new AtomicInteger();
+        getEngine().getMapperSet().streamMappers()
+                .flatMap(mapper -> Stream.concat(Stream.of(mapper), mapper.getChildMappers().stream()))
+                .forEach(mapper -> count.set(Math.max(count.get(), mapper.getCount())));
+        return count.get();
     }
 
 }
