@@ -21,6 +21,7 @@ package pl.edu.icm.board.urizen.person;
 import com.google.common.base.Charsets;
 import com.univocity.parsers.csv.CsvParser;
 import com.univocity.parsers.csv.CsvParserSettings;
+import net.snowyhollows.bento.annotation.ByName;
 import net.snowyhollows.bento.annotation.WithFactory;
 import net.snowyhollows.bento.config.WorkDir;
 import pl.edu.icm.trurl.bin.BinPool;
@@ -38,9 +39,9 @@ public class NamesSource {
 
     @WithFactory
     public NamesSource(
-            String namesFPath,
-            String namesMPath,
-            String surnamesPath,
+            @ByName("soc-struct.population.names.f") String namesFPath,
+            @ByName("soc-struct.population.names.m") String namesMPath,
+            @ByName("soc-struct.population.names.surnames") String surnamesPath,
             WorkDir workDir
     ) {
         this.namesFPath = namesFPath;

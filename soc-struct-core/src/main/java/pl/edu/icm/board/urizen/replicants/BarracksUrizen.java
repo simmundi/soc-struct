@@ -18,6 +18,7 @@
 
 package pl.edu.icm.board.urizen.replicants;
 
+import net.snowyhollows.bento.annotation.ByName;
 import net.snowyhollows.bento.annotation.WithFactory;
 import org.apache.commons.math3.random.RandomDataGenerator;
 import pl.edu.icm.board.EngineIo;
@@ -56,10 +57,14 @@ public class BarracksUrizen {
     public BarracksUrizen(
             EngineIo engineIo,
             ReplicantPrototypes prototypes,
-            Entities entities, ReplicantsPopulation replicantsPopulation,
+            Entities entities,
+            ReplicantsPopulation replicantsPopulation,
             PopulationDensityLoader populationDensityLoader,
-            AgeSexFromDistributionPicker ageSexFromDistributionPicker, RandomProvider randomProvider,
-            int barracksReplicantsCount, int barracksRoomSize, int barracksMaxRooms) {
+            AgeSexFromDistributionPicker ageSexFromDistributionPicker,
+            RandomProvider randomProvider,
+            @ByName("soc-struct.replicants.barracks.count") int barracksReplicantsCount,
+            @ByName("soc-struct.replicants.barracks.room-size") int barracksRoomSize,
+            @ByName("soc-struct.replicants.barracks.max-rooms") int barracksMaxRooms) {
         this.engineIo = engineIo;
         this.prototypes = prototypes;
         this.entities = entities;

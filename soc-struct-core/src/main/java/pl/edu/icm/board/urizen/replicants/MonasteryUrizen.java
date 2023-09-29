@@ -18,16 +18,17 @@
 
 package pl.edu.icm.board.urizen.replicants;
 
+import net.snowyhollows.bento.annotation.ByName;
 import net.snowyhollows.bento.annotation.WithFactory;
 import org.apache.commons.math3.random.RandomDataGenerator;
 import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.agesex.AgeSexFromDistributionPicker;
-import pl.edu.icm.board.model.Complex;
 import pl.edu.icm.board.geography.KilometerGridCell;
 import pl.edu.icm.board.geography.density.PopulationDensityLoader;
+import pl.edu.icm.board.model.Complex;
 import pl.edu.icm.board.model.Household;
-import pl.edu.icm.board.model.Replicant;
 import pl.edu.icm.board.model.Person;
+import pl.edu.icm.board.model.Replicant;
 import pl.edu.icm.board.urizen.generic.Entities;
 import pl.edu.icm.board.urizen.household.model.AgeRange;
 import pl.edu.icm.board.util.RandomProvider;
@@ -55,10 +56,14 @@ public class MonasteryUrizen {
     public MonasteryUrizen(
             EngineIo engineIo,
             ReplicantPrototypes prototypes,
-            Entities entities, ReplicantsPopulation replicantsPopulation,
+            Entities entities,
+            ReplicantsPopulation replicantsPopulation,
             PopulationDensityLoader populationDensityLoader,
-            AgeSexFromDistributionPicker ageSexFromDistributionPicker, RandomProvider randomProvider,
-            int monasteryReplicantsCount, int monasteryRoomSize, int monasteryMaxRooms) {
+            AgeSexFromDistributionPicker ageSexFromDistributionPicker,
+            RandomProvider randomProvider,
+            @ByName("soc-struct.replicants.monastery.count") int monasteryReplicantsCount,
+            @ByName("soc-struct.replicants.monastery.room-size") int monasteryRoomSize,
+            @ByName("soc-struct.replicants.monastery.max-rooms") int monasteryMaxRooms) {
         this.engineIo = engineIo;
         this.prototypes = prototypes;
         this.entities = entities;
@@ -114,17 +119,17 @@ public class MonasteryUrizen {
     }
 
     private void generateRoom(int inhabitants, List<Entity> complexHouseholds, Session session, KilometerGridCell cell) {
-            List<Entity> dependents = prototypes.monasteryRoom(session, complexHouseholds, cell).get(Household.class).getMembers();
-            for (int i = 0; i < inhabitants; i++) {
-                var sexPicked = sexes.sample(random.getRandomGenerator().nextDouble()).pick();
-                var ageRangePicked = ages.sample(random.getRandomGenerator().nextDouble())
-                        .pick();
-                dependents.add(prototypes.monasteryResident(
-                        session,
-                        sexPicked,
-                        ageSexFromDistributionPicker.getEmpiricalDistributedRandomAge(sexPicked,
-                                ageRangePicked, random.getRandomGenerator().nextDouble())));
-            }
+        List<Entity> dependents = prototypes.monasteryRoom(session, complexHouseholds, cell).get(Household.class).getMembers();
+        for (int i = 0; i < inhabitants; i++) {
+            var sexPicked = sexes.sample(random.getRandomGenerator().nextDouble()).pick();
+            var ageRangePicked = ages.sample(random.getRandomGenerator().nextDouble())
+                    .pick();
+            dependents.add(prototypes.monasteryResident(
+                    session,
+                    sexPicked,
+                    ageSexFromDistributionPicker.getEmpiricalDistributedRandomAge(sexPicked,
+                            ageRangePicked, random.getRandomGenerator().nextDouble())));
+        }
     }
 
 }

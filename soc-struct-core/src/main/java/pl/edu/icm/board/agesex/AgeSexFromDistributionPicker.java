@@ -20,6 +20,7 @@ package pl.edu.icm.board.agesex;
 
 import com.univocity.parsers.csv.CsvParser;
 import com.univocity.parsers.csv.CsvParserSettings;
+import net.snowyhollows.bento.annotation.ByName;
 import net.snowyhollows.bento.annotation.WithFactory;
 import net.snowyhollows.bento.config.WorkDir;
 import pl.edu.icm.board.model.Person;
@@ -37,7 +38,8 @@ public class AgeSexFromDistributionPicker {
     String ageSexStructureFilename;
 
     @WithFactory
-    public AgeSexFromDistributionPicker(WorkDir workDir, String ageSexStructureFilename) {
+    public AgeSexFromDistributionPicker(WorkDir workDir,
+                                        @ByName("soc-struct.population.age-sex-structure") String ageSexStructureFilename) {
         this.workDir = workDir;
         this.ageSexStructureFilename = ageSexStructureFilename;
         prepareBinPools();

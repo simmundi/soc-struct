@@ -18,6 +18,7 @@
 
 package pl.edu.icm.board.export;
 
+import net.snowyhollows.bento.annotation.ByName;
 import net.snowyhollows.bento.annotation.WithFactory;
 import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.EngineIoFactory;
@@ -41,7 +42,7 @@ public class DistanceFromHealthcareExporter {
 
     @WithFactory
     public DistanceFromHealthcareExporter(EngineIo engineIo,
-                                          String healthcareDistanceExportFilename,
+                                          @ByName("soc-struct.healthcare.distance-export") String healthcareDistanceExportFilename,
                                           Selectors selectors) {
         this.healthcareDistanceExportFilename = healthcareDistanceExportFilename;
         this.selectors = selectors;
@@ -93,8 +94,8 @@ public class DistanceFromHealthcareExporter {
 
     public static void main(String[] args) throws IOException {
         var config = EmConfig.configurer(args)
-                .loadConfigDir("input/config/healthcare")
-                .loadConfigDir("input/config/board")
+                .loadHoconFile("input/config/pdyn2-stack.conf")
+                .loadHoconFile("input/config/soc-struct.conf")
                 .getConfig();
         var io = config.get(EngineIoFactory.IT);
         var exporter = config.get(DistanceFromHealthcareExporterFactory.IT);

@@ -20,6 +20,7 @@ package pl.edu.icm.board.urizen.healthcare;
 
 import com.univocity.parsers.csv.CsvParser;
 import com.univocity.parsers.csv.CsvParserSettings;
+import net.snowyhollows.bento.annotation.ByName;
 import net.snowyhollows.bento.annotation.WithFactory;
 import net.snowyhollows.bento.config.WorkDir;
 import pl.edu.icm.trurl.store.array.ArrayStore;
@@ -37,7 +38,8 @@ public class HealthcareLoader {
     public HealthcareFromCsvMapper mapper;
 
     @WithFactory
-    public HealthcareLoader(String healthcareFilename, WorkDir workDir) {
+    public HealthcareLoader(@ByName("soc-struct.healthcare.source") String healthcareFilename,
+                            WorkDir workDir) {
         this.healthcareFilename = healthcareFilename;
         this.workDir = workDir;
     }

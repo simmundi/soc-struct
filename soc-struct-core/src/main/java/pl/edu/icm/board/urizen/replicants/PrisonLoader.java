@@ -20,6 +20,7 @@ package pl.edu.icm.board.urizen.replicants;
 
 import com.univocity.parsers.csv.CsvParser;
 import com.univocity.parsers.csv.CsvParserSettings;
+import net.snowyhollows.bento.annotation.ByName;
 import net.snowyhollows.bento.annotation.WithFactory;
 import net.snowyhollows.bento.config.WorkDir;
 import pl.edu.icm.trurl.store.array.ArrayStore;
@@ -37,7 +38,7 @@ public class PrisonLoader {
     public PrisonFromCsvMapper mapper;
 
     @WithFactory
-    public PrisonLoader(WorkDir workDir, String prisonFilename) {
+    public PrisonLoader(WorkDir workDir, @ByName("soc-struct.replicants.prison.source") String prisonFilename) {
         this.workDir = workDir;
         this.prisonFilename = prisonFilename;
     }

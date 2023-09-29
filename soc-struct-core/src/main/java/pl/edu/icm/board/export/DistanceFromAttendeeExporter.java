@@ -18,6 +18,7 @@
 
 package pl.edu.icm.board.export;
 
+import net.snowyhollows.bento.annotation.ByName;
 import net.snowyhollows.bento.annotation.WithFactory;
 import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.EngineIoFactory;
@@ -45,7 +46,7 @@ public class DistanceFromAttendeeExporter {
 
     @WithFactory
     public DistanceFromAttendeeExporter(EngineIo engineIo,
-                                        String odleglosciPath,
+                                        @ByName("soc-struct.export.distances") String odleglosciPath,
                                         Selectors selectors) {
         this.odleglosciPath = odleglosciPath;
         this.selectors = selectors;

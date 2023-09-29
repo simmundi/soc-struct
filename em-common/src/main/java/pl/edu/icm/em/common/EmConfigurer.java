@@ -27,6 +27,8 @@ import net.snowyhollows.bento.config.WorkDir;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.function.Consumer;
 
 public class EmConfigurer extends Configurer {
@@ -86,13 +88,29 @@ public class EmConfigurer extends Configurer {
         return this;
     }
 
-    public EmConfigurer loadHoconFile(String filename) throws IOException {
+    public EmConfigurer loadHoconFile(String filename) {
         File file = new File(filename);
         file = file.isAbsolute() ? file : new File(rootPath.getAbsolutePath(), file.getPath());
         Config config = ConfigFactory.parseFile(file);
         config.entrySet().forEach(entry -> {
             setParam(entry.getKey(), entry.getValue().unwrapped().toString());
         });
+        return this;
+    }
+
+    public EmConfigurer loadHoconResource(String resource) throws IOException {
+        try (InputStream inputStream = this.getClass().getResourceAsStream(resource)) {
+            if (inputStream == null) {
+                throw new IOException("Resource not found: " + resource);
+            }
+
+            Config config = ConfigFactory.parseReader(new InputStreamReader(inputStream));
+            config.entrySet().forEach(entry -> {
+                setParam(entry.getKey(), entry.getValue().unwrapped().toString());
+            });
+        } catch (Exception e) {
+            throw new IOException("Couldn't read resource " + resource, e);
+        }
         return this;
     }
 

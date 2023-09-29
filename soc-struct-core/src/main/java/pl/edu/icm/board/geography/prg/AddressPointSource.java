@@ -20,6 +20,7 @@ package pl.edu.icm.board.geography.prg;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
+import net.snowyhollows.bento.annotation.ByName;
 import net.snowyhollows.bento.annotation.WithFactory;
 import net.snowyhollows.bento.config.WorkDir;
 import pl.edu.icm.board.geography.KilometerGridCell;
@@ -46,7 +47,9 @@ public class AddressPointSource {
     private final SetMultimap<String, KilometerGridCell> postalCodesToLocations = HashMultimap.create();
 
     @WithFactory
-    public AddressPointSource(StreetNameNormalizer streetNameNormalizer, String prgInputDir, WorkDir filesystem) {
+    public AddressPointSource(StreetNameNormalizer streetNameNormalizer,
+                              @ByName("soc-struct.geography.prg-input-dir") String prgInputDir,
+                              WorkDir filesystem) {
         this.streetNameNormalizer = streetNameNormalizer;
         this.prgInputDir = prgInputDir;
         this.filesystem = filesystem;

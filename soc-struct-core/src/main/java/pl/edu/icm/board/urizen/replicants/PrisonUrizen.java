@@ -18,6 +18,7 @@
 
 package pl.edu.icm.board.urizen.replicants;
 
+import net.snowyhollows.bento.annotation.ByName;
 import net.snowyhollows.bento.annotation.WithFactory;
 import org.apache.commons.math3.random.RandomDataGenerator;
 import pl.edu.icm.board.EngineIo;
@@ -49,15 +50,17 @@ public class PrisonUrizen {
     private final AgeSexFromDistributionPicker ageSexFromDistributionPicker;
     private final Entities entities;
     private final PrisonGeodecoder prisonGeodecoder;
+
     @WithFactory
     public PrisonUrizen(
             EngineIo engineIo,
             ReplicantPrototypes prototypes,
-            Entities entities, ReplicantsPopulation replicantsPopulation,
+            Entities entities,
+            ReplicantsPopulation replicantsPopulation,
             AgeSexFromDistributionPicker ageSexFromDistributionPicker,
             RandomProvider randomProvider,
             PrisonGeodecoder prisonGeodecoder,
-            int prisonRoomSize) {
+            @ByName("soc-struct.replicants.prison.room-size") int prisonRoomSize) {
         this.engineIo = engineIo;
         this.prototypes = prototypes;
         this.entities = entities;
@@ -113,9 +116,9 @@ public class PrisonUrizen {
         for (int i = 0; i < inhabitants; i++) {
             var ageRangePicked = ages.sample(random.getRandomGenerator().nextDouble()).pick();
             Person.Sex sexPicked;
-            if(type == PrisonFromCsv.Type.PRISON_K) {
+            if (type == PrisonFromCsv.Type.PRISON_K) {
                 sexPicked = sexesK.sample(random.getRandomGenerator().nextDouble()).pick();
-            } else if(type == PrisonFromCsv.Type.PRISON_M) {
+            } else if (type == PrisonFromCsv.Type.PRISON_M) {
                 sexPicked = sexesM.sample(random.getRandomGenerator().nextDouble()).pick();
             } else {
                 sexPicked = sexes.sample(random.getRandomGenerator().nextDouble()).pick();

@@ -20,6 +20,7 @@ package pl.edu.icm.board.urizen.place;
 
 import com.univocity.parsers.csv.CsvParser;
 import com.univocity.parsers.csv.CsvParserSettings;
+import net.snowyhollows.bento.annotation.ByName;
 import net.snowyhollows.bento.annotation.WithFactory;
 import net.snowyhollows.bento.config.WorkDir;
 import pl.edu.icm.trurl.store.array.ArrayStore;
@@ -37,7 +38,8 @@ public class EducationalInstitutionLoader {
     private static EducationalInstitutionFromCsvMapper mapper;
 
     @WithFactory
-    public EducationalInstitutionLoader(String educationalInstitutionsFilename, WorkDir workDir) {
+    public EducationalInstitutionLoader(@ByName("soc-struct.educational-institutions.source") String educationalInstitutionsFilename,
+                                        WorkDir workDir) {
         this.educationalInstitutionsFilename = educationalInstitutionsFilename;
         this.workDir = workDir;
     }

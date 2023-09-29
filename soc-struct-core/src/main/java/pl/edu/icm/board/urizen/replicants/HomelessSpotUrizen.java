@@ -18,16 +18,17 @@
 
 package pl.edu.icm.board.urizen.replicants;
 
+import net.snowyhollows.bento.annotation.ByName;
 import net.snowyhollows.bento.annotation.WithFactory;
 import org.apache.commons.math3.random.RandomDataGenerator;
 import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.agesex.AgeSexFromDistributionPicker;
 import pl.edu.icm.board.geography.KilometerGridCell;
-import pl.edu.icm.board.model.Location;
 import pl.edu.icm.board.geography.density.PopulationDensityLoader;
 import pl.edu.icm.board.model.Household;
-import pl.edu.icm.board.model.Replicant;
+import pl.edu.icm.board.model.Location;
 import pl.edu.icm.board.model.Person;
+import pl.edu.icm.board.model.Replicant;
 import pl.edu.icm.board.urizen.household.model.AgeRange;
 import pl.edu.icm.board.util.RandomProvider;
 import pl.edu.icm.trurl.bin.Bin;
@@ -59,8 +60,12 @@ public class HomelessSpotUrizen {
             ReplicantPrototypes prototypes,
             ReplicantsPopulation replicantsPopulation,
             PopulationDensityLoader populationDensityLoader,
-            AgeSexFromDistributionPicker ageSexFromDistributionPicker, RandomProvider randomProvider,
-            int homelessSpotReplicantsCount, int homelessSpotRoomSize, int homelessSpotMaxInSingleGridCell, int homelessSpotPercentOfMale) {
+            AgeSexFromDistributionPicker ageSexFromDistributionPicker,
+            RandomProvider randomProvider,
+            @ByName("soc-soc-struct.replicants.homeless-spot.count") int homelessSpotReplicantsCount,
+            @ByName("soc-soc-struct.replicants.homeless-spot.room-size") int homelessSpotRoomSize,
+            @ByName("soc-soc-struct.replicants.homeless-spot.max-in-single-grid-cell") int homelessSpotMaxInSingleGridCell,
+            @ByName("soc-soc-struct.replicants.homeless-spot.percent-of-male") int homelessSpotPercentOfMale) {
         this.engineIo = engineIo;
         this.prototypes = prototypes;
         this.populationDensityLoader = populationDensityLoader;
@@ -116,7 +121,7 @@ public class HomelessSpotUrizen {
             Session session = sessionFactory.create();
             List<Entity> dependents = prototypes.homelessSpotRoom(session, cell).get(Household.class).getMembers();
             Bin<Person.Sex> sex;
-            if (random.nextInt(0,99) < this.homelessSpotPercentOfMale) {
+            if (random.nextInt(0, 99) < this.homelessSpotPercentOfMale) {
                 sex = sexSubPoolM.sample(0.5);
             } else {
                 sex = sexSubPoolK.sample(0.5);

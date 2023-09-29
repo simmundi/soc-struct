@@ -18,6 +18,7 @@
 
 package pl.edu.icm.board.urizen.replicants;
 
+import net.snowyhollows.bento.annotation.ByName;
 import net.snowyhollows.bento.annotation.WithFactory;
 
 public class ReplicantsCounter {
@@ -25,14 +26,14 @@ public class ReplicantsCounter {
 
     @WithFactory
     public ReplicantsCounter(
-            int clergyHouseReplicantsCount,
-            int nursingHomeReplicantsCount,
-            int prisonReplicantsCount,
-            int dormReplicantsCount,
-            int monasteryReplicantsCount,
-            int barracksReplicantsCount,
-            int homelessSpotReplicantsCount,
-            int immigrantsSpotReplicantsCount) {
+            @ByName("soc-struct.replicants.clergy-house.count") int clergyHouseReplicantsCount,
+            @ByName("soc-struct.replicants.nursing-home.count") int nursingHomeReplicantsCount,
+            @ByName("soc-struct.replicants.prison.count") int prisonReplicantsCount,
+            @ByName("soc-struct.replicants.dorm.count") int dormReplicantsCount,
+            @ByName("soc-struct.replicants.monastery.count") int monasteryReplicantsCount,
+            @ByName("soc-struct.replicants.barracks.count") int barracksReplicantsCount,
+            @ByName("soc-struct.replicants.homeless-spot.count") int homelessSpotReplicantsCount,
+            @ByName("soc-struct.replicants.immigrants-spot.count") int immigrantsSpotReplicantsCount) {
         this.replicantsCount = clergyHouseReplicantsCount
                 + nursingHomeReplicantsCount
                 + prisonReplicantsCount

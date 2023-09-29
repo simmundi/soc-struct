@@ -18,6 +18,7 @@
 
 package pl.edu.icm.board.util;
 
+import net.snowyhollows.bento.annotation.ByName;
 import net.snowyhollows.bento.annotation.WithFactory;
 import org.apache.commons.math3.random.RandomDataGenerator;
 import org.apache.commons.math3.random.RandomGenerator;
@@ -34,7 +35,7 @@ public class RandomProvider {
     private final Map<String, RandomForChunkProvider> randomDataForChunkProviderMap;
 
     @WithFactory
-    public RandomProvider(int randomProviderSeed) {
+    public RandomProvider(@ByName("soc-struct.random-provider.random-provider-seed") int randomProviderSeed) {
         this.randomProviderSeed = randomProviderSeed;
         this.randomGeneratorMap = new HashMap<>();
         this.randomDataForChunkProviderMap = new HashMap<>();

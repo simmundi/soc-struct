@@ -59,7 +59,7 @@ class HouseholdsFromGridToAddressPointsUrizenTest {
 
     @BeforeEach
     void setup() throws IOException {
-        EngineConfiguration engineConfiguration = new Configurer().setParam("trurl.engine.storeFactory", TablesawStoreFactory.class.getName()).getConfig().get(EngineConfigurationFactory.IT);
+        EngineConfiguration engineConfiguration = new Configurer().setParam("trurl.engine.store-factory", TablesawStoreFactory.class.getName()).getConfig().get(EngineConfigurationFactory.IT);
 
         engineIo = new EngineIo(engineConfiguration, null, null, null);
 

@@ -18,6 +18,7 @@
 
 package pl.edu.icm.board.urizen.replicants;
 
+import net.snowyhollows.bento.annotation.ByName;
 import net.snowyhollows.bento.annotation.WithFactory;
 import org.apache.commons.math3.random.RandomDataGenerator;
 import pl.edu.icm.board.EngineIo;
@@ -60,10 +61,14 @@ public class NursingHomeUrizen {
     public NursingHomeUrizen(
             EngineIo engineIo,
             ReplicantPrototypes prototypes,
-            Entities entities, ReplicantsPopulation replicantsPopulation,
+            Entities entities,
+            ReplicantsPopulation replicantsPopulation,
             PopulationDensityLoader populationDensityLoader,
-            AgeSexFromDistributionPicker ageSexFromDistributionPicker, RandomProvider randomProvider,
-            int nursingHomeReplicantsCount, int nursingHomeRoomSize, int nursingHomeMaxRooms) {
+            AgeSexFromDistributionPicker ageSexFromDistributionPicker,
+            RandomProvider randomProvider,
+            @ByName("soc-struct.replicants.nursing-home.count") int nursingHomeReplicantsCount,
+            @ByName("soc-struct.replicants.nursing-home.room-size") int nursingHomeRoomSize,
+            @ByName("soc-struct.replicants.nursing-home.max-rooms") int nursingHomeMaxRooms) {
         this.engineIo = engineIo;
         this.prototypes = prototypes;
         this.entities = entities;

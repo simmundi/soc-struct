@@ -19,6 +19,7 @@
 package pl.edu.icm.board.export.vn.poi;
 
 import com.google.common.util.concurrent.AtomicLongMap;
+import net.snowyhollows.bento.annotation.ByName;
 import net.snowyhollows.bento.annotation.WithFactory;
 import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.model.Complex;
@@ -64,7 +65,11 @@ public class PoiReports {
     private final String othersFilename;
 
     @WithFactory
-    public PoiReports(EngineIo engineIo, PoiExporter poiExporter, String educationFilename, String workplacesFilename, String othersFilename) {
+    public PoiReports(EngineIo engineIo,
+                      PoiExporter poiExporter,
+                      @ByName("soc-struct.export.visnow.education-filename") String educationFilename,
+                      @ByName("soc-struct.export.visnow.workplaces-filename") String workplacesFilename,
+                      @ByName("soc-struct.export.visnow.others-filename") String othersFilename) {
         this.engineIo = engineIo;
         this.poiExporter = poiExporter;
         this.educationFilename = educationFilename;

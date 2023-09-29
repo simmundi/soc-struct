@@ -18,6 +18,7 @@
 
 package pl.edu.icm.board.education;
 
+import net.snowyhollows.bento.annotation.ByName;
 import net.snowyhollows.bento.annotation.WithFactory;
 import pl.edu.icm.board.model.EducationLevel;
 
@@ -29,11 +30,11 @@ public class EducationRadiusProvider {
     private final int bigUniversityRadius;
 
 @WithFactory
-   public EducationRadiusProvider(int kindergartenRadius,
-                                  int primarySchoolRadius,
-                                  int highSchoolRadius,
-                                  int universityRadius,
-                                  int bigUniversityRadius) {
+   public EducationRadiusProvider(@ByName("soc-struct.educational-institutions.kindergarten.radius") int kindergartenRadius,
+                                  @ByName("soc-struct.educational-institutions.primary-school.radius") int primarySchoolRadius,
+                                  @ByName("soc-struct.educational-institutions.high-school.radius") int highSchoolRadius,
+                                  @ByName("soc-struct.educational-institutions.university.small.radius") int universityRadius,
+                                  @ByName("soc-struct.educational-institutions.university.big.radius") int bigUniversityRadius) {
        this.kindergartenRadius = kindergartenRadius;
        this.primarySchoolRadius = primarySchoolRadius;
        this.highSchoolRadius = highSchoolRadius;

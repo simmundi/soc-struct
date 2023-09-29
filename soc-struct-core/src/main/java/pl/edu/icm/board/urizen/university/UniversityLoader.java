@@ -18,6 +18,7 @@
 
 package pl.edu.icm.board.urizen.university;
 
+import net.snowyhollows.bento.annotation.ByName;
 import net.snowyhollows.bento.annotation.WithFactory;
 import pl.edu.icm.board.geography.KilometerGridCell;
 import pl.edu.icm.board.model.Location;
@@ -36,7 +37,9 @@ public class UniversityLoader {
     private final String rootPath;
 
     @WithFactory
-    public UniversityLoader(String bigUniversityFilename, String smallUniversityFileName, String rootPath) {
+    public UniversityLoader(@ByName("soc-struct.educational-institutions.university.big.source") String bigUniversityFilename,
+                            @ByName("soc-struct.educational-institutions.university.small.source") String smallUniversityFileName,
+                            String rootPath) {
         this.bigUniversityFilename = bigUniversityFilename;
         this.smallUniversityFileName = smallUniversityFileName;
         this.rootPath = rootPath;

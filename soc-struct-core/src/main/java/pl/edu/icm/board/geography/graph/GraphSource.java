@@ -23,6 +23,7 @@ import com.graphhopper.config.Profile;
 import com.graphhopper.storage.GraphBuilder;
 import com.graphhopper.storage.GraphHopperStorage;
 import com.graphhopper.storage.NodeAccess;
+import net.snowyhollows.bento.annotation.ByName;
 import net.snowyhollows.bento.annotation.WithFactory;
 import pl.edu.icm.trurl.ecs.mapper.Mapper;
 import pl.edu.icm.trurl.ecs.mapper.Mappers;
@@ -36,7 +37,7 @@ public class GraphSource {
     private final String osmFilename;
 
     @WithFactory
-    GraphSource(String osmFilename) {
+    GraphSource(@ByName("soc-struct.geography.graph.osm") String osmFilename) {
         this.osmFilename = osmFilename;
     }
 

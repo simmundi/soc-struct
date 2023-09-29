@@ -18,6 +18,7 @@
 
 package pl.edu.icm.board.export.vn.poi;
 
+import net.snowyhollows.bento.annotation.ByName;
 import net.snowyhollows.bento.annotation.WithFactory;
 import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.model.*;
@@ -37,7 +38,9 @@ public class HealthcareExporter {
     ));
 
     @WithFactory
-    public HealthcareExporter(EngineIo engineIo, PoiExporter poiExporter, String healthcareExportFilename) {
+    public HealthcareExporter(EngineIo engineIo,
+                              PoiExporter poiExporter,
+                              @ByName("soc-struct.healthcare.export") String healthcareExportFilename) {
         this.engineIo = engineIo;
         this.poiExporter = poiExporter;
         this.healthcareExportFilename = healthcareExportFilename;

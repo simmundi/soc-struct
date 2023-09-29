@@ -37,8 +37,8 @@ public class SquaroniaUrizen {
     private int familySize;
     private int populationSize;
     private int borderLength;
-    private int numberOfWoman;
-    private int numberOfMan;
+    private int numberOfWomen;
+    private int numberOfMen;
 
     private final EngineIo engineIo;
 
@@ -52,12 +52,12 @@ public class SquaroniaUrizen {
                            int familySize,
                            int populationSize,
                            int borderLength,
-                           float percentOfWoman,
+                           float percentOfWomen,
                            RandomProvider randomProvider) {
         this.engineIo = engineIo;
         this.withPopulationSize(populationSize);
         this.withFamilySize(familySize);
-        this.withPercentOfWoman(percentOfWoman);
+        this.withPercentOfWomen(percentOfWomen);
         this.withBorderLength(borderLength);
         this.random = randomProvider.getRandomGenerator(SquaroniaUrizen.class);
     }
@@ -81,14 +81,14 @@ public class SquaroniaUrizen {
 
     /**
      * Define sex structure in Squaronia
-     * @param percentOfWoman percent of woman in Squaronia
+     * @param percentOfWomen percent of women in Squaronia
      * @return self (SquaroniaUrizen)
-     * @throws IllegalArgumentException if percentOfWoman not in [0, 100]
+     * @throws IllegalArgumentException if percentOfWomen not in [0, 100]
      */
-    public SquaroniaUrizen withPercentOfWoman(float percentOfWoman) {
-        checkArgument(percentOfWoman >= 0 && percentOfWoman <= 100, "percentOfWoman == " + percentOfWoman + " not in (0,100)");
-        this.numberOfWoman = (int)(this.populationSize * percentOfWoman / 100);
-        this.numberOfMan = this.populationSize - this.numberOfWoman;
+    public SquaroniaUrizen withPercentOfWomen(float percentOfWomen) {
+        checkArgument(percentOfWomen >= 0 && percentOfWomen <= 100, "percentOfWomen == " + percentOfWomen + " not in (0,100)");
+        this.numberOfWomen = (int)(this.populationSize * percentOfWomen / 100);
+        this.numberOfMen = this.populationSize - this.numberOfWomen;
         return this;
     }
 
@@ -135,9 +135,9 @@ public class SquaroniaUrizen {
         if (ageRangeBinPool == null){
             generateDefaultAgePool();
         }
-        if (numberOfWoman == -1){
-          numberOfWoman = populationSize / 2;
-          numberOfMan = populationSize - numberOfWoman;
+        if (numberOfWomen == -1){
+          numberOfWomen = populationSize / 2;
+          numberOfMen = populationSize - numberOfWomen;
         }
         generateSexPoll();
         engineIo.require(Household.class, Location.class, Person.class);
@@ -146,8 +146,8 @@ public class SquaroniaUrizen {
 
     private void generateSexPoll() {
         this.sexPoll = new BinPool<>();
-        this.sexPoll.add(Person.Sex.M,this.numberOfMan);
-        this.sexPoll.add(Person.Sex.K,this.numberOfWoman);
+        this.sexPoll.add(Person.Sex.M,this.numberOfMen);
+        this.sexPoll.add(Person.Sex.K,this.numberOfWomen);
     }
 
     private void generateDefaultAgePool() {

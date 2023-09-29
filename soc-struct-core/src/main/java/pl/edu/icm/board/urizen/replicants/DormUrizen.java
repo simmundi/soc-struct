@@ -18,19 +18,14 @@
 
 package pl.edu.icm.board.urizen.replicants;
 
+import net.snowyhollows.bento.annotation.ByName;
 import net.snowyhollows.bento.annotation.WithFactory;
 import org.apache.commons.math3.random.RandomGenerator;
 import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.agesex.AgeSexFromDistributionPicker;
-import pl.edu.icm.board.model.Complex;
-import pl.edu.icm.board.model.EducationalInstitution;
 import pl.edu.icm.board.geography.KilometerGridCell;
-import pl.edu.icm.board.model.Location;
 import pl.edu.icm.board.geography.density.PopulationDensityLoader;
-import pl.edu.icm.board.model.Household;
-import pl.edu.icm.board.model.Replicant;
-import pl.edu.icm.board.model.Attendee;
-import pl.edu.icm.board.model.Person;
+import pl.edu.icm.board.model.*;
 import pl.edu.icm.board.urizen.generic.Entities;
 import pl.edu.icm.board.urizen.generic.EntityStreamManipulator;
 import pl.edu.icm.board.util.RandomProvider;
@@ -73,10 +68,10 @@ public class DormUrizen {
                       AgeSexFromDistributionPicker ageSexFromDistributionPicker,
                       RandomProvider randomProvider,
                       ReplicantsPopulation population,
-                      int dormReplicantsCount,
-                      int dormRoomSize,
-                      int dormMaxRooms,
-                      int dormToUniversityMaxDistance) {
+                      @ByName("soc-struct.replicants.dorm.count") int dormReplicantsCount,
+                      @ByName("soc-struct.replicants.dorm.room-size") int dormRoomSize,
+                      @ByName("soc-struct.replicants.dorm.max-rooms") int dormMaxRooms,
+                      @ByName("soc-struct.replicants.dorm.max-distance-to-university") int dormToUniversityMaxDistance) {
         this.engineIo = engineIo;
         this.prototypes = replicantPrototypes;
         this.entities = entities;

@@ -18,6 +18,7 @@
 
 package pl.edu.icm.board.squaronia;
 
+import net.snowyhollows.bento.annotation.ByName;
 import net.snowyhollows.bento.annotation.WithFactory;
 import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.util.RandomProvider;
@@ -27,22 +28,22 @@ public class SquaroniaUrizenBuilder {
     private final int familySize;
     private final int populationSize;
     private final int borderLength;
-    private final int numberOfWoman;
+    private final int numberOfWomen;
 
     @WithFactory
     public SquaroniaUrizenBuilder(EngineIo engineIo,
-                                  int defaultFamilySize,
-                                  int defaultPopulationSize,
-                                  int defaultBorderLength,
-                                  float defaultPercentOfWoman) {
+                                  @ByName("soc-struct.squaronia.default.family-size") int defaultFamilySize,
+                                  @ByName("soc-struct.squaronia.default.population-size") int defaultPopulationSize,
+                                  @ByName("soc-struct.squaronia.default.border-length") int defaultBorderLength,
+                                  @ByName("soc-struct.squaronia.default.precent-of-women") float defaultPercentOfWomen) {
         this.engineIo = engineIo;
         this.familySize = defaultFamilySize;
         this.populationSize = defaultPopulationSize;
         this.borderLength = defaultBorderLength;
-        this.numberOfWoman = (int) (this.populationSize * defaultPercentOfWoman / 100);
+        this.numberOfWomen = (int) (this.populationSize * defaultPercentOfWomen / 100);
     }
 
     public SquaroniaUrizen build(RandomProvider randomProvider){
-        return new SquaroniaUrizen(engineIo, familySize, populationSize, borderLength, numberOfWoman, randomProvider);
+        return new SquaroniaUrizen(engineIo, familySize, populationSize, borderLength, numberOfWomen, randomProvider);
     }
 }

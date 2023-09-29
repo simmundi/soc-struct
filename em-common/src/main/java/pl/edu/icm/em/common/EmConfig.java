@@ -64,7 +64,7 @@ public class EmConfig {
         }
         File root = new File(rootPath);
         return new EmConfigurer(new DefaultWorkDir(root), root, configurer -> postConfigure(line, configurer))
-                .loadConfigDir("input/config")
+                .loadHoconFile("input/config/pdyn2-stack.conf")
                 .setParam("rootPath", rootPath);
     }
 

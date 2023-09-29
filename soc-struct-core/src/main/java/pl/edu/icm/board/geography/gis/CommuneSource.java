@@ -18,6 +18,7 @@
 
 package pl.edu.icm.board.geography.gis;
 
+import net.snowyhollows.bento.annotation.ByName;
 import net.snowyhollows.bento.annotation.WithFactory;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.opengis.feature.simple.SimpleFeature;
@@ -50,8 +51,8 @@ public class CommuneSource {
     @WithFactory
     public CommuneSource(GisUtilsService gisUtilsService,
                          CommuneGisReader communeGisReader,
-                         int gridColumns,
-                         int gridRows) {
+                         @ByName("soc-struct.geography.grid-columns") int gridColumns,
+                         @ByName("soc-struct.geography.grid-rows") int gridRows) {
         this.gisUtilsService = gisUtilsService;
         this.communeGisReader = communeGisReader;
         this.gridCols = gridColumns;

@@ -18,26 +18,21 @@
 
 package pl.edu.icm.board.urizen.replicants;
 
+import net.snowyhollows.bento.annotation.ByName;
 import net.snowyhollows.bento.annotation.WithFactory;
 import org.apache.commons.math3.random.RandomDataGenerator;
 import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.agesex.AgeSexFromDistributionPicker;
-import pl.edu.icm.board.model.AdministrationUnit;
 import pl.edu.icm.board.geography.KilometerGridCell;
-import pl.edu.icm.board.model.Location;
 import pl.edu.icm.board.geography.commune.Commune;
 import pl.edu.icm.board.geography.commune.CommuneManager;
 import pl.edu.icm.board.geography.commune.TerytsOfBigCities;
 import pl.edu.icm.board.geography.density.PopulationDensityLoader;
-import pl.edu.icm.board.model.Household;
-import pl.edu.icm.board.model.Employee;
-import pl.edu.icm.board.model.Replicant;
-import pl.edu.icm.board.model.Person;
+import pl.edu.icm.board.model.*;
 import pl.edu.icm.board.urizen.generic.EntityStreamManipulator;
 import pl.edu.icm.board.urizen.household.model.AgeRange;
 import pl.edu.icm.board.util.RandomProvider;
 import pl.edu.icm.board.workplace.ProfessionalActivityAssessor;
-import pl.edu.icm.board.model.Workplace;
 import pl.edu.icm.trurl.bin.BinPool;
 import pl.edu.icm.trurl.bin.BinPoolsByShape;
 import pl.edu.icm.trurl.ecs.Entity;
@@ -78,7 +73,9 @@ public class ImmigrantsSpotUrizen {
             ProfessionalActivityAssessor professionalActivityAssessor,
             AgeSexFromDistributionPicker ageSexFromDistributionPicker,
             TerytsOfBigCities terytsOfBigCities,
-            int immigrantsSpotReplicantsCount, int immigrantsSpotRoomSize, int immigrantsSpotMaxRooms) {
+            @ByName("soc-struct.replicants.immigrants-spot.count") int immigrantsSpotReplicantsCount,
+            @ByName("soc-struct.replicants.immigrants-spot.room-size") int immigrantsSpotRoomSize,
+            @ByName("soc-struct.replicants.immigrants-spot.max-rooms") int immigrantsSpotMaxRooms) {
         this.engineIo = engineIo;
         this.prototypes = prototypes;
         this.populationDensityLoader = populationDensityLoader;

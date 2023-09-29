@@ -20,6 +20,7 @@ package pl.edu.icm.board.workplace;
 
 import com.univocity.parsers.csv.CsvParser;
 import com.univocity.parsers.csv.CsvParserSettings;
+import net.snowyhollows.bento.annotation.ByName;
 import net.snowyhollows.bento.annotation.WithFactory;
 import net.snowyhollows.bento.config.WorkDir;
 import pl.edu.icm.board.EngineIo;
@@ -52,7 +53,12 @@ public class WorkplacesInCommunes {
     private final Map<Commune, EmploymentInCommune> employment = new HashMap<>();
 
     @WithFactory
-    public WorkplacesInCommunes(WorkDir workDir, EngineIo engineIo, CommuneManager communeManager, ProfessionalActivityAssessor professionalActivityAssessor, String przeplywyLudnosciFilename, int totalSlotsInWorkContexts) {
+    public WorkplacesInCommunes(WorkDir workDir,
+                                EngineIo engineIo,
+                                CommuneManager communeManager,
+                                ProfessionalActivityAssessor professionalActivityAssessor,
+                                @ByName("soc-struct.workplaces.population-flows") String przeplywyLudnosciFilename,
+                                int totalSlotsInWorkContexts) {
         this.workDir = workDir;
         this.engineIo = engineIo;
         this.communeManager = communeManager;

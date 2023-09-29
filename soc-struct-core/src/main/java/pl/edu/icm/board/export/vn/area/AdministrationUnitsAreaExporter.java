@@ -18,6 +18,7 @@
 
 package pl.edu.icm.board.export.vn.area;
 
+import net.snowyhollows.bento.annotation.ByName;
 import net.snowyhollows.bento.annotation.WithFactory;
 import pl.edu.icm.board.geography.KilometerGridCell;
 import pl.edu.icm.board.geography.commune.Commune;
@@ -35,7 +36,8 @@ public class AdministrationUnitsAreaExporter {
     private Map<Commune, Short> communeToShortMap;
 
     @WithFactory
-    public AdministrationUnitsAreaExporter(String administrationMapFilename, CommuneManager communeManager) {
+    public AdministrationUnitsAreaExporter(@ByName("soc-struct.export.visnow.administration-map-filename") String administrationMapFilename,
+                                           CommuneManager communeManager) {
         this.administrationMapFilename = administrationMapFilename;
         this.communeManager = communeManager;
     }

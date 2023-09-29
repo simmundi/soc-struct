@@ -19,6 +19,7 @@
 package pl.edu.icm.board.geography.density;
 
 import com.univocity.parsers.common.record.Record;
+import net.snowyhollows.bento.annotation.ByName;
 import net.snowyhollows.bento.annotation.WithFactory;
 import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.geography.KilometerGridCell;
@@ -53,7 +54,10 @@ public class PopulationDensityLoader {
     private final Selectors selectors;
 
     @WithFactory
-    public PopulationDensityLoader(BoardCsvLoader boardCsvLoader, String gmPopulationGridFilename, EngineIo engineIo, Selectors selectors) {
+    public PopulationDensityLoader(BoardCsvLoader boardCsvLoader,
+                                   @ByName("soc-struct.population.grid.source") String gmPopulationGridFilename,
+                                   EngineIo engineIo,
+                                   Selectors selectors) {
         this.boardCsvLoader = boardCsvLoader;
         this.gmPopulationGridFilename = gmPopulationGridFilename;
         this.engineIo = engineIo;

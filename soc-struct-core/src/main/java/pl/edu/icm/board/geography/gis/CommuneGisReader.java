@@ -18,6 +18,7 @@
 
 package pl.edu.icm.board.geography.gis;
 
+import net.snowyhollows.bento.annotation.ByName;
 import net.snowyhollows.bento.annotation.WithFactory;
 import net.snowyhollows.bento.config.WorkDir;
 import org.geotools.data.collection.SpatialIndexFeatureCollection;
@@ -41,7 +42,7 @@ class CommuneGisReader {
     private final WorkDir workDir;
 
     @WithFactory
-    public CommuneGisReader(String graniceGminFilename, WorkDir workDir) {
+    public CommuneGisReader(@ByName("soc-struct.geography.granice-gmin.source") String graniceGminFilename, WorkDir workDir) {
         this.graniceGminFilename = graniceGminFilename;
         this.workDir = workDir;
     }

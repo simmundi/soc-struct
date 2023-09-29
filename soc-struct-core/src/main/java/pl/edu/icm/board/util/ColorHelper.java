@@ -18,6 +18,7 @@
 
 package pl.edu.icm.board.util;
 
+import net.snowyhollows.bento.annotation.ByName;
 import net.snowyhollows.bento.annotation.WithFactory;
 
 import java.awt.*;
@@ -31,7 +32,11 @@ public class ColorHelper {
     public final Color COLOR_E;
 
     @WithFactory
-    public ColorHelper(String colorA, String colorB, String colorC, String colorD, String colorE) {
+    public ColorHelper(@ByName("soc-struct.export.color.a") String colorA,
+                       @ByName("soc-struct.export.color.b") String colorB,
+                       @ByName("soc-struct.export.color.c") String colorC,
+                       @ByName("soc-struct.export.color.d") String colorD,
+                       @ByName("soc-struct.export.color.e") String colorE) {
         COLOR_A = Color.decode(colorA);
         COLOR_B = Color.decode(colorB);
         COLOR_C = Color.decode(colorC);

@@ -40,7 +40,7 @@ class SquaroniaUrizenTest {
     @DisplayName("should generate specific age structure")
     void withAgeGroupShare(){
         //given
-        EngineConfiguration engineConfiguration = new Configurer().setParam("trurl.engine.storeFactory", TablesawStoreFactory.class.getName()).getConfig().get(EngineConfigurationFactory.IT);
+        EngineConfiguration engineConfiguration = new Configurer().setParam("trurl.engine.store-factory", TablesawStoreFactory.class.getName()).getConfig().get(EngineConfigurationFactory.IT);
 
         EngineIo engineIo = new EngineIo(engineConfiguration, null, null, null);
         RandomProvider randomProvider = new RandomProvider(0);
@@ -65,7 +65,7 @@ class SquaroniaUrizenTest {
     @DisplayName("shoud build squaronia")
     void build(){
         //given
-        EngineConfiguration engineConfiguration = new Configurer().setParam("trurl.engine.storeFactory", TablesawStoreFactory.class.getName()).getConfig().get(EngineConfigurationFactory.IT);
+        EngineConfiguration engineConfiguration = new Configurer().setParam("trurl.engine.store-factory", TablesawStoreFactory.class.getName()).getConfig().get(EngineConfigurationFactory.IT);
 
         EngineIo engineIo = new EngineIo(engineConfiguration, null, null, null);
         RandomProvider randomProvider = new RandomProvider(0);

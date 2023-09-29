@@ -18,6 +18,7 @@
 
 package pl.edu.icm.board.urizen.population.trusted;
 
+import net.snowyhollows.bento.annotation.ByName;
 import net.snowyhollows.bento.annotation.WithFactory;
 import net.snowyhollows.bento.config.WorkDir;
 import pl.edu.icm.trurl.csv.CsvReader;
@@ -39,9 +40,9 @@ public class CountyPopulationLoader {
 
     @WithFactory
     public CountyPopulationLoader(
-            String powiatsPopulationFilename,
+            @ByName("soc-struct.population.powiats.source") String powiatsPopulationFilename,
             WorkDir workDir,
-            int totalPopulation) {
+            @ByName("soc-struct.population.total") int totalPopulation) {
         this.workDir = workDir;
         this.totalPopulation = totalPopulation;
 

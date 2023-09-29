@@ -65,7 +65,7 @@ class AssignAttendeesToInstitutionsUrizenTest {
 
     @BeforeEach
     void before() throws IOException {
-        EngineConfiguration engineConfiguration = new Configurer().setParam("trurl.engine.storeFactory", TablesawStoreFactory.class.getName()).getConfig().get(EngineConfigurationFactory.IT);
+        EngineConfiguration engineConfiguration = new Configurer().setParam("trurl.engine.store-factory", TablesawStoreFactory.class.getName()).getConfig().get(EngineConfigurationFactory.IT);
 
         engineIo = new EngineIo(engineConfiguration, csvWriter, null, null);
         StaticSelectors staticSelectors = new StaticSelectors(engineConfiguration);

@@ -22,6 +22,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.ints.IntLists;
+import net.snowyhollows.bento.annotation.ByName;
 import net.snowyhollows.bento.annotation.WithFactory;
 import net.snowyhollows.bento.config.WorkDir;
 import org.apache.commons.math3.random.RandomGenerator;
@@ -66,7 +67,7 @@ public class PdynExporter {
                         WorkDir workDir,
                         EngineIo engineIo,
                         CommuneManager communeManager,
-                        boolean removeEmptyEduInstitutions,
+                        @ByName("soc-struct.educational-institutions.remove-empty") boolean removeEmptyEduInstitutions,
                         PdynIdExporter idExporter,
                         RandomProvider randomProvider) {
         this.debugTextFileService = debugTextFileService;

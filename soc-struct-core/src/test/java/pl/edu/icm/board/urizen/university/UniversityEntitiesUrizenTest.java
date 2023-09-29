@@ -83,7 +83,7 @@ class UniversityEntitiesUrizenTest {
                 List.of(bigUniversity));
         when(universityLoader.loadSmallUniversities()).thenReturn(
                 List.of(smallUniversity1, smallUniversity2));
-        EngineConfiguration engineConfig = new Configurer().setParam("trurl.engine.storeFactory", TablesawStoreFactory.class.getName()).getConfig().get(EngineConfigurationFactory.IT);
+        EngineConfiguration engineConfig = new Configurer().setParam("trurl.engine.store-factory", TablesawStoreFactory.class.getName()).getConfig().get(EngineConfigurationFactory.IT);
         engineIo = new EngineIo(engineConfig, null, null, null);
         universityEntitiesUrizen =
                 new UniversityEntitiesUrizen(universityLoader,
