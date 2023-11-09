@@ -64,7 +64,6 @@ public class EmConfig {
         }
         File root = new File(rootPath);
         return new EmConfigurer(new DefaultWorkDir(root), root, configurer -> postConfigure(line, configurer))
-                .loadHoconFile("input/config/pdyn2-stack.conf")
                 .setParam("rootPath", rootPath);
     }
 
@@ -77,7 +76,7 @@ public class EmConfig {
             }
             if (line.hasOption(fileOption)) {
                 for (String file : line.getOptionValues(fileOption)) {
-                    configurer.loadConfigFile(file);
+                    configurer.loadHoconFile(file);
                 }
             }
             if (line.hasOption(parameterOption)) {
@@ -113,7 +112,7 @@ public class EmConfig {
                         .hasArgs()
                         .valueSeparator('=').build())
                 .addOption(fileOption = Option.builder("F")
-                        .desc("reads a single property file, e.g. -Finput/config/healthcare/healthcare.properties")
+                        .desc("reads a single config file, e.g. -Finput/config/healthcare/healthcare.conf")
                         .hasArg()
                         .build())
                 .addOption(homeOption = Option.builder()
