@@ -32,11 +32,12 @@ import pl.edu.icm.board.geography.prg.model.AddressPoint;
 import pl.edu.icm.board.geography.prg.model.IndexedAddressPoint;
 import pl.edu.icm.board.geography.prg.model.IndexedAddressPointMapper;
 import pl.edu.icm.board.geography.prg.model.LookupPrecision;
-import pl.edu.icm.board.model.Location;
+import pl.edu.icm.em.socstruct.component.geo.Location;
 import pl.edu.icm.board.util.FileCacheService;
 import pl.edu.icm.board.util.RandomProvider;
 import pl.edu.icm.trurl.store.Store;
 import pl.edu.icm.trurl.store.array.ArrayStore;
+import pl.edu.icm.trurl.store.basic.BasicAttributeFactory;
 import pl.edu.icm.trurl.util.Status;
 
 import java.util.ArrayList;
@@ -50,9 +51,9 @@ public class AddressPointManager {
     private final CommuneManager communeManager;
     private final RandomGenerator random;
     private final StreetNameNormalizer streetNameNormalizer;
-    private final Store addressPointsStore = new ArrayStore(1024);
+    private final Store addressPointsStore = new Store(new BasicAttributeFactory(), 1024);
     private final int[] index;
-    private final IndexedAddressPointMapper indexedAddressPointMapper = new IndexedAddressPointMapper(null);
+    private final IndexedAddressPointDao indexedAddressPointDao = new IndexedAddressPointDao(null);
 
     @WithFactory
     public AddressPointManager(AddressPointSource addressPointSource,
@@ -63,9 +64,9 @@ public class AddressPointManager {
         this.communeManager = communeManager;
         this.random = randomProvider.getRandomGenerator(AddressPointManager.class);
         this.streetNameNormalizer = streetNameNormalizer;
-        indexedAddressPointMapper.configureStore(addressPointsStore);
+        indexedAddressPointDao.configureStore(addressPointsStore);
         fileCacheService.computeIfAbsent("address_points", addressPointsStore, addressPointSource::load);
-        indexedAddressPointMapper.attachStore(addressPointsStore);
+        indexedAddressPointDao.attachStore(addressPointsStore);
         index = IntStream.range(0, addressPointsStore.getCount()).toArray();
         postalCodesToGrid = extractPostalCodes();
         index();
@@ -87,17 +88,17 @@ public class AddressPointManager {
         String needle = streetNameNormalizer.indexize(postalCode, locality, street, streetNumber);
         AddressLookupResult addressLookupResult = new AddressLookupResult();
         int indexPosition = IntArrays.binarySearch(index, -1, (a, unused) -> {  // -1 is unused
-            String normA = indexedAddressPointMapper.getNormalized(a);
+            String normA = indexedAddressPointDao.getNormalized(a);
             return normA.compareTo(needle);
         });
 
         if (indexPosition >= 0) {
             int id = index[indexPosition];
             addressLookupResult.setPrecision(LookupPrecision.PERFECT_MATCH);
-            IndexedAddressPoint indexed = indexedAddressPointMapper.createAndLoad(id);
+            IndexedAddressPoint indexed = indexedAddressPointDao.createAndLoad(id);
 
             addressLookupResult.setAddressPoint(indexed.getAddressPoint());
-            addressLookupResult.setLocation(Location.fromPl1992MeterCoords(
+            addressLookupResult.setLocation(Location.fromEquiarealENMeters(
                     indexed.getAddressPoint().getEasting(), indexed.getAddressPoint().getNorthing()));
 
             return addressLookupResult;
@@ -127,15 +128,15 @@ public class AddressPointManager {
 
     public Stream<IndexedAddressPoint> streamIndexedAddressPoints() {
         return IntStream.range(0, addressPointsStore.getCount())
-                .mapToObj((idx) -> indexedAddressPointMapper.createAndLoad(idx));
+                .mapToObj((idx) -> indexedAddressPointDao.createAndLoad(idx));
     }
 
     private void index() {
         var status = Status.of("Indexing PRG database");
 
         IntArrays.parallelQuickSort(index, (a, b) -> {
-            String normA = indexedAddressPointMapper.getNormalized(a);
-            String normB = indexedAddressPointMapper.getNormalized(b);
+            String normA = indexedAddressPointDao.getNormalized(a);
+            String normB = indexedAddressPointDao.getNormalized(b);
             return normA.compareTo(normB);
         });
 

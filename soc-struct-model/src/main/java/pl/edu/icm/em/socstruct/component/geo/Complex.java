@@ -16,15 +16,15 @@
  *
  */
 
-package pl.edu.icm.board.model;
+package pl.edu.icm.em.socstruct.component.geo;
 
-import pl.edu.icm.trurl.ecs.annotation.WithMapper;
+import pl.edu.icm.trurl.ecs.dao.annotation.WithDao;
 import pl.edu.icm.trurl.ecs.Entity;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@WithMapper(namespace = "complex")
+@WithDao(namespace = "complex")
 public class Complex {
     private List<Entity> households = new ArrayList<>();
     private int size;

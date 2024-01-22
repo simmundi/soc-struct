@@ -16,15 +16,19 @@
  *
  */
 
-package pl.edu.icm.board.model;
+package pl.edu.icm.em.socstruct.component;
 
-public enum ReplicantType {
-    CLERGY_HOUSE,
-    NURSING_HOME,
-    DORM,
-    IMMIGRANTS_SPOT,
-    PRISON,
-    MONASTERY,
-    BARRACKS,
-    HOMELESS_SPOT
+import pl.edu.icm.trurl.ecs.dao.annotation.WithDao;
+
+@WithDao
+public class NameTag {
+    private String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }

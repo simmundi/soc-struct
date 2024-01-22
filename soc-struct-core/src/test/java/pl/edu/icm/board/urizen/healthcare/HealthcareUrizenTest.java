@@ -28,8 +28,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.geography.prg.model.AddressLookupResult;
 import pl.edu.icm.board.geography.prg.model.GeocodedPoi;
-import pl.edu.icm.board.model.HealthcareType;
-import pl.edu.icm.board.model.Location;
+import pl.edu.icm.em.socstruct.component.health.HealthcareType;
+import pl.edu.icm.em.socstruct.component.geo.Location;
 import pl.edu.icm.board.urizen.generic.Entities;
 import pl.edu.icm.trurl.ecs.Engine;
 import pl.edu.icm.trurl.ecs.Session;
@@ -74,7 +74,7 @@ class HealthcareUrizenTest {
             system.execute(sessionFactory);
             return null;
         }).when(engine).execute(any());
-        addressLookupResult.setLocation(Location.fromPl1992MeterCoords(1, 1));
+        addressLookupResult.setLocation(Location.fromEquiarealENMeters(1, 1));
         healthcare1.setType(HealthcareType.POZ);
         healthcare1.setDateOfClosure("2021-01-20");
 

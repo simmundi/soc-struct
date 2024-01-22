@@ -20,7 +20,8 @@ package pl.edu.icm.board.urizen.healthcare;
 
 import net.snowyhollows.bento.annotation.WithFactory;
 import pl.edu.icm.board.EngineIo;
-import pl.edu.icm.board.model.*;
+import pl.edu.icm.em.socstruct.component.geo.Location;
+import pl.edu.icm.em.socstruct.component.health.HealthcareType;
 import pl.edu.icm.board.urizen.generic.Entities;
 import pl.edu.icm.trurl.ecs.Session;
 
@@ -56,7 +57,7 @@ public class HealthcareUrizen {
     private void generateHealthcareUnit(HealthcareType type, String dateOfClosure, Location location) {
         if (type == HealthcareType.POZ && dateOfClosure.equals("NULL")) {
             engineIo.getEngine().execute(sessionFactory -> {
-                Session session = sessionFactory.create();
+                Session session = sessionFactory.createOrGet();
                 entities.createHealthcare(session, type, location.getN(), location.getE());
                 session.close();
             });

@@ -20,11 +20,11 @@ package pl.edu.icm.board.urizen.university;
 
 import net.snowyhollows.bento.annotation.WithFactory;
 import pl.edu.icm.board.EngineIo;
-import pl.edu.icm.board.model.EducationLevel;
-import pl.edu.icm.board.model.EducationalInstitution;
-import pl.edu.icm.board.model.Named;
-import pl.edu.icm.board.model.AdministrationUnit;
-import pl.edu.icm.board.model.Location;
+import pl.edu.icm.em.socstruct.component.NameTag;
+import pl.edu.icm.em.socstruct.component.edu.EducationLevel;
+import pl.edu.icm.em.socstruct.component.edu.EducationalInstitution;
+import pl.edu.icm.em.socstruct.component.geo.AdministrationUnitTag;
+import pl.edu.icm.em.socstruct.component.geo.Location;
 import pl.edu.icm.board.urizen.generic.Entities;
 import pl.edu.icm.trurl.ecs.Session;
 import pl.edu.icm.trurl.util.Status;
@@ -49,8 +49,8 @@ public class UniversityEntitiesUrizen {
         engineIo.require(
                 EducationalInstitution.class,
                 Location.class,
-                Named.class,
-                AdministrationUnit.class);
+                NameTag.class,
+                AdministrationUnitTag.class);
     }
 
     public void buildEntities() {

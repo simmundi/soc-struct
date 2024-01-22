@@ -20,27 +20,30 @@ package pl.edu.icm.board.export;
 
 import net.snowyhollows.bento.annotation.WithFactory;
 import pl.edu.icm.board.EngineIo;
-import pl.edu.icm.board.model.Household;
-import pl.edu.icm.board.model.Location;
-import pl.edu.icm.board.model.Person;
+import pl.edu.icm.em.socstruct.component.Household;
+import pl.edu.icm.em.socstruct.component.Person;
+import pl.edu.icm.em.socstruct.component.geo.Location;
 import pl.edu.icm.trurl.ecs.Engine;
 import pl.edu.icm.trurl.ecs.Entity;
-import pl.edu.icm.trurl.ecs.util.EntityIterator;
-import pl.edu.icm.trurl.ecs.util.Selectors;
+import pl.edu.icm.trurl.ecs.util.ActionService;
+import pl.edu.icm.trurl.ecs.util.Indexes;
+import pl.edu.icm.trurl.ecs.util.IteratingStepBuilder;
+import pl.edu.icm.trurl.io.visnow.VnPointsExporter;
 import pl.edu.icm.trurl.util.Status;
-import pl.edu.icm.trurl.visnow.VnPointsExporter;
 
 import java.io.IOException;
 
 public class AgentExporter {
 
     private final Engine engine;
-    private final Selectors selectors;
+    private final Indexes indexes;
+    private final ActionService actionService;
 
     @WithFactory
-    public AgentExporter(EngineIo engineIo, Selectors selectors) {
+    public AgentExporter(EngineIo engineIo, Indexes indexes, ActionService actionService) {
         this.engine = engineIo.getEngine();
-        this.selectors = selectors;
+        this.indexes = indexes;
+        this.actionService = actionService;
     }
 
     public void export() throws IOException {
@@ -50,9 +53,10 @@ public class AgentExporter {
 
         ExportedAgent exportedAgent = new ExportedAgent();
         var statusBar = Status.of("Outputing agents", 500000);
-        engine.execute(EntityIterator.select(selectors.allWithComponents(Household.class, Location.class))
-                .dontPersist()
-                .forEach(Household.class, Location.class, (entity, household, location) -> {
+        engine.execute(IteratingStepBuilder.iteratingOver(indexes.allWithComponents(Household.class, Location.class))
+                .persisting()
+                .withoutContext()
+                .perform(actionService.withComponents(Household.class, Location.class, (entity, household, location) -> {
                     for (Entity member : household.getMembers()) {
                         var person = member.get(Person.class);
 
@@ -65,7 +69,7 @@ public class AgentExporter {
 
                         statusBar.tick();
                     }
-                }));
+                })).build());
         exporter.close();
         statusBar.done();
     }

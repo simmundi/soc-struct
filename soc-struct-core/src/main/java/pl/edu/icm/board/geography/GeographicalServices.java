@@ -19,7 +19,7 @@
 package pl.edu.icm.board.geography;
 
 import net.snowyhollows.bento.annotation.WithFactory;
-import pl.edu.icm.board.model.Area;
+import pl.edu.icm.em.socstruct.component.geo.Area;
 
 public class GeographicalServices {
 

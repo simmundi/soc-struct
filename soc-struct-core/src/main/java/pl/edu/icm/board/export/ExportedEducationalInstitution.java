@@ -18,10 +18,10 @@
 
 package pl.edu.icm.board.export;
 
-import pl.edu.icm.trurl.ecs.annotation.WithMapper;
-import pl.edu.icm.trurl.visnow.VnCoords;
+import pl.edu.icm.trurl.ecs.dao.annotation.WithDao;
+import pl.edu.icm.trurl.io.visnow.VnCoords;
 
-@WithMapper
+@WithDao
 public class ExportedEducationalInstitution implements VnCoords {
     private short id;
     private float x;

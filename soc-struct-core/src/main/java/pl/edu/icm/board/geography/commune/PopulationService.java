@@ -22,31 +22,37 @@ import net.snowyhollows.bento.annotation.WithFactory;
 import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.geography.KilometerGridCell;
 import pl.edu.icm.board.geography.density.PopulationDensityLoader;
-import pl.edu.icm.board.model.Household;
-import pl.edu.icm.board.model.Location;
-import pl.edu.icm.trurl.ecs.util.EntityIterator;
-import pl.edu.icm.trurl.ecs.util.Selectors;
+import pl.edu.icm.em.socstruct.component.Household;
+import pl.edu.icm.em.socstruct.component.geo.Location;
+import pl.edu.icm.trurl.ecs.util.ActionService;
+import pl.edu.icm.trurl.ecs.util.Indexes;
+import pl.edu.icm.trurl.ecs.util.IteratingStepBuilder;
 import pl.edu.icm.trurl.util.Status;
 
 import java.util.HashMap;
 import java.util.Map;
+
+;
 
 public class PopulationService {
     private final Map<String, Integer> populationByTeryt = new HashMap<>();
     private final PopulationDensityLoader populationDensityLoader;
     private final CommuneManager communeManager;
     private final EngineIo engineIo;
-    private final Selectors selectors;
+    private final ActionService actionService;
+    private final Indexes indexes;
 
     @WithFactory
     public PopulationService(EngineIo engineIo,
                              CommuneManager communeManager,
                              PopulationDensityLoader populationDensityLoader,
-                             Selectors selectors) {
+                             ActionService actionService,
+                             Indexes indexes) {
         this.populationDensityLoader = populationDensityLoader;
         this.communeManager = communeManager;
         this.engineIo = engineIo;
-        this.selectors = selectors;
+        this.actionService = actionService;
+        this.indexes = indexes;
     }
 
     public void load() {
@@ -55,17 +61,18 @@ public class PopulationService {
         }
         populationDensityLoader.loadActualPopulationFromEngine();
         var status = Status.of("loading population", 1_000_000);
-        engineIo.getEngine().execute(EntityIterator.select(selectors.allWithComponents(Household.class, Location.class)).forEach(Household.class, Location.class, (entity, household, location) -> {
-            var teryt = communeManager.communeAt(KilometerGridCell.fromLocation(location)).getTeryt();
-            var size = household.getMembers().size();
-            if (isACityWithPowiatRights(teryt)) {
-                teryt = teryt.substring(0, 4);
-            } else {
-                teryt = teryt.substring(0, 6);
-            }
-            populationByTeryt.compute(teryt, (t, v) -> (v == null) ? size : v + size);
-            status.tick();
-        }));
+        engineIo.getEngine().execute(IteratingStepBuilder.iteratingOver(indexes.allWithComponents(Household.class, Location.class))
+                .withoutContext().perform(actionService.withComponents(Household.class, Location.class, (entity, household, location) -> {
+                    var teryt = communeManager.communeAt(KilometerGridCell.fromLocation(location)).getTeryt();
+                    var size = household.getMembers().size();
+                    if (isACityWithPowiatRights(teryt)) {
+                        teryt = teryt.substring(0, 4);
+                    } else {
+                        teryt = teryt.substring(0, 6);
+                    }
+                    populationByTeryt.compute(teryt, (t, v) -> (v == null) ? size : v + size);
+                    status.tick();
+                })).build());
         status.done();
     }
 

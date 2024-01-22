@@ -22,16 +22,15 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class BinnedDatasetTest {
+class MultiHistogramTest {
     @Test
     @DisplayName("Should create a binned dataset of occurances of 'a', labelled by words and sliced by word lengthts")
     void binAndSlice() {
         // execute
-        BinnedDataset<Integer, String> binnedDataset = BinnedDataset.binAndSlice(
+        MultiHistogram<Integer, String> binnedDataset = MultiHistogram.binAndSlice(
                 Stream.of("ala", "ola", "bela", "rurka", "watażka", "ważka", "penicylina"),
                 string -> (int)string.chars().filter(ch -> ch == 'a').count(),
                 string -> Stream.of(string.length()));

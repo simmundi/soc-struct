@@ -19,9 +19,9 @@
 package pl.edu.icm.board.export.vn.poi;
 
 import net.snowyhollows.bento.annotation.WithFactory;
-import pl.edu.icm.board.model.Location;
-import pl.edu.icm.trurl.ecs.Entity;
-import pl.edu.icm.trurl.visnow.VnPointsExporter;
+import pl.edu.icm.em.common.detached.DetachedEntity;
+import pl.edu.icm.em.socstruct.component.geo.Location;
+import pl.edu.icm.trurl.io.visnow.VnPointsExporter;
 
 import java.io.IOException;
 import java.util.function.BiFunction;
@@ -33,7 +33,7 @@ public class PoiExporter {
     public PoiExporter() {
     }
 
-    public void export(String baseName, Stream<Entity> entityStream, BiFunction<PoiItem, Entity, PoiItem> mapper) throws IOException {
+    public void export(String baseName, Stream<DetachedEntity> entityStream, BiFunction<PoiItem, DetachedEntity, PoiItem> mapper) throws IOException {
         PoiItem poiItem = new PoiItem();
         var exporter = VnPointsExporter.create(PoiItem.class, baseName);
 

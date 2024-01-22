@@ -21,6 +21,11 @@ package pl.edu.icm.board.urizen.replicants;
 import net.snowyhollows.bento.annotation.WithFactory;
 import pl.edu.icm.board.geography.KilometerGridCell;
 import pl.edu.icm.board.model.*;
+import pl.edu.icm.em.socstruct.component.Household;
+import pl.edu.icm.em.socstruct.component.Person;
+import pl.edu.icm.em.socstruct.component.geo.Location;
+import pl.edu.icm.em.socstruct.component.prefab.PrefabTag;
+import pl.edu.icm.em.socstruct.component.prefab.PrefabType;
 import pl.edu.icm.trurl.ecs.Entity;
 import pl.edu.icm.trurl.ecs.Session;
 
@@ -36,70 +41,70 @@ public class ReplicantPrototypes {
     }
 
     public Entity immigrantsSpotResident(Session session, Person.Sex sex, int age) {
-        return createPerson(session, sex, age, ReplicantType.IMMIGRANTS_SPOT);
+        return createPerson(session, sex, age, PrefabType.IMMIGRANTS_SPOT);
     }
 
     public Entity immigrantsSpotRoom(Session session, KilometerGridCell cell) {
-        return createHousehold(session, cell, ReplicantType.IMMIGRANTS_SPOT);
+        return createHousehold(session, cell, PrefabType.IMMIGRANTS_SPOT);
     }
 
     public Entity nursingHomeResident(Session session, Person.Sex sex, int age) {
-        return createPerson(session, sex, age, ReplicantType.NURSING_HOME);
+        return createPerson(session, sex, age, PrefabType.NURSING_HOME);
     }
 
     public Entity nursingHomeRoom(Session session, List<Entity> complexHouseholds, KilometerGridCell cell) {
-        return createHouseholdInComplex(session, cell, complexHouseholds, ReplicantType.NURSING_HOME);
+        return createHouseholdInComplex(session, cell, complexHouseholds, PrefabType.NURSING_HOME);
     }
 
     public Entity dormResident(Session session, Person.Sex sex, int age) {
-        return createPerson(session, sex, age, ReplicantType.DORM);
+        return createPerson(session, sex, age, PrefabType.DORM);
     }
 
     public Entity dormRoom(Session session, List<Entity> complexHouseholds, KilometerGridCell cell) {
-        return createHouseholdInComplex(session, cell, complexHouseholds, ReplicantType.DORM);
+        return createHouseholdInComplex(session, cell, complexHouseholds, PrefabType.DORM);
     }
 
     public Entity monasteryResident(Session session, Person.Sex sex, int age) {
-        return createPerson(session, sex, age, ReplicantType.MONASTERY);
+        return createPerson(session, sex, age, PrefabType.MONASTERY);
     }
 
     public Entity monasteryRoom(Session session, List<Entity> complexHouseholds, KilometerGridCell cell) {
-        return createHouseholdInComplex(session, cell, complexHouseholds, ReplicantType.MONASTERY);
+        return createHouseholdInComplex(session, cell, complexHouseholds, PrefabType.MONASTERY);
     }
 
     public Entity prisonResident(Session session, Person.Sex sex, int age) {
-        return createPerson(session, sex, age, ReplicantType.PRISON);
+        return createPerson(session, sex, age, PrefabType.PRISON);
     }
 
     public Entity prisonRoom(Session session, List<Entity> complexHouseholds, Location location) {
-        return createHouseholdInComplex(session, location, complexHouseholds, ReplicantType.PRISON);
+        return createHouseholdInComplex(session, location, complexHouseholds, PrefabType.PRISON);
     }
 
     public Entity barracksRoom(Session session, List<Entity> complexHouseholds, KilometerGridCell cell) {
-        return createHouseholdInComplex(session, cell, complexHouseholds, ReplicantType.BARRACKS);
+        return createHouseholdInComplex(session, cell, complexHouseholds, PrefabType.BARRACKS);
     }
 
     public Entity barracksResident(Session session, Person.Sex sex, int age) {
-        return createPerson(session, sex, age, ReplicantType.BARRACKS);
+        return createPerson(session, sex, age, PrefabType.BARRACKS);
     }
 
     public Entity clergyHouseResident(Session session, Person.Sex sex, int age) {
-        return createPerson(session, sex, age, ReplicantType.CLERGY_HOUSE);
+        return createPerson(session, sex, age, PrefabType.CLERGY_HOUSE);
     }
 
     public Entity clergyHouseRoom(Session session, KilometerGridCell cell) {
-        return createHousehold(session, cell, ReplicantType.CLERGY_HOUSE);
+        return createHousehold(session, cell, PrefabType.CLERGY_HOUSE);
     }
 
     public Entity homelessSpotRoom(Session session, KilometerGridCell cell) {
-        return createHousehold(session, cell, ReplicantType.HOMELESS_SPOT);
+        return createHousehold(session, cell, PrefabType.HOMELESS_SPOT);
     }
 
     public Entity homelessSpotResident(Session session, Person.Sex sex, int age) {
-        return createPerson(session, sex, age, ReplicantType.HOMELESS_SPOT);
+        return createPerson(session, sex, age, PrefabType.HOMELESS_SPOT);
     }
 
-    private Entity createPerson(Session session, Person.Sex sex, int age, ReplicantType type) {
+    private Entity createPerson(Session session, Person.Sex sex, int age, PrefabType type) {
         Entity replicantEntity = session.createEntity();
         Person person = replicantEntity.add(new Person());
         person.setSex(sex);
@@ -108,7 +113,7 @@ public class ReplicantPrototypes {
         return replicantEntity;
     }
 
-    private Entity createHousehold(Session session, KilometerGridCell cell, ReplicantType type) {
+    private Entity createHousehold(Session session, KilometerGridCell cell, PrefabType type) {
         Entity roomEntity = session.createEntity();
         roomEntity.add(cell.toLocation());
         roomEntity.add(replicant(type));
@@ -119,14 +124,14 @@ public class ReplicantPrototypes {
     private Entity createHouseholdInComplex(Session session,
                                             KilometerGridCell cell,
                                             List<Entity> complexHouseholds,
-                                            ReplicantType type) {
+                                            PrefabType type) {
         return createHouseholdInComplex(session, cell.toLocation(), complexHouseholds, type);
     }
 
     private Entity createHouseholdInComplex(Session session,
                                             Location location,
                                             List<Entity> complexHouseholds,
-                                            ReplicantType type) {
+                                            PrefabType type) {
         Entity roomEntity = session.createEntity();
         roomEntity.add(location);
         roomEntity.add(replicant(type));
@@ -135,9 +140,9 @@ public class ReplicantPrototypes {
         return roomEntity;
     }
 
-    private Replicant replicant(ReplicantType type) {
-        Replicant replicant = new Replicant();
-        replicant.setType(type);
-        return replicant;
+    private PrefabTag replicant(PrefabType type) {
+        PrefabTag prefabTag = new PrefabTag();
+        prefabTag.setType(type);
+        return prefabTag;
     }
 }

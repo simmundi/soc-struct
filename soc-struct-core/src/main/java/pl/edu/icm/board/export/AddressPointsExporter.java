@@ -20,8 +20,8 @@ package pl.edu.icm.board.export;
 
 import net.snowyhollows.bento.annotation.WithFactory;
 import pl.edu.icm.board.geography.prg.AddressPointManager;
+import pl.edu.icm.trurl.io.visnow.VnPointsExporter;
 import pl.edu.icm.trurl.util.Status;
-import pl.edu.icm.trurl.visnow.VnPointsExporter;
 
 import java.io.IOException;
 

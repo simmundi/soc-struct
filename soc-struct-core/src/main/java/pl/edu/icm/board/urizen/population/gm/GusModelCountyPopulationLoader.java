@@ -49,7 +49,7 @@ public class GusModelCountyPopulationLoader implements CacheManager.HasCache {
         load();
     }
 
-    public Map<String, Population> createCountyBinPools() {
+    public Map<String, Population> createCountyHistograms() {
         if (records.isEmpty()) {
             load();
         }

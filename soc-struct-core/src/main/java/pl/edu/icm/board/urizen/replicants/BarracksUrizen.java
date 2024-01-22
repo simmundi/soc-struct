@@ -23,17 +23,17 @@ import net.snowyhollows.bento.annotation.WithFactory;
 import org.apache.commons.math3.random.RandomDataGenerator;
 import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.agesex.AgeSexFromDistributionPicker;
-import pl.edu.icm.board.model.Complex;
+import pl.edu.icm.em.socstruct.component.geo.Complex;
 import pl.edu.icm.board.geography.KilometerGridCell;
-import pl.edu.icm.board.model.Location;
+import pl.edu.icm.em.socstruct.component.geo.Location;
 import pl.edu.icm.board.geography.density.PopulationDensityLoader;
-import pl.edu.icm.board.model.Household;
-import pl.edu.icm.board.model.Replicant;
-import pl.edu.icm.board.model.Person;
+import pl.edu.icm.em.socstruct.component.Household;
+import pl.edu.icm.em.socstruct.component.prefab.PrefabTag;
+import pl.edu.icm.em.socstruct.component.Person;
 import pl.edu.icm.board.urizen.generic.Entities;
 import pl.edu.icm.board.urizen.household.model.AgeRange;
 import pl.edu.icm.board.util.RandomProvider;
-import pl.edu.icm.trurl.bin.BinPool;
+import pl.edu.icm.trurl.bin.Histogram;
 import pl.edu.icm.trurl.ecs.Entity;
 import pl.edu.icm.trurl.ecs.Session;
 
@@ -48,8 +48,8 @@ public class BarracksUrizen {
     private final int barracksReplicantsCount;
     private final int barracksRoomSize;
     private final int barracksMaxRooms;
-    private final BinPool<AgeRange> ages;
-    private final BinPool<Person.Sex> sexes;
+    private final Histogram<AgeRange> ages;
+    private final Histogram<Person.Sex> sexes;
     private final AgeSexFromDistributionPicker ageSexFromDistributionPicker;
     private final Entities entities;
 
@@ -73,7 +73,7 @@ public class BarracksUrizen {
         this.barracksReplicantsCount = barracksReplicantsCount;
         this.barracksRoomSize = barracksRoomSize;
         this.barracksMaxRooms = barracksMaxRooms;
-        this.engineIo.require(Household.class, Person.class, Location.class, Replicant.class);
+        this.engineIo.require(Household.class, Person.class, Location.class, PrefabTag.class);
         this.sexes = replicantsPopulation.getPopulation().getPeopleBySex();
         this.ages = replicantsPopulation.getPopulation().getPeopleByAge().createSubPool(
                 AgeRange.AGE_20_24,

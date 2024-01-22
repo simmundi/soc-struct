@@ -31,13 +31,13 @@ import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.EntityMocker;
 import pl.edu.icm.board.MockRandomProvider;
 import pl.edu.icm.board.agesex.AgeSexFromDistributionPicker;
-import pl.edu.icm.board.model.AdministrationUnit;
-import pl.edu.icm.board.model.Household;
-import pl.edu.icm.board.model.Person;
+import pl.edu.icm.em.socstruct.component.geo.AdministrationUnitTag;
+import pl.edu.icm.em.socstruct.component.Household;
+import pl.edu.icm.em.socstruct.component.Person;
 import pl.edu.icm.board.urizen.population.trusted.CountyPopulationLoader;
 import pl.edu.icm.board.urizen.replicants.ReplicantsCounter;
 import pl.edu.icm.board.util.RandomProvider;
-import pl.edu.icm.trurl.bin.BinPool;
+import pl.edu.icm.trurl.bin.Histogram;
 import pl.edu.icm.trurl.ecs.Engine;
 import pl.edu.icm.trurl.ecs.Entity;
 import pl.edu.icm.trurl.ecs.EntitySystem;
@@ -83,7 +83,7 @@ class HouseholdClonerUrizenTest {
 
     @BeforeEach
     void configure() {
-        mock = new EntityMocker(session, Household.class, Person.class, AdministrationUnit.class);
+        mock = new EntityMocker(session, Household.class, Person.class, AdministrationUnitTag.class);
 
         when(engineIo.getEngine()).thenReturn(engine);
         doAnswer(call -> {
@@ -135,7 +135,7 @@ class HouseholdClonerUrizenTest {
 //                .collect(Collectors.toList());
 
         assertThat(households).extracting(
-                        e -> e.get(AdministrationUnit.class).getTeryt(),
+                        e -> e.get(AdministrationUnitTag.class).getCode(),
                         e -> e.get(Household.class).getMembers().size())
                 .containsExactly(
                         tuple("warszawa", 2),
@@ -159,7 +159,7 @@ class HouseholdClonerUrizenTest {
         //  - 1 household of a young couple
         // target Warsaw population of 20
         familyShapeStats.populationByTeryt.put("warszawa", new AtomicInteger(10));
-        BinPool<HouseholdShape> warszawa = new BinPool<>();
+        Histogram<HouseholdShape> warszawa = new Histogram<>();
         familyShapeStats.shapesByTeryt.put("warszawa", warszawa);
         when(countyPopulationLoader.populationOf("warszawa")).thenReturn(20);
 //        warszawa.add(HouseholdShape.tryCreate(
@@ -177,7 +177,7 @@ class HouseholdClonerUrizenTest {
         // ten people in Cracow:
         // - 1 household with 10 middle-aged people in it
         // target Cracow population: 31
-        BinPool<HouseholdShape> krakow = new BinPool<>();
+        Histogram<HouseholdShape> krakow = new Histogram<>();
         familyShapeStats.shapesByTeryt.put("kraków", krakow);
         familyShapeStats.populationByTeryt.put("kraków", new AtomicInteger(10));
         when(countyPopulationLoader.populationOf("kraków")).thenReturn(31);

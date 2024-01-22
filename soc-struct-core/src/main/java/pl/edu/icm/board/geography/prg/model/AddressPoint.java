@@ -18,9 +18,9 @@
 
 package pl.edu.icm.board.geography.prg.model;
 
-import pl.edu.icm.trurl.ecs.annotation.WithMapper;
+import pl.edu.icm.trurl.ecs.dao.annotation.WithDao;
 
-@WithMapper
+@WithDao
 public class AddressPoint {
     private String prgId;
     private String postalCode;
@@ -28,8 +28,6 @@ public class AddressPoint {
     private String fineLocality;
     private String street;
     private String number;
-    private float easting;
-    private float northing;
 
     public String getPrgId() {
         return prgId;
@@ -77,21 +75,5 @@ public class AddressPoint {
 
     public void setNumber(String number) {
         this.number = number;
-    }
-
-    public float getEasting() {
-        return easting;
-    }
-
-    public void setEasting(float easting) {
-        this.easting = easting;
-    }
-
-    public float getNorthing() {
-        return northing;
-    }
-
-    public void setNorthing(float northing) {
-        this.northing = northing;
     }
 }

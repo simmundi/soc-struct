@@ -41,7 +41,7 @@ import static org.mockito.Mockito.when;
 class PopulationDensityLoaderTest {
 
     @Mock
-    Selectors selectors;
+    Indexes selectors;
     @Mock
     BoardCsvLoader boardCsvLoader;
 

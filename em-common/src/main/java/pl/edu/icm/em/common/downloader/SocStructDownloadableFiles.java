@@ -2,11 +2,11 @@ package pl.edu.icm.em.common.downloader;
 
 import net.snowyhollows.bento.Bento;
 import net.snowyhollows.bento.annotation.WithFactory;
-import net.snowyhollows.bento.soft.SoftEnumManager;
+import net.snowyhollows.bento.category.CategoryManager;
 
 import java.io.IOException;
 
-public class SocStructDownloadableFiles extends SoftEnumManager<DownloadableFile> {
+public class SocStructDownloadableFiles extends CategoryManager<DownloadableFile> {
     public final DownloadableFile POPULATION_ORC;
     public final DownloadableFile POPULATION_CRC;
     private final SocStructFileVerifier socstructFileVerifier;

@@ -18,7 +18,7 @@
 
 package pl.edu.icm.board.urizen.household.cloner;
 
-import pl.edu.icm.trurl.bin.BinPool;
+import pl.edu.icm.em.common.math.histogram.Histogram;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,6 +29,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @see FamilyShapeStatsService
  */
 class FamilyShapeStats {
-    final Map<String, BinPool<HouseholdShape>> shapesByTeryt = new HashMap<>();
+    final Map<String, Histogram<HouseholdShape>> shapesByTeryt = new HashMap<>();
     final Map<String, AtomicInteger> populationByTeryt = new HashMap<>();
 }

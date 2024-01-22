@@ -16,23 +16,30 @@
  *
  */
 
-package pl.edu.icm.board.model;
+package pl.edu.icm.em.socstruct.component.edu;
 
-public enum EducationLevel {
-    K("kindergarten"),
-    P("primary school"),
-    H("high school"),
-    PH("primary and high school"),
-    BU("big university"),
-    U("university");
+import pl.edu.icm.trurl.ecs.dao.annotation.WithDao;
+import pl.edu.icm.trurl.ecs.Entity;
 
-    private final String name;
+@WithDao
+public class Attendee {
+    private Entity institution;
+    private Entity secondaryInstitution;
 
-    EducationLevel(String name) {
-        this.name = name;
+    public Entity getInstitution() {
+        return institution;
     }
 
-    public boolean isUniversity() {
-        return this == U || this == BU;
+    public void setInstitution(Entity institution) {
+        this.institution = institution;
     }
+
+    public Entity getSecondaryInstitution() {
+        return secondaryInstitution;
+    }
+
+    public void setSecondaryInstitution(Entity secondaryInstitution) {
+        this.secondaryInstitution = secondaryInstitution;
+    }
+
 }

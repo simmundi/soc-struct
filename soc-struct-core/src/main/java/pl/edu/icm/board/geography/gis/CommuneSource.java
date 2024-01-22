@@ -23,15 +23,14 @@ import net.snowyhollows.bento.annotation.WithFactory;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.opengis.feature.simple.SimpleFeature;
 import pl.edu.icm.board.geography.KilometerGridCell;
-import pl.edu.icm.trurl.ecs.mapper.Mapper;
-import pl.edu.icm.trurl.ecs.mapper.Mappers;
+import pl.edu.icm.trurl.ecs.dao.Dao;
+import pl.edu.icm.trurl.ecs.dao.DaoProducer;
 import pl.edu.icm.trurl.store.Store;
 import pl.edu.icm.trurl.util.Status;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * Stateless, cacheless source of data about geography and administration units.
@@ -46,15 +45,18 @@ public class CommuneSource {
     private final GisUtilsService gisUtilsService;
     private final CommuneGisReader communeGisReader;
     private final int gridRows;
+    private final DaoProducer daoProducer;
     private final int gridCols;
 
     @WithFactory
     public CommuneSource(GisUtilsService gisUtilsService,
                          CommuneGisReader communeGisReader,
+                         DaoProducer daoProducer,
                          @ByName("soc-struct.geography.grid-columns") int gridColumns,
                          @ByName("soc-struct.geography.grid-rows") int gridRows) {
         this.gisUtilsService = gisUtilsService;
         this.communeGisReader = communeGisReader;
+        this.daoProducer = daoProducer;
         this.gridCols = gridColumns;
         this.gridRows = gridRows;
     }
@@ -65,7 +67,7 @@ public class CommuneSource {
 
         processGisData(terytGrid, terytToNameMap);
 
-        Mapper<CommuneStoreItem> gridItemMapper = new Mappers().create(CommuneStoreItem.class);
+        Dao<CommuneStoreItem> gridItemMapper = daoProducer.createDao(CommuneStoreItem.class);
         gridItemMapper.configureStore(store);
         gridItemMapper.attachStore(store);
 
@@ -82,8 +84,6 @@ public class CommuneSource {
                 gridItemMapper.save(item, idx++);
             }
         }
-
-        store.fireUnderlyingDataChanged(0, idx);
     }
 
     public int getGridRows() {

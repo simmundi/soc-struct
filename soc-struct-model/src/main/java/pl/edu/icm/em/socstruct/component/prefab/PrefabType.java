@@ -16,9 +16,15 @@
  *
  */
 
-package pl.edu.icm.board.model;
+package pl.edu.icm.em.socstruct.component.prefab;
 
-public enum HealthcareType {
-    POZ,
-    OTHER
+public enum PrefabType {
+    CLERGY_HOUSE,
+    NURSING_HOME,
+    DORM,
+    IMMIGRANTS_SPOT,
+    PRISON,
+    MONASTERY,
+    BARRACKS,
+    HOMELESS_SPOT
 }

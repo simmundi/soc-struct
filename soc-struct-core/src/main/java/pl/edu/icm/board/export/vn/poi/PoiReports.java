@@ -22,16 +22,17 @@ import com.google.common.util.concurrent.AtomicLongMap;
 import net.snowyhollows.bento.annotation.ByName;
 import net.snowyhollows.bento.annotation.WithFactory;
 import pl.edu.icm.board.EngineIo;
-import pl.edu.icm.board.model.Complex;
-import pl.edu.icm.board.model.EducationLevel;
-import pl.edu.icm.board.model.EducationalInstitution;
+import pl.edu.icm.em.common.detached.DetachedEntityStreamer;
+import pl.edu.icm.em.socstruct.component.geo.Complex;
+import pl.edu.icm.em.socstruct.component.edu.EducationLevel;
+import pl.edu.icm.em.socstruct.component.edu.EducationalInstitution;
 import pl.edu.icm.board.export.vn.poi.PoiItem.Type;
-import pl.edu.icm.board.model.Location;
-import pl.edu.icm.board.model.Household;
-import pl.edu.icm.board.model.Attendee;
-import pl.edu.icm.board.model.Employee;
-import pl.edu.icm.board.model.Replicant;
-import pl.edu.icm.board.model.Workplace;
+import pl.edu.icm.em.socstruct.component.geo.Location;
+import pl.edu.icm.em.socstruct.component.Household;
+import pl.edu.icm.em.socstruct.component.edu.Attendee;
+import pl.edu.icm.em.socstruct.component.prefab.PrefabTag;
+import pl.edu.icm.em.socstruct.component.work.Employee;
+import pl.edu.icm.em.socstruct.component.work.Workplace;
 import pl.edu.icm.trurl.util.Status;
 
 import java.io.IOException;
@@ -60,6 +61,7 @@ public class PoiReports {
             Complex.Type.NURSING_HOME, Type.NURSING_HOME,
             Complex.Type.PRISON, Type.PRISON
     ));
+    private final DetachedEntityStreamer detachedEntityStreamer;
     private final String educationFilename;
     private final String workplacesFilename;
     private final String othersFilename;
@@ -67,11 +69,13 @@ public class PoiReports {
     @WithFactory
     public PoiReports(EngineIo engineIo,
                       PoiExporter poiExporter,
+                      DetachedEntityStreamer detachedEntityStreamer,
                       @ByName("soc-struct.export.visnow.education-filename") String educationFilename,
                       @ByName("soc-struct.export.visnow.workplaces-filename") String workplacesFilename,
                       @ByName("soc-struct.export.visnow.others-filename") String othersFilename) {
         this.engineIo = engineIo;
         this.poiExporter = poiExporter;
+        this.detachedEntityStreamer = detachedEntityStreamer;
         this.educationFilename = educationFilename;
         this.workplacesFilename = workplacesFilename;
         this.othersFilename = othersFilename;
@@ -80,7 +84,7 @@ public class PoiReports {
                 EducationalInstitution.class,
                 Location.class,
                 Workplace.class,
-                Replicant.class,
+                PrefabTag.class,
                 Complex.class,
                 Attendee.class,
                 Employee.class);
@@ -91,7 +95,7 @@ public class PoiReports {
 
         var engine = engineIo.getEngine();
         var status = Status.of("aggregating attendees and employees in pois", 1_000_000);
-        engine.streamDetached().forEach(entity -> {
+        detachedEntityStreamer.streamDetached().forEach(entity -> {
             entity
                     .optional(Attendee.class)
                     .ifPresent(attendee -> {
@@ -114,33 +118,33 @@ public class PoiReports {
         status.done();
 
         poiExporter.export(educationFilename,
-                engine
+                detachedEntityStreamer
                         .streamDetached()
                         .filter(e -> e.optional(EducationalInstitution.class).isPresent()),
                 (poiItem, entity) -> {
                     entity.optional(EducationalInstitution.class).ifPresent(ei -> {
                         poiItem.setSubsets(levelsToTypes.get(ei.getLevel()));
-                        poiItem.setSlots(ei.getPupilCount());
+                        poiItem.setSlots(ei.getEstPupilCount());
                         poiItem.setTaken((int) slotsTaken.get(entity.getId()));
                     });
                     return poiItem;
                 });
 
         poiExporter.export(workplacesFilename,
-                engine
+                detachedEntityStreamer
                         .streamDetached()
                         .filter(e -> e.optional(Workplace.class).isPresent()),
                 (poiItem, entity) -> {
                     entity.optional(Workplace.class).ifPresent(workplace -> {
                         poiItem.setSubsets(Type.WORKPLACE);
-                        poiItem.setSlots(workplace.getEmployees());
+                        poiItem.setSlots(workplace.getEstEmployeeCount());
                         poiItem.setTaken((int) slotsTaken.get(entity.getId()));
                     });
                     return poiItem;
                 });
 
         poiExporter.export(othersFilename,
-                engine
+                detachedEntityStreamer
                         .streamDetached()
                         .filter(e -> e.optional(Complex.class).isPresent()),
                 (poiItem, entity) -> {

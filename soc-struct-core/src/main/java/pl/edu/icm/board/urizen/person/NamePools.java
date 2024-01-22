@@ -18,12 +18,12 @@
 
 package pl.edu.icm.board.urizen.person;
 
-import pl.edu.icm.trurl.bin.BinPool;
+import pl.edu.icm.trurl.bin.Histogram;
 
 public class NamePools {
-    public final BinPool<String> maleNames = new BinPool<>();
-    public final BinPool<String> femaleNames = new BinPool<>();
-    public final BinPool<String> surnames = new BinPool<>();
+    public final Histogram<String> maleNames = new Histogram<>();
+    public final Histogram<String> femaleNames = new Histogram<>();
+    public final Histogram<String> surnames = new Histogram<>();
 
     NamePools(){
 

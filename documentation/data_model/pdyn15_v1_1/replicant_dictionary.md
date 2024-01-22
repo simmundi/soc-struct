@@ -1,4 +1,4 @@
-# Dictionary of the terminology used in replicant production
+# Dictionary of the terminology used in prefabTag production
 
 <dl>
     <dt>Replicants</dt>

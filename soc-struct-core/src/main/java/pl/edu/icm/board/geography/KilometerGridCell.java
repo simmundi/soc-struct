@@ -18,8 +18,8 @@
 
 package pl.edu.icm.board.geography;
 
-import pl.edu.icm.board.model.Area;
-import pl.edu.icm.board.model.Location;
+import pl.edu.icm.em.socstruct.component.geo.Area;
+import pl.edu.icm.em.socstruct.component.geo.Location;
 
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -113,7 +113,7 @@ public class KilometerGridCell {
     }
 
     public static KilometerGridCell fromLocation(Location location) {
-        return new KilometerGridCell((location.getE() / 1000), (location.getN() / 1000));
+        return new KilometerGridCell((int) (location.getE() / 1000), (int) (location.getN() / 1000));
     }
 
     public static KilometerGridCell fromArea(Area area) {

@@ -18,8 +18,8 @@
 
 package pl.edu.icm.em.common.math.pdf;
 
-import net.snowyhollows.bento.soft.SoftEnum;
-import net.snowyhollows.bento.soft.SoftEnumManager;
+import net.snowyhollows.bento.category.Category;
+import net.snowyhollows.bento.category.CategoryManager;
 
 import java.util.Arrays;
 
@@ -28,19 +28,19 @@ import java.util.Arrays;
  *
  * @param <Label>
  */
-public class DiscretePDF<Label extends SoftEnum> {
+public class DiscretePDF<Label extends Category> {
     private final float[] outcomes;
     private boolean normalized;
     private Label defaultOutcome;
-    private final SoftEnumManager<Label> manager;
+    private final CategoryManager<Label> manager;
 
-    public DiscretePDF(SoftEnumManager<Label> manager) {
+    public DiscretePDF(CategoryManager<Label> manager) {
         this.manager = manager;
         outcomes = new float[manager.values().size()];
         normalized = false;
     }
 
-    public DiscretePDF(Label defaultOutcome, SoftEnumManager<Label> manager) {
+    public DiscretePDF(Label defaultOutcome, CategoryManager<Label> manager) {
         this(manager);
         this.defaultOutcome = defaultOutcome;
 

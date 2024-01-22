@@ -16,19 +16,15 @@
  *
  */
 
-package pl.edu.icm.board.model;
-
-import pl.edu.icm.trurl.ecs.Entity;
-import pl.edu.icm.trurl.ecs.annotation.WithMapper;
+package pl.edu.icm.em.socstruct.component.social;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@WithMapper
-public class Household {
-    private List<Entity> members = new ArrayList<>();
+public class SocialInfluences {
+    private List<Influence> influences = new ArrayList<>();
 
-    public List<Entity> getMembers() {
-        return members;
+    public List<Influence> getInfluences() {
+        return influences;
     }
 }

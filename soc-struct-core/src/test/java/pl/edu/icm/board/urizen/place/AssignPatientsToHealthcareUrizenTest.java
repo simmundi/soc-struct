@@ -31,6 +31,12 @@ import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.MockRandomProvider;
 import pl.edu.icm.board.geography.density.PopulationDensityLoader;
 import pl.edu.icm.board.model.*;
+import pl.edu.icm.em.socstruct.component.Household;
+import pl.edu.icm.em.socstruct.component.NameTag;
+import pl.edu.icm.em.socstruct.component.Person;
+import pl.edu.icm.em.socstruct.component.geo.Location;
+import pl.edu.icm.em.socstruct.component.health.Healthcare;
+import pl.edu.icm.em.socstruct.component.health.Patient;
 import pl.edu.icm.board.urizen.generic.Entities;
 import pl.edu.icm.board.urizen.generic.EntityStreamManipulator;
 import pl.edu.icm.board.util.RandomProvider;
@@ -66,7 +72,7 @@ class AssignPatientsToHealthcareUrizenTest {
         engineIo = Mockito.spy(new EngineIo(engineConfiguration, null, null, null));
         StaticSelectors staticSelectors = new StaticSelectors(engineConfiguration);
         assigner = new AssignPatientsToHealthcareUrizen(engineIo, entities, entityStreamManipulator, randomProvider, populationDensityLoader, staticSelectors);
-        engineIo.require(Healthcare.class, Location.class, Named.class, Household.class, Person.class, Patient.class);
+        engineIo.require(Healthcare.class, Location.class, NameTag.class, Household.class, Person.class, Patient.class);
         engineIo.load(AssignAttendeesToInstitutionsUrizen.class.getResourceAsStream("/healthcareAssignerTest.csv"));
         when(populationDensityLoader.isPopulated(any())).thenReturn(true);
     }

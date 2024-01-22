@@ -20,7 +20,7 @@ package pl.edu.icm.board.urizen.household.model;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import pl.edu.icm.board.geography.prg.model.AddressPoint;
-import pl.edu.icm.board.model.Location;
+import pl.edu.icm.em.socstruct.component.geo.Location;
 
 import java.util.List;
 
@@ -28,8 +28,8 @@ public class ComplexBlueprint {
     private final Location location;
     private final List<Integer> householdsId = new IntArrayList();
 
-    private ComplexBlueprint(float easting, float northing) {
-        this.location = Location.fromPl1992MeterCoords(easting, northing);
+    private ComplexBlueprint(Location location) {
+        this.location = location;
     }
 
     public Location getLocation() {
@@ -40,8 +40,8 @@ public class ComplexBlueprint {
         return householdsId;
     }
 
-    public static ComplexBlueprint from(AddressPoint ap) {
-        return new ComplexBlueprint(ap.getEasting(), ap.getNorthing());
+    public static ComplexBlueprint from(Location location) {
+        return new ComplexBlueprint(location);
     }
 
     public void addHouseholdId(int householdId) {

@@ -18,9 +18,9 @@
 
 package pl.edu.icm.board.geography.graph;
 
-import pl.edu.icm.trurl.ecs.annotation.WithMapper;
+import pl.edu.icm.trurl.ecs.dao.annotation.WithDao;
 
-@WithMapper
+@WithDao
 public class GraphStoreItem {
     private int id;
     private int baseNode;

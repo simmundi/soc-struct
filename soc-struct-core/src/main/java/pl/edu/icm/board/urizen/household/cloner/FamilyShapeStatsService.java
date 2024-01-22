@@ -21,12 +21,13 @@ package pl.edu.icm.board.urizen.household.cloner;
 import net.snowyhollows.bento.annotation.WithFactory;
 import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.agesex.AgeSexFromDistributionPicker;
-import pl.edu.icm.board.model.AdministrationUnit;
-import pl.edu.icm.board.model.Household;
-import pl.edu.icm.board.model.Named;
-import pl.edu.icm.board.model.Person;
-import pl.edu.icm.trurl.bin.Bin;
-import pl.edu.icm.trurl.bin.BinPool;
+import pl.edu.icm.em.common.detached.DetachedEntityStreamer;
+import pl.edu.icm.em.common.math.histogram.Bin;
+import pl.edu.icm.em.common.math.histogram.Histogram;
+import pl.edu.icm.em.socstruct.component.Household;
+import pl.edu.icm.em.socstruct.component.NameTag;
+import pl.edu.icm.em.socstruct.component.Person;
+import pl.edu.icm.em.socstruct.component.geo.AdministrationUnitTag;
 import pl.edu.icm.trurl.util.Status;
 
 import java.util.HashMap;
@@ -44,25 +45,26 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class FamilyShapeStatsService {
     private final EngineIo engineIo;
+    private final DetachedEntityStreamer entityStreamer;
     private final AgeSexFromDistributionPicker ageSexFromDistributionPicker;
 
     @WithFactory
-    public FamilyShapeStatsService(EngineIo engineIo, AgeSexFromDistributionPicker ageSexFromDistributionPicker) {
+    public FamilyShapeStatsService(EngineIo engineIo, DetachedEntityStreamer entityStreamer, AgeSexFromDistributionPicker ageSexFromDistributionPicker) {
         this.engineIo = engineIo;
+        this.entityStreamer = entityStreamer;
         this.ageSexFromDistributionPicker = ageSexFromDistributionPicker;
         engineIo.require(
                 Household.class,
-                AdministrationUnit.class,
+                AdministrationUnitTag.class,
                 Person.class,
-                Named.class);
+                NameTag.class);
     }
 
     public FamilyShapeStats countStats() {
         FamilyShapeStats familyShapeStats = new FamilyShapeStats();
         var status = Status.of("Finding family statistics", 1_000_000);
         Map<HouseholdShape, Bin> shapes = new HashMap<>();
-        engineIo
-                .getEngine()
+        entityStreamer
                 .streamDetached()
                 .map(e -> HouseholdShape.tryCreate(e, ageSexFromDistributionPicker))
                 .filter(shape -> shape != null)
@@ -72,7 +74,7 @@ public class FamilyShapeStatsService {
                             .addAndGet(shape.getMemberCount());
                     shapes
                             .computeIfAbsent(shape, s -> familyShapeStats.shapesByTeryt
-                                    .computeIfAbsent(s.getTeryt(), t -> new BinPool<>())
+                                    .computeIfAbsent(s.getTeryt(), t -> new Histogram<>())
                                     .add(s, 0))
                             .add(1);
                 });

@@ -26,10 +26,10 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pl.edu.icm.board.geography.KilometerGridCell;
-import pl.edu.icm.board.model.Location;
-import pl.edu.icm.board.model.Household;
-import pl.edu.icm.board.model.Replicant;
-import pl.edu.icm.board.model.Person;
+import pl.edu.icm.em.socstruct.component.geo.Location;
+import pl.edu.icm.em.socstruct.component.Household;
+import pl.edu.icm.em.socstruct.component.prefab.PrefabTag;
+import pl.edu.icm.em.socstruct.component.Person;
 import pl.edu.icm.trurl.ecs.Entity;
 import pl.edu.icm.trurl.ecs.Session;
 
@@ -40,7 +40,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class ReplicantPrototypesTest {
+class PrefabTagPrototypesTest {
     @Mock
     private Session session;
     @Mock
@@ -65,7 +65,7 @@ class ReplicantPrototypesTest {
 
         // assert
         verify(entity).add(eq(person));
-        verify(entity).add(Mockito.any(Replicant.class));
+        verify(entity).add(Mockito.any(PrefabTag.class));
         verify(entity, times(2)).add(any());
     }
 
@@ -73,7 +73,7 @@ class ReplicantPrototypesTest {
     @DisplayName("Should create an entity Household, Location and Replicant components")
     void clergyHouseRoom() {
         // given
-        Location location = Location.fromPl1992MeterCoords(10000, 45000);
+        Location location = Location.fromEquiarealENMeters(10000, 45000);
         when(session.createEntity()).thenReturn(entity);
         when(entity.add(any())).thenAnswer(args -> args.getArgument(0));
 
@@ -83,6 +83,6 @@ class ReplicantPrototypesTest {
         // assert
         verify(entity, times(3)).add(any());
         verify(entity).add(Mockito.any(Household.class));
-        verify(entity).add(Mockito.any(Replicant.class));
+        verify(entity).add(Mockito.any(PrefabTag.class));
     }
 }

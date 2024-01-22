@@ -3,7 +3,7 @@ dependencies {
     annotationProcessor "net.snowyhollows.bento:bento-generator:${bentoVersion}"
 
     implementation "net.snowyhollows.bento:bento-core:${bentoVersion}"
-    implementation "pl.edu.icm.em:trurl-core:${trurlVersion}"
+    implementation "pl.edu.icm.em:trurl-all:${trurlVersion}"
 }
 
 publishing {

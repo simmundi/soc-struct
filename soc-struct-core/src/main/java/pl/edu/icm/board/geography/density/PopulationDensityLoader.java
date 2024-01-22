@@ -23,12 +23,13 @@ import net.snowyhollows.bento.annotation.ByName;
 import net.snowyhollows.bento.annotation.WithFactory;
 import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.geography.KilometerGridCell;
-import pl.edu.icm.board.model.Household;
-import pl.edu.icm.board.model.Location;
 import pl.edu.icm.board.util.BoardCsvLoader;
+import pl.edu.icm.em.socstruct.component.Household;
+import pl.edu.icm.em.socstruct.component.geo.Location;
 import pl.edu.icm.trurl.ecs.Engine;
-import pl.edu.icm.trurl.ecs.util.EntityIterator;
-import pl.edu.icm.trurl.ecs.util.Selectors;
+import pl.edu.icm.trurl.ecs.util.ActionService;
+import pl.edu.icm.trurl.ecs.util.Indexes;
+import pl.edu.icm.trurl.ecs.util.IteratingStepBuilder;
 import pl.edu.icm.trurl.util.Status;
 
 import java.io.FileNotFoundException;
@@ -51,17 +52,20 @@ public class PopulationDensityLoader {
     private final Set<KilometerGridCell> cellSet = new HashSet<>();
     private final Map<KilometerGridCell, Integer> densityMap = new HashMap<>();
     private final EngineIo engineIo;
-    private final Selectors selectors;
+    private final ActionService actionService;
+    private final Indexes indexes;
 
     @WithFactory
     public PopulationDensityLoader(BoardCsvLoader boardCsvLoader,
                                    @ByName("soc-struct.population.grid.source") String gmPopulationGridFilename,
                                    EngineIo engineIo,
-                                   Selectors selectors) {
+                                   ActionService actionService,
+                                   Indexes indexes) {
         this.boardCsvLoader = boardCsvLoader;
         this.gmPopulationGridFilename = gmPopulationGridFilename;
         this.engineIo = engineIo;
-        this.selectors = selectors;
+        this.actionService = actionService;
+        this.indexes = indexes;
     }
 
     public void load() throws FileNotFoundException {
@@ -86,13 +90,14 @@ public class PopulationDensityLoader {
         }
         Engine engine = engineIo.getEngine();
         var status = Status.of("loading population density from engine", 500000);
-        engine.execute(EntityIterator.select(selectors.allWithComponents(Household.class, Location.class)).dontPersist().forEach(Household.class, Location.class, (entity, members, location) -> {
-            var size = members.getMembers().size();
-            KilometerGridCell cell = KilometerGridCell.fromLocation(location);
-            cellSet.add(cell);
-            densityMap.compute(cell, (c,v) -> (v == null) ? size : v + size);
-            status.tick();
-        }));
+        engine.execute(
+                IteratingStepBuilder.iteratingOver((indexes.allWithComponents(Household.class, Location.class))).withoutPersisting().withoutContext().perform(actionService.withComponents(Household.class, Location.class, (entity, members, location) -> {
+                    var size = members.getMembers().size();
+                    KilometerGridCell cell = KilometerGridCell.fromLocation(location);
+                    cellSet.add(cell);
+                    densityMap.compute(cell, (c, v) -> (v == null) ? size : v + size);
+                    status.tick();
+                })).build());
         cellList.addAll(cellSet);
         status.done();
     }

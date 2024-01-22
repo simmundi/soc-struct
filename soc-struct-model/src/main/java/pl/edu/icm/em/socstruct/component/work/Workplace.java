@@ -16,19 +16,26 @@
  *
  */
 
-package pl.edu.icm.board.model;
+package pl.edu.icm.em.socstruct.component.work;
 
-import pl.edu.icm.trurl.ecs.annotation.WithMapper;
+import pl.edu.icm.trurl.ecs.dao.annotation.WithDao;
 
-@WithMapper
-public class Replicant {
-    ReplicantType type;
+@WithDao
+public class Workplace {
+    private short estEmployeeCount;
 
-    public ReplicantType getType() {
-        return type;
+    public Workplace() {
     }
 
-    public void setType(ReplicantType type) {
-        this.type = type;
+    public Workplace(short estEmployeeCount) {
+        this.estEmployeeCount = estEmployeeCount;
+    }
+
+    public short getEstEmployeeCount() {
+        return estEmployeeCount;
+    }
+
+    public void setEstEmployeeCount(short estEmployeeCount) {
+        this.estEmployeeCount = estEmployeeCount;
     }
 }

@@ -28,16 +28,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.MockRandomProvider;
 import pl.edu.icm.board.agesex.AgeSexFromDistributionPicker;
-import pl.edu.icm.board.model.Complex;
+import pl.edu.icm.em.socstruct.component.geo.Complex;
 import pl.edu.icm.board.geography.KilometerGridCell;
 import pl.edu.icm.board.geography.density.PopulationDensityLoader;
-import pl.edu.icm.board.model.Household;
-import pl.edu.icm.board.model.Person;
+import pl.edu.icm.em.socstruct.component.Household;
+import pl.edu.icm.em.socstruct.component.Person;
 import pl.edu.icm.board.urizen.generic.Entities;
 import pl.edu.icm.board.urizen.household.model.AgeRange;
 import pl.edu.icm.board.urizen.population.Population;
 import pl.edu.icm.board.util.RandomProvider;
-import pl.edu.icm.trurl.bin.BinPool;
+import pl.edu.icm.trurl.bin.Histogram;
 import pl.edu.icm.trurl.ecs.Engine;
 import pl.edu.icm.trurl.ecs.Entity;
 import pl.edu.icm.trurl.ecs.Session;
@@ -58,9 +58,9 @@ class BarracksUrizenTest {
     @Mock
     private Population population;
     @Spy
-    private BinPool<Person.Sex> sexBinPool = new BinPool<>();
+    private Histogram<Person.Sex> sexHistogram = new Histogram<>();
     @Spy
-    private BinPool<AgeRange> ageRangeBinPool = new BinPool<>();
+    private Histogram<AgeRange> ageRangeHistogram = new Histogram<>();
     @Mock
     private PopulationDensityLoader populationDensityLoader;
     @Mock
@@ -84,18 +84,18 @@ class BarracksUrizenTest {
 
     @BeforeEach
     void before() {
-        sexBinPool.add(Person.Sex.K, 600);
-        sexBinPool.add(Person.Sex.M, 600);
-        ageRangeBinPool.add(AgeRange.AGE_20_24, 50);
-        ageRangeBinPool.add(AgeRange.AGE_25_29, 50);
-        ageRangeBinPool.add(AgeRange.AGE_30_34, 50);
-        ageRangeBinPool.add(AgeRange.AGE_35_39, 50);
-        ageRangeBinPool.add(AgeRange.AGE_40_44, 50);
-        ageRangeBinPool.add(AgeRange.AGE_45_49, 50);
+        sexHistogram.add(Person.Sex.F, 600);
+        sexHistogram.add(Person.Sex.M, 600);
+        ageRangeHistogram.add(AgeRange.AGE_20_24, 50);
+        ageRangeHistogram.add(AgeRange.AGE_25_29, 50);
+        ageRangeHistogram.add(AgeRange.AGE_30_34, 50);
+        ageRangeHistogram.add(AgeRange.AGE_35_39, 50);
+        ageRangeHistogram.add(AgeRange.AGE_40_44, 50);
+        ageRangeHistogram.add(AgeRange.AGE_45_49, 50);
         when(sessionFactory.create()).thenReturn(session);
         when(replicantsPopulation.getPopulation()).thenReturn(population);
-        when(population.getPeopleByAge()).thenReturn(ageRangeBinPool);
-        when(population.getPeopleBySex()).thenReturn(sexBinPool);
+        when(population.getPeopleByAge()).thenReturn(ageRangeHistogram);
+        when(population.getPeopleBySex()).thenReturn(sexHistogram);
         when(entities
                 .createEmptyComplex(same(session), anyInt()))
                 .thenReturn(entity2);

@@ -18,9 +18,9 @@
 
 package pl.edu.icm.board.pdyn1;
 
-import pl.edu.icm.trurl.ecs.annotation.WithMapper;
+import pl.edu.icm.trurl.ecs.dao.annotation.WithDao;
 
-@WithMapper
+@WithDao
 public class ExportedId {
     int pdyn2Id;
     int pdyn1Id;

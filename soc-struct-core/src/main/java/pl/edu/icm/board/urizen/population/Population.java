@@ -20,29 +20,29 @@ package pl.edu.icm.board.urizen.population;
 
 import com.univocity.parsers.common.record.Record;
 import pl.edu.icm.board.urizen.household.model.AgeRange;
-import pl.edu.icm.board.model.Person;
-import pl.edu.icm.trurl.bin.BinPool;
+import pl.edu.icm.em.socstruct.component.Person;
+import pl.edu.icm.trurl.bin.Histogram;
 
 public class Population {
     final private String teryt;
 
-    final private BinPool<AgeRange> peopleByAge = new BinPool<>();
-    final private BinPool<Person.Sex> peopleBySex = new BinPool<>();
-    final private BinPool<AgeRange> people80andMore;
-    final private BinPool<AgeRange> people75to80;
-    final private BinPool<AgeRange> people70to75;
-    final private BinPool<AgeRange> people65to70;
-    final private BinPool<AgeRange> people60to65;
-    final private BinPool<AgeRange> people0to60;
-    final private BinPool<AgeRange> people20to60;
-    final private BinPool<AgeRange> people20to100;
-    private final BinPool<AgeRange> people20to24;
+    final private Histogram<AgeRange> peopleByAge = new Histogram<>();
+    final private Histogram<Person.Sex> peopleBySex = new Histogram<>();
+    final private Histogram<AgeRange> people80andMore;
+    final private Histogram<AgeRange> people75to80;
+    final private Histogram<AgeRange> people70to75;
+    final private Histogram<AgeRange> people65to70;
+    final private Histogram<AgeRange> people60to65;
+    final private Histogram<AgeRange> people0to60;
+    final private Histogram<AgeRange> people20to60;
+    final private Histogram<AgeRange> people20to100;
+    private final Histogram<AgeRange> people20to24;
 
     public Population(Record record) {
         this.teryt = record.getString("Powiat");
 
         peopleBySex.add(Person.Sex.M, record.getInt("M_Ludnosc"));
-        peopleBySex.add(Person.Sex.K, record.getInt("K_Ludnosc"));
+        peopleBySex.add(Person.Sex.F, record.getInt("K_Ludnosc"));
         peopleByAge.add(AgeRange.AGE_0_4, record.getInt("O_Ludnosc_0_4"));
         peopleByAge.add(AgeRange.AGE_5_9, record.getInt("O_Ludnosc_5_9"));
         peopleByAge.add(AgeRange.AGE_10_14, record.getInt("O_Ludnosc_10_14"));
@@ -112,47 +112,47 @@ public class Population {
         return teryt;
     }
 
-    public BinPool<AgeRange> getPeopleByAge() {
+    public Histogram<AgeRange> getPeopleByAge() {
         return peopleByAge;
     }
 
-    public BinPool<Person.Sex> getPeopleBySex() {
+    public Histogram<Person.Sex> getPeopleBySex() {
         return peopleBySex;
     }
 
-    public BinPool<AgeRange> getPeople80andMore() {
+    public Histogram<AgeRange> getPeople80andMore() {
         return people80andMore;
     }
 
-    public BinPool<AgeRange> getPeople75to80() {
+    public Histogram<AgeRange> getPeople75to80() {
         return people75to80;
     }
 
-    public BinPool<AgeRange> getPeople70to75() {
+    public Histogram<AgeRange> getPeople70to75() {
         return people70to75;
     }
 
-    public BinPool<AgeRange> getPeople65to70() {
+    public Histogram<AgeRange> getPeople65to70() {
         return people65to70;
     }
 
-    public BinPool<AgeRange> getPeople60to65() {
+    public Histogram<AgeRange> getPeople60to65() {
         return people60to65;
     }
 
-    public BinPool<AgeRange> getPeople0to60() {
+    public Histogram<AgeRange> getPeople0to60() {
         return people0to60;
     }
 
-    public BinPool<AgeRange> getPeople20to60() {
+    public Histogram<AgeRange> getPeople20to60() {
         return people20to60;
     }
 
-    public BinPool<AgeRange> getPeople20to24() {
+    public Histogram<AgeRange> getPeople20to24() {
         return people20to24;
     }
 
-    public BinPool<AgeRange> getPeople20to100() {
+    public Histogram<AgeRange> getPeople20to100() {
         return people20to100;
     }
 }

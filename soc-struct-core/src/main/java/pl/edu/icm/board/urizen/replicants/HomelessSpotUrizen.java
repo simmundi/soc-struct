@@ -25,14 +25,14 @@ import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.agesex.AgeSexFromDistributionPicker;
 import pl.edu.icm.board.geography.KilometerGridCell;
 import pl.edu.icm.board.geography.density.PopulationDensityLoader;
-import pl.edu.icm.board.model.Household;
-import pl.edu.icm.board.model.Location;
-import pl.edu.icm.board.model.Person;
-import pl.edu.icm.board.model.Replicant;
+import pl.edu.icm.em.socstruct.component.Household;
+import pl.edu.icm.em.socstruct.component.geo.Location;
+import pl.edu.icm.em.socstruct.component.Person;
+import pl.edu.icm.em.socstruct.component.prefab.PrefabTag;
 import pl.edu.icm.board.urizen.household.model.AgeRange;
 import pl.edu.icm.board.util.RandomProvider;
 import pl.edu.icm.trurl.bin.Bin;
-import pl.edu.icm.trurl.bin.BinPool;
+import pl.edu.icm.trurl.bin.Histogram;
 import pl.edu.icm.trurl.ecs.Entity;
 import pl.edu.icm.trurl.ecs.Session;
 
@@ -49,9 +49,9 @@ public class HomelessSpotUrizen {
     private final int homelessSpotRoomSize;
     private final int homelessSpotMaxInSingleGridCell;
     private final int homelessSpotPercentOfMale;
-    private final BinPool<AgeRange> ages;
-    private final BinPool<Person.Sex> sexSubPoolM;
-    private final BinPool<Person.Sex> sexSubPoolK;
+    private final Histogram<AgeRange> ages;
+    private final Histogram<Person.Sex> sexSubPoolM;
+    private final Histogram<Person.Sex> sexSubPoolK;
     private final AgeSexFromDistributionPicker ageSexFromDistributionPicker;
 
     @WithFactory
@@ -74,9 +74,9 @@ public class HomelessSpotUrizen {
         this.homelessSpotRoomSize = homelessSpotRoomSize;
         this.homelessSpotMaxInSingleGridCell = homelessSpotMaxInSingleGridCell;
         this.homelessSpotPercentOfMale = homelessSpotPercentOfMale;
-        this.engineIo.require(Household.class, Person.class, Location.class, Replicant.class);
+        this.engineIo.require(Household.class, Person.class, Location.class, PrefabTag.class);
         this.sexSubPoolM = replicantsPopulation.getPopulation().getPeopleBySex().createSubPool(Person.Sex.M);
-        this.sexSubPoolK = replicantsPopulation.getPopulation().getPeopleBySex().createSubPool(Person.Sex.K);
+        this.sexSubPoolK = replicantsPopulation.getPopulation().getPeopleBySex().createSubPool(Person.Sex.F);
         this.ages = replicantsPopulation.getPopulation().getPeopleByAge().createSubPool(
                 AgeRange.AGE_20_24,
                 AgeRange.AGE_25_29,

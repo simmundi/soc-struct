@@ -22,17 +22,18 @@ import net.snowyhollows.bento.annotation.WithFactory;
 import pl.edu.icm.board.geography.KilometerGridCell;
 import pl.edu.icm.board.geography.gis.CommuneSource;
 import pl.edu.icm.board.geography.gis.CommuneStoreItem;
-import pl.edu.icm.board.model.Location;
 import pl.edu.icm.board.util.FileCacheService;
-import pl.edu.icm.trurl.ecs.mapper.Mappers;
+import pl.edu.icm.em.socstruct.component.geo.Location;
+import pl.edu.icm.trurl.ecs.dao.DaoProducer;
 import pl.edu.icm.trurl.store.Store;
-import pl.edu.icm.trurl.store.array.ArrayStore;
+import pl.edu.icm.trurl.store.basic.BasicAttributeFactory;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.groupingBy;
 
@@ -45,19 +46,20 @@ public class CommuneManager {
 
     @WithFactory
     public CommuneManager(FileCacheService fileCacheService, CommuneSource communeSource) {
-        Store store = new ArrayStore(1024);
-        var gridItemMapper = new Mappers().create(CommuneStoreItem.class);
-        gridItemMapper.configureStore(store);
+        Store store = new Store(new BasicAttributeFactory(), 1024);
+        var gridItemDao = new DaoProducer().createDao(CommuneStoreItem.class);
+        gridItemDao.configureStore(store);
         fileCacheService
                 .computeIfAbsent("gminy", store, communeSource::load);
 
-        gridItemMapper.attachStore(store);
+        gridItemDao.attachStore(store);
 
         gridRows = communeSource.getGridRows();
         gridCols = communeSource.getGridCols();
         grid = new Commune[gridRows * gridCols];
 
-        Mappers.stream(gridItemMapper)
+        IntStream.range(0, store.getCounter().getCount())
+                .mapToObj(idx -> gridItemDao.createAndLoad(idx))
                 .collect(groupingBy(
                         CommuneStoreItem::getTeryt,
                         Collectors.toList()))

@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import pl.edu.icm.board.model.Person;
+import pl.edu.icm.em.socstruct.component.Person;
 import pl.edu.icm.board.urizen.household.model.AgeRange;
 
 import java.util.ArrayList;
@@ -53,7 +53,7 @@ class AgeSexFromDistributionPickerTest {
         //execute
         for (int i = 0; i < 5; i++){
             results1.add(ageSexFromDistributionPicker.getEmpiricalDistributedRandomAge(Person.Sex.M, AgeRange.AGE_10_14, 0));
-            results2.add(ageSexFromDistributionPicker.getEmpiricalDistributedRandomAge(Person.Sex.K, AgeRange.AGE_15_19, 0));
+            results2.add(ageSexFromDistributionPicker.getEmpiricalDistributedRandomAge(Person.Sex.F, AgeRange.AGE_15_19, 0));
         }
 
         //assert

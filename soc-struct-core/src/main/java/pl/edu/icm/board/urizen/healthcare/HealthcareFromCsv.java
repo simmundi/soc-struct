@@ -18,12 +18,12 @@
 
 package pl.edu.icm.board.urizen.healthcare;
 
-import pl.edu.icm.board.model.HealthcareType;
-import pl.edu.icm.trurl.ecs.annotation.WithMapper;
+import pl.edu.icm.em.socstruct.component.health.HealthcareType;
+import pl.edu.icm.trurl.ecs.dao.annotation.WithDao;
 
 ;
 
-@WithMapper
+@WithDao
 public class HealthcareFromCsv {
 
     private HealthcareType type;

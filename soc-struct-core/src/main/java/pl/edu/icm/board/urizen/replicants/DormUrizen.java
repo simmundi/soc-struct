@@ -26,10 +26,17 @@ import pl.edu.icm.board.agesex.AgeSexFromDistributionPicker;
 import pl.edu.icm.board.geography.KilometerGridCell;
 import pl.edu.icm.board.geography.density.PopulationDensityLoader;
 import pl.edu.icm.board.model.*;
+import pl.edu.icm.em.socstruct.component.Household;
+import pl.edu.icm.em.socstruct.component.Person;
+import pl.edu.icm.em.socstruct.component.edu.Attendee;
+import pl.edu.icm.em.socstruct.component.edu.EducationalInstitution;
+import pl.edu.icm.em.socstruct.component.geo.Complex;
+import pl.edu.icm.em.socstruct.component.geo.Location;
+import pl.edu.icm.em.socstruct.component.prefab.PrefabTag;
 import pl.edu.icm.board.urizen.generic.Entities;
 import pl.edu.icm.board.urizen.generic.EntityStreamManipulator;
 import pl.edu.icm.board.util.RandomProvider;
-import pl.edu.icm.trurl.bin.BinPoolsByShape;
+import pl.edu.icm.trurl.bin.HistogramsByShape;
 import pl.edu.icm.trurl.ecs.Entity;
 import pl.edu.icm.trurl.ecs.Session;
 import pl.edu.icm.trurl.util.Status;
@@ -84,13 +91,13 @@ public class DormUrizen {
         this.dormMaxRooms = dormMaxRooms;
         this.dormToUniversityMaxDistance = dormToUniversityMaxDistance;
         this.random = randomProvider.getRandomGenerator(DormUrizen.class);
-        this.engineIo.require(Person.class, Household.class, Replicant.class, Attendee.class);
+        this.engineIo.require(Person.class, Household.class, PrefabTag.class, Attendee.class);
     }
 
     public void fabricate() throws FileNotFoundException {
         this.populationDensityLoader.load();
         var status = Status.of("building university map", 1000);
-        BinPoolsByShape<KilometerGridCell, Entity> slotsInDorms = entityStreamManipulator.groupIntoShapes(
+        HistogramsByShape<KilometerGridCell, Entity> slotsInDorms = entityStreamManipulator.groupIntoShapes(
                 engineIo.getEngine().streamDetached().filter(this::isEntityAUniversity),
                 this::studentCount,
                 entityStreamManipulator.cellsInRadius$(dormToUniversityMaxDistance)
@@ -105,7 +112,7 @@ public class DormUrizen {
         }
     }
 
-    private void generateDorm(BinPoolsByShape<KilometerGridCell, Entity> slotsInDorms, int size) {
+    private void generateDorm(HistogramsByShape<KilometerGridCell, Entity> slotsInDorms, int size) {
         Entity selectedUniversity = slotsInDorms.getAllBins().sample(random.nextDouble()).pick();
 
         // cells within correct radius and inhabited
@@ -138,7 +145,7 @@ public class DormUrizen {
     }
 
     private void createRoom(List<Entity> complexHouseholds, KilometerGridCell selectedCell,
-                            BinPoolsByShape<KilometerGridCell, Entity> slotsInDorms,
+                            HistogramsByShape<KilometerGridCell, Entity> slotsInDorms,
                             int roomSize, Session session) {
         List<Entity> students = prototypes.dormRoom(session, complexHouseholds, selectedCell).get(Household.class).getMembers();
         for (int i = 0; i < roomSize; i++) {
@@ -148,7 +155,7 @@ public class DormUrizen {
 
     private Entity createStudent(
             KilometerGridCell selectedCell,
-            BinPoolsByShape<KilometerGridCell, Entity> slotsInDorms,
+            HistogramsByShape<KilometerGridCell, Entity> slotsInDorms,
             Session session) {
         var sexPicked = population.getPopulation().getPeopleBySex().sample(random.nextDouble()).pick();
         var ageRangePicked = population.getPopulation().getPeople20to24().sample(random.nextDouble()).pick();
@@ -167,6 +174,6 @@ public class DormUrizen {
 
     private int studentCount(Entity entity) {
         EducationalInstitution educationalInstitution = entity.get(EducationalInstitution.class);
-        return educationalInstitution != null ? educationalInstitution.getPupilCount() : 0;
+        return educationalInstitution != null ? educationalInstitution.getEstPupilCount() : 0;
     }
 }

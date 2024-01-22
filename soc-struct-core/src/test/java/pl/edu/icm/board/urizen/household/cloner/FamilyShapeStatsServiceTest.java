@@ -29,9 +29,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.EntityMocker;
 import pl.edu.icm.board.agesex.AgeSexFromDistributionPicker;
-import pl.edu.icm.board.model.AdministrationUnit;
-import pl.edu.icm.board.model.Household;
-import pl.edu.icm.board.model.Person;
+import pl.edu.icm.em.socstruct.component.geo.AdministrationUnitTag;
+import pl.edu.icm.em.socstruct.component.Household;
+import pl.edu.icm.em.socstruct.component.Person;
 import pl.edu.icm.trurl.bin.Bin;
 import pl.edu.icm.trurl.ecs.Engine;
 
@@ -60,22 +60,22 @@ class FamilyShapeStatsServiceTest {
 
     @BeforeEach
     void configure() {
-        mock = new EntityMocker(null, Person.class, AdministrationUnit.class, Household.class);
+        mock = new EntityMocker(null, Person.class, AdministrationUnitTag.class, Household.class);
 
         when(engineIo.getEngine()).thenReturn(engine);
         when(engine.streamDetached()).thenReturn(Stream.of(
                 // młode małżeństwo
-                mock.entity(1, mock.person(27, Person.Sex.K)),
+                mock.entity(1, mock.person(27, Person.Sex.F)),
                 mock.entity(2, mock.person(27, Person.Sex.M)),
                 mock.entity(1001, mock.household(1, 2), mock.au("warszawa")),
 
                 // młode małżeństwo
-                mock.entity(3, mock.person(28, Person.Sex.K)),
-                mock.entity(4, mock.person(28, Person.Sex.K)),
+                mock.entity(3, mock.person(28, Person.Sex.F)),
+                mock.entity(4, mock.person(28, Person.Sex.F)),
                 mock.entity(1002, mock.household(3, 4), mock.au("warszawa")),
 
                 // singiel
-                mock.entity(5, mock.person(56, Person.Sex.K)),
+                mock.entity(5, mock.person(56, Person.Sex.F)),
                 mock.entity(1003, mock.household(5), mock.au("warszawa")),
 
                 // emeryt
@@ -83,19 +83,19 @@ class FamilyShapeStatsServiceTest {
                 mock.entity(1004, mock.household(6), mock.au("warszawa")),
 
                 // emeryt
-                mock.entity(7, mock.person(69, Person.Sex.K)),
+                mock.entity(7, mock.person(69, Person.Sex.F)),
                 mock.entity(1005, mock.household(7), mock.au("kraków")),
 
                 // małżeństwo z dzieckiem
-                mock.entity(8, mock.person(30, Person.Sex.K)),
-                mock.entity(9, mock.person(30, Person.Sex.K)),
-                mock.entity(10, mock.person(7, Person.Sex.K)),
+                mock.entity(8, mock.person(30, Person.Sex.F)),
+                mock.entity(9, mock.person(30, Person.Sex.F)),
+                mock.entity(10, mock.person(7, Person.Sex.F)),
                 mock.entity(1006, mock.household(8, 9, 10), mock.au("kraków")),
 
                 // małżeństwo z dzieckiem
-                mock.entity(11, mock.person(31, Person.Sex.K)),
-                mock.entity(12, mock.person(32, Person.Sex.K)),
-                mock.entity(13, mock.person(9, Person.Sex.K)),
+                mock.entity(11, mock.person(31, Person.Sex.F)),
+                mock.entity(12, mock.person(32, Person.Sex.F)),
+                mock.entity(13, mock.person(9, Person.Sex.F)),
                 mock.entity(1007, mock.household(11, 12, 13), mock.au("kraków"))
         ));
     }

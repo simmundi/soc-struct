@@ -18,8 +18,8 @@
 
 package pl.edu.icm.em.common.math.pdf;
 
-import net.snowyhollows.bento.soft.SoftEnum;
-import net.snowyhollows.bento.soft.SoftEnumManager;
+import net.snowyhollows.bento.category.Category;
+import net.snowyhollows.bento.category.CategoryManager;
 
 import java.util.Arrays;
 
@@ -33,12 +33,12 @@ import java.util.Arrays;
  *
  * @param <Label>
  */
-public class SoftEnumDiscretePDF<Label extends SoftEnum> {
+public class SoftEnumDiscretePDF<Label extends Category> {
     private final float[] values;
-    private final SoftEnumManager<Label> softEnumManager;
+    private final CategoryManager<Label> softEnumManager;
     private boolean normalized;
 
-    public SoftEnumDiscretePDF(SoftEnumManager<Label> softEnumManager) {
+    public SoftEnumDiscretePDF(CategoryManager<Label> softEnumManager) {
         values = new float[softEnumManager.values().size()];
         this.softEnumManager = softEnumManager;
         normalized = false;

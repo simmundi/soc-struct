@@ -45,7 +45,7 @@ This last step introduces some correlation between age and sex, which is absent 
 Uses:
 
 - powiats_population.csv (A)
-- replicant configuration (B)
+- prefabTag configuration (B)
 - agents and households created in former step (C)
 - eurostat age / sex structure (reuses the pool from the last step) (D)
 - 
@@ -53,7 +53,7 @@ Population in poviats ( A )  is aggregated and a ratio of replicants
 (i.e. agents to be created later, taken from B ) to the total is calculated.
 
 For each poviat, the total target population is considered by taking the GUS target population
-and subtracting the replicant count, based on the replicant ratio (e.g. if a poviat has GUS population of 100 000
+and subtracting the prefabTag count, based on the prefabTag ratio (e.g. if a poviat has GUS population of 100 000
 and the replicants-to-standard-agent ratio is 0.01, then the target
 count of basic agents for the poviat is (1 - 0.01) * 100 000).
 
@@ -328,11 +328,11 @@ uses:
 
 uses:
 
-- replicant pool
+- prefabTag pool
 - population density data
 - configuration (defaults in brackets): total count of soldiers (50000), room size (25), number of rooms in single location (40)
 
-A pool of soldiers is created, by selecting a subpool of the replicant pool,
+A pool of soldiers is created, by selecting a subpool of the prefabTag pool,
 containing people aged 20-49.
 
 While the number of replicants to create is bigger than the number of replicants created, the algorithm:
@@ -347,11 +347,11 @@ While the number of replicants to create is bigger than the number of replicants
 
 uses:
 
-- replicant pool
+- prefabTag pool
 - population density data
 - configuration (defaults in brackets): count of clergymen (16000), room size (2)
 
-A pool of clergymen is created, by selecting a subpool of the replicant pool, containing males aged 25-80.
+A pool of clergymen is created, by selecting a subpool of the prefabTag pool, containing males aged 25-80.
 
 While the number of replicants to create is bigger than the number of replicants created,
 the algorithm:
@@ -364,12 +364,12 @@ the algorithm:
 
 uses:
 
-- replicant pool
+- prefabTag pool
 - population density data
 - pre-created university entities
 - configuration (defaults in brackets): total count of students in dorms (90000), dorm room size (4), number of dorm rooms in a single dorm house (100); maximum distance to the university (10)
 
-A pool of students is created, by selecting a subpool of the replicant pool, containing people aged 20-24.
+A pool of students is created, by selecting a subpool of the prefabTag pool, containing people aged 20-24.
 
 A pool of student slots is created, categorized by universities (jews, djews) and mapped by kilometer grid cells.
 
@@ -391,7 +391,7 @@ Creates households which emulate spots frequented by the homeless (like old buil
 
 uses:
 
-- replicant pool
+- prefabTag pool
 - population density data
 - configuration (defaults in brackets): total count of the homeless (50000), spot size (5),
   number of such spots per square kilometer (10), percent of males (87)
@@ -405,18 +405,18 @@ While the number of replicants to create is bigger than the number of replicants
 - creates all the configured spots as separate households
 - for each spot, creates the configured number of replicants by drawing age statistics
   from the pool of the homeless and forcing selection of sex to fit the parameters
-  (the selected age and sex are drawn from the general replicant pool but not replaced).
+  (the selected age and sex are drawn from the general prefabTag pool but not replaced).
 
 ### Monasteries
 
 uses:
 
-- replicant pool
+- prefabTag pool
 - population density data
 - configuration (defaults in brackets): total count of monks / nuns (32000),
   room size (2), number of rooms in single location (50)
 
-A pool of monks/nuns is created (ages between 20 and 80) is created from the replicant pool.
+A pool of monks/nuns is created (ages between 20 and 80) is created from the prefabTag pool.
 
 While the number of replicants to create is bigger than the number of replicants already created,
 the algorithm:
@@ -431,12 +431,12 @@ the algorithm:
 
 uses:
 
-- replicant pool
+- prefabTag pool
 - population density data
 - configuration (defaults in brackets): total count of nursing home patients (110000);
   patients per room (10); maximum number of rooms per location (25)
 
-A subpool is created from the replicant pool, containing people aged 70+ of both sexes.
+A subpool is created from the prefabTag pool, containing people aged 70+ of both sexes.
 
 While the number of patients to create is bigger than the number of patients created, the algorithm:
 
@@ -450,12 +450,12 @@ While the number of patients to create is bigger than the number of patients cre
 
 uses:
 
-- replicant pool
+- prefabTag pool
 - population density data
 - configuration (defaults in brackets): total count of penitents (85000);
   penitents per cell (6); maximum number of cells per prison (167)
 
-A subpool is created from the replicant pool, containing people aged 20 and above, of both sexes.
+A subpool is created from the prefabTag pool, containing people aged 20 and above, of both sexes.
 
 While the number of replicants to create is bigger than the number of replicants already created,
 the algorithm:

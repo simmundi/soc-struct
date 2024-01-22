@@ -18,12 +18,12 @@
 
 package pl.edu.icm.board.urizen.place.export;
 
-import pl.edu.icm.board.model.Location;
+import pl.edu.icm.em.socstruct.component.geo.Location;
 import pl.edu.icm.board.urizen.place.EducationalInstitutionFromCsv;
-import pl.edu.icm.trurl.ecs.annotation.WithMapper;
-import pl.edu.icm.trurl.visnow.VnCoords;
+import pl.edu.icm.trurl.ecs.dao.annotation.WithDao;
+import pl.edu.icm.trurl.io.visnow.VnCoords;
 
-@WithMapper
+@WithDao
 public class ExportedToCsvEducationalInstitution implements VnCoords {
     float x;
     float y;

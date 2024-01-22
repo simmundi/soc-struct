@@ -20,7 +20,7 @@ package pl.edu.icm.board.geography;
 
 import org.assertj.core.data.Percentage;
 import org.junit.jupiter.api.Test;
-import pl.edu.icm.board.model.Area;
+import pl.edu.icm.em.socstruct.component.geo.Area;
 
 import java.util.stream.Collectors;
 

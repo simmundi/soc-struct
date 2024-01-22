@@ -16,20 +16,29 @@
  *
  */
 
-package pl.edu.icm.board.model;
+package pl.edu.icm.em.socstruct.component.social;
 
-import pl.edu.icm.trurl.ecs.annotation.WithMapper;
+
 import pl.edu.icm.trurl.ecs.Entity;
+import pl.edu.icm.trurl.ecs.dao.annotation.WithDao;
 
-@WithMapper
-public class Employee {
-    private Entity work;
-
-    public Entity getWork() {
-        return work;
+@WithDao
+public class Influence {
+    private Entity source;
+    private float weight;
+    public Entity getSource() {
+        return source;
     }
 
-    public void setWork(Entity work) {
-        this.work = work;
+    public void setSource(Entity source) {
+        this.source = source;
+    }
+
+    public float getWeight() {
+        return weight;
+    }
+
+    public void setWeight(float weight) {
+        this.weight = weight;
     }
 }

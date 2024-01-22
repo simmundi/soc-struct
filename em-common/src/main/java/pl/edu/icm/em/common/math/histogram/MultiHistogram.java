@@ -30,25 +30,22 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * Represents a set of bins and slices. A slice is a Histogram which only
- * contains a subset of the bins.
+ * Represents a set of Bins sliced into different Histograms. Slices can intersect, meaning that each Bin can belong
+ * to multiple Histograms. On the other hand - some Bins might not be included in any slice.
  *
  * The purpose of such structure is sampling specific subsets of the dataset,
- * instead of int entirety. For example a dataset describing a social structure,
+ * instead of its entirety. For example a dataset describing a social structure,
  * binned by age range and sex (e.g. bins contain 'males between 10-20') can
  * be sliced into 'males only', 'females only', 'people between 0-20' etc.The
- *
- *
- * The slices don't have to cover all the bins and they can (and usually do) overlap.
  *
  * @param <SLICE> type of identifier for a subset of Bins
  * @param <LABEL> type of identifier for a single Bin
  */
-public final class BinnedDataset<SLICE, LABEL> {
+public final class MultiHistogram<SLICE, LABEL> {
     private final Histogram<LABEL> allBins;
     private final Map<SLICE, Histogram<LABEL>> slices;
 
-    public BinnedDataset(Histogram<LABEL> allBins, Map<SLICE, Histogram<LABEL>> slices) {
+    public MultiHistogram(Histogram<LABEL> allBins, Map<SLICE, Histogram<LABEL>> slices) {
         this.allBins = allBins;
         this.slices = slices;
     }
@@ -65,7 +62,7 @@ public final class BinnedDataset<SLICE, LABEL> {
         return slices.get(slice);
     }
 
-    public static <SLICE, LABEL> BinnedDataset<SLICE, LABEL> binAndSlice(
+    public static <SLICE, LABEL> MultiHistogram<SLICE, LABEL> binAndSlice(
             Stream<LABEL> labels,
             ToIntFunction<LABEL> countFromLabel,
             Function<LABEL, Stream<SLICE>> slicesFromLabel) {
@@ -98,6 +95,6 @@ public final class BinnedDataset<SLICE, LABEL> {
                         }
                 ));
 
-        return new BinnedDataset<>(allBins, slices);
+        return new MultiHistogram<>(allBins, slices);
     }
 }

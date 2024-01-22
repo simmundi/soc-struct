@@ -37,7 +37,7 @@ import java.util.List;
  * Count can be decremented by picking the value, or it can be reset to the original count.
  * <p>
  * Bins are useful when they are part of Histograms, where they can be sampled; Histograms can further be
- * composed into complexes called BinnedDataset.
+ * composed into complexes called MultiHistograms.
  */
 public class Bin<Label> {
     private final Label label;

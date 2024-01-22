@@ -1,5 +1,5 @@
 group 'pl.edu.icm.em'
-version '1.2-SNAPSHOT'
+version '1.3-SNAPSHOT'
 
 subprojects {
 
@@ -57,8 +57,8 @@ subprojects {
     }
 
     ext {
-        bentoVersion = '1.4.9-SNAPSHOT'
-        trurlVersion = '1.2-SNAPSHOT'
+        bentoVersion = '1.6.2'
+        trurlVersion = '1.3'
         guavaVersion = '30.1-jre'
         geotoolsVersion = '26-RC'
         grasshopperVersion = '4.0'

@@ -18,18 +18,20 @@
 
 package pl.edu.icm.board.geography.prg.model;
 
-import pl.edu.icm.trurl.ecs.annotation.WithMapper;
+import pl.edu.icm.em.socstruct.component.geo.Location;
+import pl.edu.icm.trurl.ecs.dao.annotation.WithDao;
 
-@WithMapper
+@WithDao
 public class IndexedAddressPoint {
     private String normalized;
     private String normalizedStreetName;
     private AddressPoint addressPoint;
+    private Location location;
 
     public IndexedAddressPoint() {
     }
 
-    public IndexedAddressPoint(String normalized, String normalizedStreetName, AddressPoint addressPoint) {
+    public IndexedAddressPoint(String normalized, String normalizedStreetName, AddressPoint addressPoint, Location location) {
         this.normalized = normalized;
         this.normalizedStreetName = normalizedStreetName;
         this.addressPoint = addressPoint;
@@ -57,5 +59,13 @@ public class IndexedAddressPoint {
 
     public AddressPoint getAddressPoint() {
         return addressPoint;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
     }
 }

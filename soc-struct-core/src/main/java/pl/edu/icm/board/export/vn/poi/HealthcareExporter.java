@@ -21,7 +21,11 @@ package pl.edu.icm.board.export.vn.poi;
 import net.snowyhollows.bento.annotation.ByName;
 import net.snowyhollows.bento.annotation.WithFactory;
 import pl.edu.icm.board.EngineIo;
-import pl.edu.icm.board.model.*;
+import pl.edu.icm.em.socstruct.component.geo.Location;
+import pl.edu.icm.em.socstruct.component.health.Healthcare;
+import pl.edu.icm.em.socstruct.component.health.HealthcareType;
+import pl.edu.icm.em.common.detached.DetachedEntityStreamer;
+
 import java.io.IOException;
 import java.util.EnumMap;
 import java.util.Map;
@@ -29,6 +33,7 @@ import java.util.Map;
 public class HealthcareExporter {
 
     private final EngineIo engineIo;
+    private final DetachedEntityStreamer detachedEntityStreamer;
     private final PoiExporter poiExporter;
     private final String healthcareExportFilename;
 
@@ -39,9 +44,11 @@ public class HealthcareExporter {
 
     @WithFactory
     public HealthcareExporter(EngineIo engineIo,
+                              DetachedEntityStreamer detachedEntityStreamer,
                               PoiExporter poiExporter,
                               @ByName("soc-struct.healthcare.export") String healthcareExportFilename) {
         this.engineIo = engineIo;
+        this.detachedEntityStreamer = detachedEntityStreamer;
         this.poiExporter = poiExporter;
         this.healthcareExportFilename = healthcareExportFilename;
 
@@ -51,7 +58,7 @@ public class HealthcareExporter {
     public void export() throws IOException {
         var engine = engineIo.getEngine();
         poiExporter.export(healthcareExportFilename,
-                engine
+                detachedEntityStreamer
                         .streamDetached()
                         .filter(e -> e.optional(Healthcare.class).isPresent()),
                 (poiItem, entity) -> {

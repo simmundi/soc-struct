@@ -27,9 +27,9 @@ import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.geography.KilometerGridCell;
 import pl.edu.icm.board.geography.commune.Commune;
 import pl.edu.icm.board.geography.commune.CommuneManager;
-import pl.edu.icm.board.model.Household;
-import pl.edu.icm.board.model.Location;
-import pl.edu.icm.board.model.Person;
+import pl.edu.icm.em.socstruct.component.Household;
+import pl.edu.icm.em.socstruct.component.geo.Location;
+import pl.edu.icm.em.socstruct.component.Person;
 import pl.edu.icm.trurl.ecs.Entity;
 import pl.edu.icm.trurl.util.Status;
 

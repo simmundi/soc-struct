@@ -32,19 +32,19 @@ import pl.edu.icm.board.EntityMocker;
 import pl.edu.icm.board.MockRandomProvider;
 import pl.edu.icm.board.agesex.AgeSexFromDistributionPicker;
 import pl.edu.icm.board.geography.KilometerGridCell;
-import pl.edu.icm.board.model.Complex;
+import pl.edu.icm.em.socstruct.component.geo.Complex;
 import pl.edu.icm.board.geography.density.PopulationDensityLoader;
-import pl.edu.icm.board.model.EducationLevel;
-import pl.edu.icm.board.model.EducationalInstitution;
-import pl.edu.icm.board.model.Household;
-import pl.edu.icm.board.model.Location;
-import pl.edu.icm.board.model.Person;
+import pl.edu.icm.em.socstruct.component.edu.EducationLevel;
+import pl.edu.icm.em.socstruct.component.edu.EducationalInstitution;
+import pl.edu.icm.em.socstruct.component.Household;
+import pl.edu.icm.em.socstruct.component.geo.Location;
+import pl.edu.icm.em.socstruct.component.Person;
 import pl.edu.icm.board.urizen.generic.Entities;
 import pl.edu.icm.board.urizen.generic.EntityStreamManipulator;
 import pl.edu.icm.board.urizen.household.model.AgeRange;
 import pl.edu.icm.board.urizen.population.Population;
 import pl.edu.icm.board.util.RandomProvider;
-import pl.edu.icm.trurl.bin.BinPool;
+import pl.edu.icm.trurl.bin.Histogram;
 import pl.edu.icm.trurl.ecs.Engine;
 import pl.edu.icm.trurl.ecs.Entity;
 import pl.edu.icm.trurl.ecs.Session;
@@ -68,9 +68,9 @@ class DormUrizenTest {
     @Mock
     private Population population;
     @Spy
-    private BinPool<Person.Sex> sexBinPool = new BinPool<>();
+    private Histogram<Person.Sex> sexHistogram = new Histogram<>();
     @Spy
-    private BinPool<AgeRange> ageRangeBinPool = new BinPool<>();
+    private Histogram<AgeRange> ageRangeHistogram = new Histogram<>();
     @Mock
     private PopulationDensityLoader populationDensityLoader;
     @Mock
@@ -101,14 +101,14 @@ class DormUrizenTest {
     @BeforeEach
     void before() {
         entityMocker = new EntityMocker(session, EducationalInstitution.class, Location.class);
-        sexBinPool.add(Person.Sex.K, 500);
-        sexBinPool.add(Person.Sex.M, 500);
-        ageRangeBinPool.add(AgeRange.AGE_20_24, 1000);
+        sexHistogram.add(Person.Sex.F, 500);
+        sexHistogram.add(Person.Sex.M, 500);
+        ageRangeHistogram.add(AgeRange.AGE_20_24, 1000);
 
         when(sessionFactory.create()).thenReturn(session);
         when(replicantsPopulation.getPopulation()).thenReturn(population);
-        when(population.getPeople20to24()).thenReturn(ageRangeBinPool);
-        when(population.getPeopleBySex()).thenReturn(sexBinPool);
+        when(population.getPeople20to24()).thenReturn(ageRangeHistogram);
+        when(population.getPeopleBySex()).thenReturn(sexHistogram);
         when(entities
                 .createEmptyComplex(same(session), anyInt()))
                 .thenReturn(entity2);

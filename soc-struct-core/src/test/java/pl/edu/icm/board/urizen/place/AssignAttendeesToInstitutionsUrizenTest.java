@@ -26,13 +26,13 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.MockRandomProvider;
-import pl.edu.icm.board.model.EducationalInstitution;
+import pl.edu.icm.em.socstruct.component.NameTag;
+import pl.edu.icm.em.socstruct.component.edu.EducationalInstitution;
 import pl.edu.icm.board.education.EducationRadiusProvider;
-import pl.edu.icm.board.model.Named;
-import pl.edu.icm.board.model.Location;
-import pl.edu.icm.board.model.Household;
-import pl.edu.icm.board.model.Attendee;
-import pl.edu.icm.board.model.Person;
+import pl.edu.icm.em.socstruct.component.geo.Location;
+import pl.edu.icm.em.socstruct.component.Household;
+import pl.edu.icm.em.socstruct.component.edu.Attendee;
+import pl.edu.icm.em.socstruct.component.Person;
 import pl.edu.icm.board.urizen.generic.Entities;
 import pl.edu.icm.board.urizen.generic.EntityStreamManipulator;
 import pl.edu.icm.board.util.RandomProvider;
@@ -70,7 +70,7 @@ class AssignAttendeesToInstitutionsUrizenTest {
         engineIo = new EngineIo(engineConfiguration, csvWriter, null, null);
         StaticSelectors staticSelectors = new StaticSelectors(engineConfiguration);
         assigner = new AssignAttendeesToInstitutionsUrizen(engineIo, entityStreamManipulator, entities, randomProvider, radius, staticSelectors);
-        engineIo.require(EducationalInstitution.class, Location.class, Named.class, Household.class, Person.class, Attendee.class);
+        engineIo.require(EducationalInstitution.class, Location.class, NameTag.class, Household.class, Person.class, Attendee.class);
         engineIo.load(AssignAttendeesToInstitutionsUrizen.class.getResourceAsStream("/assignerTest.csv"));
     }
 

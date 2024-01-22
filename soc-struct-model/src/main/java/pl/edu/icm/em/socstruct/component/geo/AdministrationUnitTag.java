@@ -16,10 +16,26 @@
  *
  */
 
-package pl.edu.icm.board.model;
+package pl.edu.icm.em.socstruct.component.geo;
 
-import java.util.List;
+import pl.edu.icm.trurl.ecs.dao.annotation.WithDao;
 
-public class SocialTies {
-    private List<Connection> connections;
+@WithDao
+public class AdministrationUnitTag {
+    private String code;
+
+    public AdministrationUnitTag(String code) {
+        this.code = code;
+    }
+
+    public AdministrationUnitTag() {
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
 }

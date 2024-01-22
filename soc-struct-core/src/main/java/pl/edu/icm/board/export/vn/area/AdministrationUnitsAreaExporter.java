@@ -23,11 +23,10 @@ import net.snowyhollows.bento.annotation.WithFactory;
 import pl.edu.icm.board.geography.KilometerGridCell;
 import pl.edu.icm.board.geography.commune.Commune;
 import pl.edu.icm.board.geography.commune.CommuneManager;
-import pl.edu.icm.trurl.visnow.VnAreaExporter;
+import pl.edu.icm.trurl.io.visnow.VnAreaExporter;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class AdministrationUnitsAreaExporter {

@@ -18,10 +18,10 @@
 
 package pl.edu.icm.board.export;
 
-import pl.edu.icm.trurl.ecs.annotation.WithMapper;
+import pl.edu.icm.trurl.ecs.dao.annotation.WithDao;
 import pl.edu.icm.trurl.ecs.Entity;
 
-@WithMapper
+@WithDao
 public class LegacyAttendee {
     private Entity place;
 

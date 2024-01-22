@@ -16,16 +16,16 @@
  *
  */
 
-package pl.edu.icm.board.model;
+package pl.edu.icm.em.socstruct.component.geo;
 
-import pl.edu.icm.trurl.ecs.annotation.WithMapper;
+import pl.edu.icm.trurl.ecs.dao.annotation.WithDao;
 
 import java.util.Objects;
 
-@WithMapper
+@WithDao
 public class Location {
-    private int e;
-    private int n;
+    private float e;
+    private float n;
 
     public Location() {
     }
@@ -35,31 +35,31 @@ public class Location {
         this.n = n;
     }
 
-    public int getN() {
+    public float getN() {
         return n;
     }
 
-    public int getE() {
+    public float getE() {
         return e;
     }
 
-    public void moveByMeters(int metersE, int metersN) {
+    public void moveByMeters(float metersE, float metersN) {
         e += metersE;
         n += metersN;
     }
 
-    public static Location fromPl1992MeterCoords(float eastingMeters, float northingMeters) {
+    public static Location fromEquiarealENMeters(float eastingMeters, float northingMeters) {
         Location location = new Location();
         location.n = (int) northingMeters;
         location.e = (int) eastingMeters;
         return location;
     }
 
-    public void setE(int e) {
+    public void setE(float e) {
         this.e = e;
     }
 
-    public void setN(int n) {
+    public void setN(float n) {
         this.n = n;
     }
 

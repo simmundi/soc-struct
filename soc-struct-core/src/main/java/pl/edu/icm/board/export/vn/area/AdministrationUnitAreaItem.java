@@ -18,9 +18,9 @@
 
 package pl.edu.icm.board.export.vn.area;
 
-import pl.edu.icm.trurl.ecs.annotation.WithMapper;
+import pl.edu.icm.trurl.ecs.dao.annotation.WithDao;
 
-@WithMapper
+@WithDao
 public class AdministrationUnitAreaItem {
     private short commune;
 

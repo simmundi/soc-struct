@@ -83,7 +83,7 @@ _Collectives_. The second key entities of the model are _contexts_, denoting per
 - _Schools_<!-- ($n$ = 19,325)--> as places of basic education (including kindergartens).
 - _Universities_ as sites of study<!-- ($n$ = 426)-->.
 - _Big universities_ as large universities with spacious campuses<!-- ($n$ = 426)-->.
-- _Streets_ covering streets and public and semi-public sites (commercial services, shops, etc.). Instead of one catch-all street context, there are multiple to mimic cross-generational aspects of contact in such places. Aspects are age groups that mix (and infect each other). There are ten types of _street_ context representing ages binned by ten: 0-10, 10-20, 20-30, 30-40, 40-50, 50-60, 60-70, 70-80, 80-90, 90-100 (named respectively: street_00, street_10, ..., street_90)<!-- ($n$ = 426)-->.
+- _Streets_ covering streets and public and semi-public sites (commercial services, shops, etc.). Instead of one catch-all street context, there are multiple to mimic cross-generational aspects of contact in such places. Aspects are age groups that mix (and infect each other). There are ten types of _street_ context representing ages binned by ten: 0-10, 10-20, 20-30, 30-40, 40-50, 50-60, 60-70, 70-80, 80-90, 90-100 (nameTag respectively: street_00, street_10, ..., street_90)<!-- ($n$ = 426)-->.
 
 <!-- Environment. Many models include a single entity that performs functions such as
 describing the environment experienced by other entities and keeping track of simulated

@@ -25,14 +25,14 @@ import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.agesex.AgeSexFromDistributionPicker;
 import pl.edu.icm.board.geography.KilometerGridCell;
 import pl.edu.icm.board.geography.density.PopulationDensityLoader;
-import pl.edu.icm.board.model.Complex;
-import pl.edu.icm.board.model.Household;
-import pl.edu.icm.board.model.Person;
-import pl.edu.icm.board.model.Replicant;
+import pl.edu.icm.em.socstruct.component.geo.Complex;
+import pl.edu.icm.em.socstruct.component.Household;
+import pl.edu.icm.em.socstruct.component.Person;
+import pl.edu.icm.em.socstruct.component.prefab.PrefabTag;
 import pl.edu.icm.board.urizen.generic.Entities;
 import pl.edu.icm.board.urizen.household.model.AgeRange;
 import pl.edu.icm.board.util.RandomProvider;
-import pl.edu.icm.trurl.bin.BinPool;
+import pl.edu.icm.trurl.bin.Histogram;
 import pl.edu.icm.trurl.ecs.Entity;
 import pl.edu.icm.trurl.ecs.Session;
 
@@ -47,8 +47,8 @@ public class MonasteryUrizen {
     private final int monasteryReplicantsCount;
     private final int monasteryRoomSize;
     private final int monasteryMaxRooms;
-    private final BinPool<AgeRange> ages;
-    private final BinPool<Person.Sex> sexes;
+    private final Histogram<AgeRange> ages;
+    private final Histogram<Person.Sex> sexes;
     private final AgeSexFromDistributionPicker ageSexFromDistributionPicker;
     private Entities entities;
 
@@ -72,7 +72,7 @@ public class MonasteryUrizen {
         this.monasteryReplicantsCount = monasteryReplicantsCount;
         this.monasteryRoomSize = monasteryRoomSize;
         this.monasteryMaxRooms = monasteryMaxRooms;
-        this.engineIo.require(Household.class, Person.class, Replicant.class);
+        this.engineIo.require(Household.class, Person.class, PrefabTag.class);
         this.sexes = replicantsPopulation.getPopulation().getPeopleBySex();
         this.ages = replicantsPopulation.getPopulation().getPeopleByAge().createSubPool(
                 AgeRange.AGE_20_24, AgeRange.AGE_25_29,

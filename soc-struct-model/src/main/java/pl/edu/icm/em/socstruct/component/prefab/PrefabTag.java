@@ -16,26 +16,19 @@
  *
  */
 
-package pl.edu.icm.board.model;
+package pl.edu.icm.em.socstruct.component.prefab;
 
-import pl.edu.icm.trurl.ecs.annotation.WithMapper;
+import pl.edu.icm.trurl.ecs.dao.annotation.WithDao;
 
-@WithMapper
-public class AdministrationUnit {
-    private String teryt;
+@WithDao
+public class PrefabTag {
+    PrefabType type;
 
-    public AdministrationUnit(String teryt) {
-        this.teryt = teryt;
+    public PrefabType getType() {
+        return type;
     }
 
-    public AdministrationUnit() {
-    }
-
-    public String getTeryt() {
-        return teryt;
-    }
-
-    public void setTeryt(String teryt) {
-        this.teryt = teryt;
+    public void setType(PrefabType type) {
+        this.type = type;
     }
 }

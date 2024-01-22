@@ -20,8 +20,8 @@ package pl.edu.icm.board.urizen.generic;
 
 import net.snowyhollows.bento.annotation.WithFactory;
 import pl.edu.icm.board.geography.KilometerGridCell;
-import pl.edu.icm.board.model.Location;
-import pl.edu.icm.trurl.bin.BinPoolsByShape;
+import pl.edu.icm.em.socstruct.component.geo.Location;
+import pl.edu.icm.trurl.bin.HistogramsByShape;
 import pl.edu.icm.trurl.ecs.Entity;
 
 import java.util.function.Function;
@@ -39,12 +39,12 @@ public class EntityStreamManipulator {
                 .neighboringCircle(r);
     }
 
-    public <SHAPE> BinPoolsByShape<SHAPE, Entity> groupIntoShapes(
+    public <SHAPE> HistogramsByShape<SHAPE, Entity> groupIntoShapes(
             Stream<Entity> entities,
             ToIntFunction<Entity> countExtractor,
             Function<Entity, Stream<SHAPE>> shapeExtractor) {
 
-        return BinPoolsByShape.group(
+        return HistogramsByShape.group(
                 entities,
                 countExtractor,
                 shapeExtractor);

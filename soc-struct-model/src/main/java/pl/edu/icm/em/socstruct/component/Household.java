@@ -16,26 +16,19 @@
  *
  */
 
-package pl.edu.icm.board.model;
+package pl.edu.icm.em.socstruct.component;
 
-import pl.edu.icm.trurl.ecs.annotation.WithMapper;
+import pl.edu.icm.trurl.ecs.Entity;
+import pl.edu.icm.trurl.ecs.dao.annotation.WithDao;
 
-@WithMapper
-public class Workplace {
-    private short employees;
+import java.util.ArrayList;
+import java.util.List;
 
-    public Workplace() {
-    }
+@WithDao
+public class Household {
+    private List<Entity> members = new ArrayList<>();
 
-    public Workplace(short employees) {
-        this.employees = employees;
-    }
-
-    public short getEmployees() {
-        return employees;
-    }
-
-    public void setEmployees(short employees) {
-        this.employees = employees;
+    public List<Entity> getMembers() {
+        return members;
     }
 }

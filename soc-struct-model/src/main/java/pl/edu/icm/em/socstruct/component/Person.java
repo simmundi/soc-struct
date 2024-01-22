@@ -16,15 +16,17 @@
  *
  */
 
-package pl.edu.icm.board.model;
+package pl.edu.icm.em.socstruct.component;
 
-import pl.edu.icm.trurl.ecs.annotation.WithMapper;
+import pl.edu.icm.trurl.ecs.dao.annotation.WithDao;
 
 import java.util.Objects;
 
-@WithMapper
+@WithDao
 public class Person {
-    public enum Sex { M, K }
+    public enum Sex {
+        M, F
+    }
 
     private Sex sex;
     private int age;

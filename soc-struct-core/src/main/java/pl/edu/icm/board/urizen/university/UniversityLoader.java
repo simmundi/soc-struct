@@ -21,7 +21,7 @@ package pl.edu.icm.board.urizen.university;
 import net.snowyhollows.bento.annotation.ByName;
 import net.snowyhollows.bento.annotation.WithFactory;
 import pl.edu.icm.board.geography.KilometerGridCell;
-import pl.edu.icm.board.model.Location;
+import pl.edu.icm.em.socstruct.component.geo.Location;
 
 import java.io.IOException;
 import java.nio.file.Files;

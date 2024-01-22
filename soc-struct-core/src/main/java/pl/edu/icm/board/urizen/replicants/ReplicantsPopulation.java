@@ -41,7 +41,7 @@ public class ReplicantsPopulation {
     @WithFactory
     public ReplicantsPopulation(GusModelCountyPopulationLoader gusModelCountyPopulationLoader) {
         this.gusModelCountyPopulationLoader = gusModelCountyPopulationLoader;
-        population = gusModelCountyPopulationLoader.createCountyBinPools().get("0264");
+        population = gusModelCountyPopulationLoader.createCountyHistograms().get("0264");
     }
 
     public Population getPopulation() {

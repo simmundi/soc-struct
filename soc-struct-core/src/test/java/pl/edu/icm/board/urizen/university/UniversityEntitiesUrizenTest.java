@@ -25,12 +25,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pl.edu.icm.board.EngineIo;
-import pl.edu.icm.board.model.Named;
+import pl.edu.icm.em.socstruct.component.NameTag;
 import pl.edu.icm.board.geography.KilometerGridCell;
-import pl.edu.icm.board.model.Location;
-import pl.edu.icm.board.model.Household;
-import pl.edu.icm.board.model.Attendee;
-import pl.edu.icm.board.model.Person;
+import pl.edu.icm.em.socstruct.component.geo.Location;
+import pl.edu.icm.em.socstruct.component.Household;
+import pl.edu.icm.em.socstruct.component.edu.Attendee;
+import pl.edu.icm.em.socstruct.component.Person;
 import pl.edu.icm.board.urizen.generic.Entities;
 import pl.edu.icm.trurl.ecs.EngineConfiguration;
 import pl.edu.icm.trurl.ecs.EngineConfigurationFactory;
@@ -90,7 +90,7 @@ class UniversityEntitiesUrizenTest {
                         engineIo,
                         new Entities(),
                         2);
-        engineIo.require(Person.class, Named.class, Household.class, Attendee.class);
+        engineIo.require(Person.class, NameTag.class, Household.class, Attendee.class);
         engineIo.load(UniversityEntitiesUrizen.class.getResourceAsStream("/universitiesTest.csv"));
     }
 
@@ -110,7 +110,7 @@ class UniversityEntitiesUrizenTest {
         List<University> generatedUniversities = new ArrayList<>();
         while (iter.hasNext()) {
             Row row = iter.next();
-            generatedUniversities.add(new University(Location.fromPl1992MeterCoords(
+            generatedUniversities.add(new University(Location.fromEquiarealENMeters(
                     row.getInt("e"), row.getInt("n")
             ), row.getInt("pupilCount")));
         }

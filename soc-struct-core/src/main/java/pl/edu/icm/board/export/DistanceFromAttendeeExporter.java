@@ -23,33 +23,35 @@ import net.snowyhollows.bento.annotation.WithFactory;
 import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.EngineIoFactory;
 import pl.edu.icm.em.common.EmConfig;
-import pl.edu.icm.board.model.Attendee;
-import pl.edu.icm.board.model.EducationalInstitution;
-import pl.edu.icm.board.model.Household;
-import pl.edu.icm.board.model.Location;
-import pl.edu.icm.board.model.Person;
+import pl.edu.icm.em.socstruct.component.Household;
+import pl.edu.icm.em.socstruct.component.Person;
+import pl.edu.icm.em.socstruct.component.edu.Attendee;
+import pl.edu.icm.em.socstruct.component.edu.EducationalInstitution;
+import pl.edu.icm.em.socstruct.component.geo.Location;
 import pl.edu.icm.trurl.ecs.Engine;
 import pl.edu.icm.trurl.ecs.Entity;
-import pl.edu.icm.trurl.ecs.util.Selectors;
+import pl.edu.icm.trurl.ecs.util.ActionService;
+import pl.edu.icm.trurl.ecs.util.Indexes;
+import pl.edu.icm.trurl.ecs.util.IteratingStepBuilder;
+import pl.edu.icm.trurl.io.visnow.VnPointsExporter;
 import pl.edu.icm.trurl.util.Status;
-import pl.edu.icm.trurl.visnow.VnPointsExporter;
 
 import java.io.IOException;
-
-import static pl.edu.icm.trurl.ecs.util.EntityIterator.select;
 
 public class DistanceFromAttendeeExporter {
 
     private final EngineIo engineIo;
     private final String odleglosciPath;
-    private final Selectors selectors;
+    private final Indexes indexes;
+    private final ActionService actionService;
 
     @WithFactory
     public DistanceFromAttendeeExporter(EngineIo engineIo,
                                         @ByName("soc-struct.export.distances") String odleglosciPath,
-                                        Selectors selectors) {
+                                        Indexes indexes, ActionService actionService) {
         this.odleglosciPath = odleglosciPath;
-        this.selectors = selectors;
+        this.indexes = indexes;
+        this.actionService = actionService;
         engineIo.require(Household.class, Location.class, Attendee.class, EducationalInstitution.class, Person.class);
         this.engineIo = engineIo;
     }
@@ -64,36 +66,37 @@ public class DistanceFromAttendeeExporter {
         var statusBar = Status.of("Outputing agents", 500000);
 
         engine.execute(
-                select(selectors.allWithComponents(Household.class, Location.class))
-                        .dontPersist()
-                        .forEach(Household.class, Location.class, (householdEntity, household, location) -> {
-                    for (Entity member : household.getMembers()) {
-                        Attendee attendee = member.get(Attendee.class);
-                        if (attendee != null) {
-                            var educationalInstitution = attendee.getInstitution().get(EducationalInstitution.class);
-                            if (educationalInstitution == null) {
-                                continue;
-                            }
-                            var person = member.get(Person.class);
-                            exported.setSex((short) person.getSex().ordinal());
-                            exported.setX(location.getE() / 1000f);
-                            exported.setY(location.getN() / 1000f);
-                            var targetLocation = attendee.getInstitution().get(Location.class);
-                            var distance = Math.hypot(targetLocation.getE() - location.getE(), targetLocation.getN() - location.getN()) / 1000f;
-                            exported.setDistance((float) distance);
-                            var type = educationalInstitution.getLevel();
-                            if (type != null) {
-                                exported.setType((short) type.ordinal());
-                            } else {
-                                exported.setType((short) -1);
-                            }
+                IteratingStepBuilder.iteratingOver(indexes.allWithComponents(Household.class, Location.class))
+                        .persisting()
+                        .withoutContext()
+                        .perform(actionService.withComponents(Household.class, Location.class, (householdEntity, household, location) -> {
+                            for (Entity member : household.getMembers()) {
+                                Attendee attendee = member.get(Attendee.class);
+                                if (attendee != null) {
+                                    var educationalInstitution = attendee.getInstitution().get(EducationalInstitution.class);
+                                    if (educationalInstitution == null) {
+                                        continue;
+                                    }
+                                    var person = member.get(Person.class);
+                                    exported.setSex((short) person.getSex().ordinal());
+                                    exported.setX(location.getE() / 1000f);
+                                    exported.setY(location.getN() / 1000f);
+                                    var targetLocation = attendee.getInstitution().get(Location.class);
+                                    var distance = Math.hypot(targetLocation.getE() - location.getE(), targetLocation.getN() - location.getN()) / 1000f;
+                                    exported.setDistance((float) distance);
+                                    var type = educationalInstitution.getLevel();
+                                    if (type != null) {
+                                        exported.setType((short) type.ordinal());
+                                    } else {
+                                        exported.setType((short) -1);
+                                    }
 
-                            exporter.append(exported);
-                        }
+                                    exporter.append(exported);
+                                }
 
-                        statusBar.tick();
-                    }
-                }));
+                                statusBar.tick();
+                            }
+                        })).build());
         exporter.close();
         statusBar.done();
     }

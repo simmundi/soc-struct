@@ -30,15 +30,15 @@ import pl.edu.icm.board.MockRandomProvider;
 import pl.edu.icm.board.agesex.AgeSexFromDistributionPicker;
 import pl.edu.icm.board.geography.prg.model.AddressLookupResult;
 import pl.edu.icm.board.geography.prg.model.GeocodedPoi;
-import pl.edu.icm.board.model.Complex;
-import pl.edu.icm.board.model.Household;
-import pl.edu.icm.board.model.Location;
-import pl.edu.icm.board.model.Person;
+import pl.edu.icm.em.socstruct.component.geo.Complex;
+import pl.edu.icm.em.socstruct.component.Household;
+import pl.edu.icm.em.socstruct.component.geo.Location;
+import pl.edu.icm.em.socstruct.component.Person;
 import pl.edu.icm.board.urizen.generic.Entities;
 import pl.edu.icm.board.urizen.household.model.AgeRange;
 import pl.edu.icm.board.urizen.population.Population;
 import pl.edu.icm.board.util.RandomProvider;
-import pl.edu.icm.trurl.bin.BinPool;
+import pl.edu.icm.trurl.bin.Histogram;
 import pl.edu.icm.trurl.ecs.Engine;
 import pl.edu.icm.trurl.ecs.Entity;
 import pl.edu.icm.trurl.ecs.EntitySystem;
@@ -61,9 +61,9 @@ class PrisonUrizenTest {
     @Mock
     private Population population;
     @Spy
-    private BinPool<Person.Sex> sexBinPool = new BinPool<>();
+    private Histogram<Person.Sex> sexHistogram = new Histogram<>();
     @Spy
-    private BinPool<AgeRange> ageRangeBinPool = new BinPool<>();
+    private Histogram<AgeRange> ageRangeHistogram = new Histogram<>();
     @Mock
     private Engine engine;
     @Mock
@@ -91,14 +91,14 @@ class PrisonUrizenTest {
     private int prisoners = 100;
     @BeforeEach
     void before() throws IOException {
-        sexBinPool.add(Person.Sex.K, 500);
-        sexBinPool.add(Person.Sex.M, 500);
-        ageRangeBinPool.add(AgeRange.AGE_20_24, 1000);
+        sexHistogram.add(Person.Sex.F, 500);
+        sexHistogram.add(Person.Sex.M, 500);
+        ageRangeHistogram.add(AgeRange.AGE_20_24, 1000);
 
         when(sessionFactory.create()).thenReturn(session);
         when(replicantsPopulation.getPopulation()).thenReturn(population);
-        when(population.getPeople20to100()).thenReturn(ageRangeBinPool);
-        when(population.getPeopleBySex()).thenReturn(sexBinPool);
+        when(population.getPeople20to100()).thenReturn(ageRangeHistogram);
+        when(population.getPeopleBySex()).thenReturn(sexHistogram);
         when(entities
                 .createEmptyComplex(same(session), anyInt()))
                 .thenReturn(entity2);
@@ -111,7 +111,7 @@ class PrisonUrizenTest {
             system.execute(sessionFactory);
             return null;
         }).when(engine).execute(any());
-        addressLookupResult.setLocation(Location.fromPl1992MeterCoords(1,1));
+        addressLookupResult.setLocation(Location.fromEquiarealENMeters(1,1));
         prisonFromCsv.setType(PrisonFromCsv.Type.PRISON_K);
         prisonFromCsv.setName("Areszt śledczy nr 1 w Warszawie");
         prisonFromCsv.setPrisonCount(prisoners);

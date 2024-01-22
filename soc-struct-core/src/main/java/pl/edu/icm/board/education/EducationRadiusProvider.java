@@ -20,7 +20,7 @@ package pl.edu.icm.board.education;
 
 import net.snowyhollows.bento.annotation.ByName;
 import net.snowyhollows.bento.annotation.WithFactory;
-import pl.edu.icm.board.model.EducationLevel;
+import pl.edu.icm.em.socstruct.component.edu.EducationLevel;
 
 public class EducationRadiusProvider {
     private final int kindergartenRadius;
@@ -43,16 +43,16 @@ public class EducationRadiusProvider {
    }
 
    public int getRadius(EducationLevel level) {
-       switch(level){
-           case K:
+       switch(level.name()){
+           case "K":
                return kindergartenRadius;
-           case P:
+           case "P":
                return primarySchoolRadius;
-           case H:
+           case "H":
                return highSchoolRadius;
-           case U:
+           case "U":
                return universityRadius;
-           case BU:
+           case "BU":
                return bigUniversityRadius;
            default:
                return 0;

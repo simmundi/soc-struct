@@ -22,18 +22,18 @@ import net.snowyhollows.bento.annotation.WithFactory;
 import org.apache.commons.math3.random.RandomGenerator;
 import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.education.AssigningMethod;
-import pl.edu.icm.board.model.EducationLevel;
+import pl.edu.icm.em.socstruct.component.NameTag;
+import pl.edu.icm.em.socstruct.component.edu.EducationLevel;
 import pl.edu.icm.board.education.EducationRadiusProvider;
-import pl.edu.icm.board.model.EducationalInstitution;
-import pl.edu.icm.board.model.Named;
+import pl.edu.icm.em.socstruct.component.edu.EducationalInstitution;
 import pl.edu.icm.board.geography.KilometerGridCell;
-import pl.edu.icm.board.model.Location;
-import pl.edu.icm.board.model.Household;
-import pl.edu.icm.board.model.Person;
+import pl.edu.icm.em.socstruct.component.geo.Location;
+import pl.edu.icm.em.socstruct.component.Household;
+import pl.edu.icm.em.socstruct.component.Person;
 import pl.edu.icm.board.urizen.generic.Entities;
 import pl.edu.icm.board.urizen.generic.EntityStreamManipulator;
 import pl.edu.icm.board.util.RandomProvider;
-import pl.edu.icm.trurl.bin.BinPoolsByShape;
+import pl.edu.icm.trurl.bin.HistogramsByShape;
 import pl.edu.icm.trurl.ecs.Engine;
 import pl.edu.icm.trurl.ecs.Entity;
 import pl.edu.icm.trurl.ecs.util.EntityIterator;
@@ -65,7 +65,7 @@ public class AssignAttendeesToInstitutionsUrizen {
         this.entityStreamManipulator = entityStreamManipulator;
         this.entities = entities;
         this.staticSelectors = staticSelectors;
-        engineIo.require(EducationalInstitution.class, Location.class, Named.class, Household.class, Person.class);
+        engineIo.require(EducationalInstitution.class, Location.class, NameTag.class, Household.class, Person.class);
         this.random = randomProvider.getRandomGenerator(AssignAttendeesToInstitutionsUrizen.class);
         this.radius = radius;
     }
@@ -104,7 +104,7 @@ public class AssignAttendeesToInstitutionsUrizen {
     }
 
     private void assign(Selector householdsSelector,
-                        BinPoolsByShape<EducationInstitutionShape, Entity> gridCellEntityBinsByShape,
+                        HistogramsByShape<EducationInstitutionShape, Entity> gridCellEntityBinsByShape,
                         Predicate<Person> predicate,
                         AssigningMethod assigningMethod,
                         EducationLevel level) {
@@ -137,7 +137,7 @@ public class AssignAttendeesToInstitutionsUrizen {
         status.done();
     }
 
-    private Entity findInstitutionIfNotAlreadyFound(BinPoolsByShape<EducationInstitutionShape, Entity> gridCellEntityBinsByShape, Entity found, KilometerGridCell cell, EducationLevel level, AssigningMethod method) {
+    private Entity findInstitutionIfNotAlreadyFound(HistogramsByShape<EducationInstitutionShape, Entity> gridCellEntityBinsByShape, Entity found, KilometerGridCell cell, EducationLevel level, AssigningMethod method) {
         if (found != null && method == AssigningMethod.SELECT_PER_HOUSEHOLD) {
             return found;
         }
@@ -148,13 +148,13 @@ public class AssignAttendeesToInstitutionsUrizen {
                 .pick();
     }
 
-    private BinPoolsByShape<EducationInstitutionShape, Entity> mapPossibilities(int radius, Predicate<EducationalInstitution> predicate) {
+    private HistogramsByShape<EducationInstitutionShape, Entity> mapPossibilities(int radius, Predicate<EducationalInstitution> predicate) {
         var status = Status.of("Mapping slots in educational institutions", 1000000);
         Engine engine = engineIo.getEngine();
         var result = entityStreamManipulator.groupIntoShapes(
                 engine.streamDetached()
                         .filter(entity -> entity.get(EducationalInstitution.class) != null && predicate.test(entity.get(EducationalInstitution.class))),
-                entity -> entity.get(EducationalInstitution.class).getPupilCount(),
+                entity -> entity.get(EducationalInstitution.class).getEstPupilCount(),
                 entity -> KilometerGridCell.fromLocation(entity.get(Location.class))
                         .neighboringCircle(radius)
                         .flatMap(cell -> {

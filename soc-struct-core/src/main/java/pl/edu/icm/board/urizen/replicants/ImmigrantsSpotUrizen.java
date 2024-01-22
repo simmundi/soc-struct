@@ -29,12 +29,19 @@ import pl.edu.icm.board.geography.commune.CommuneManager;
 import pl.edu.icm.board.geography.commune.TerytsOfBigCities;
 import pl.edu.icm.board.geography.density.PopulationDensityLoader;
 import pl.edu.icm.board.model.*;
+import pl.edu.icm.em.socstruct.component.Household;
+import pl.edu.icm.em.socstruct.component.Person;
+import pl.edu.icm.em.socstruct.component.geo.AdministrationUnitTag;
+import pl.edu.icm.em.socstruct.component.geo.Location;
+import pl.edu.icm.em.socstruct.component.prefab.PrefabTag;
+import pl.edu.icm.em.socstruct.component.work.Employee;
+import pl.edu.icm.em.socstruct.component.work.Workplace;
 import pl.edu.icm.board.urizen.generic.EntityStreamManipulator;
 import pl.edu.icm.board.urizen.household.model.AgeRange;
 import pl.edu.icm.board.util.RandomProvider;
 import pl.edu.icm.board.workplace.ProfessionalActivityAssessor;
-import pl.edu.icm.trurl.bin.BinPool;
-import pl.edu.icm.trurl.bin.BinPoolsByShape;
+import pl.edu.icm.trurl.bin.Histogram;
+import pl.edu.icm.trurl.bin.HistogramsByShape;
 import pl.edu.icm.trurl.ecs.Entity;
 import pl.edu.icm.trurl.ecs.Session;
 
@@ -52,9 +59,9 @@ public class ImmigrantsSpotUrizen {
     private final int immigrantsSpotReplicantsCount;
     private final int immigrantsSpotRoomSize;
     private final int immigrantsSpotMaxRooms;
-    private final BinPool<AgeRange> ages;
-    private final BinPool<AgeRange> agesOver18;
-    private final BinPool<Person.Sex> sexes;
+    private final Histogram<AgeRange> ages;
+    private final Histogram<AgeRange> agesOver18;
+    private final Histogram<Person.Sex> sexes;
     private final ProfessionalActivityAssessor professionalActivityAssessor;
     private final CommuneManager communeManager;
     private final EntityStreamManipulator entityStreamManipulator;
@@ -82,8 +89,8 @@ public class ImmigrantsSpotUrizen {
         this.immigrantsSpotReplicantsCount = immigrantsSpotReplicantsCount;
         this.immigrantsSpotRoomSize = immigrantsSpotRoomSize;
         this.immigrantsSpotMaxRooms = immigrantsSpotMaxRooms;
-        this.engineIo.require(Household.class, Person.class, Location.class, Replicant.class, Workplace.class,
-                AdministrationUnit.class, Employee.class);
+        this.engineIo.require(Household.class, Person.class, Location.class, PrefabTag.class, Workplace.class,
+                AdministrationUnitTag.class, Employee.class);
         this.communeManager = communeManager;
         this.entityStreamManipulator = entityStreamManipulator;
         this.ageSexFromDistributionPicker = ageSexFromDistributionPicker;
@@ -129,14 +136,14 @@ public class ImmigrantsSpotUrizen {
 
     public void fabricate() throws FileNotFoundException {
         populationDensityLoader.load();
-        BinPoolsByShape<Commune, Entity> workplacesByCommunes = entityStreamManipulator.groupIntoShapes(
+        HistogramsByShape<Commune, Entity> workplacesByCommunes = entityStreamManipulator.groupIntoShapes(
                 engineIo.getEngine().streamDetached()
                         .filter(e -> e.get(Workplace.class) != null),
-                e -> e.get(Workplace.class).getEmployees(),
+                e -> e.get(Workplace.class).getEstEmployeeCount(),
                 e -> Stream.of(
                         communeManager
                                 .communeForTeryt(
-                                        e.get(AdministrationUnit.class).getTeryt())
+                                        e.get(AdministrationUnitTag.class).getCode())
                                 .get()
                 )
         );
@@ -150,7 +157,7 @@ public class ImmigrantsSpotUrizen {
         }
     }
 
-    private void generateImmigrantsSpot(int immigrantsSpotSize, List<String> teryts, BinPoolsByShape<Commune, Entity> workplacesByCommunes) {
+    private void generateImmigrantsSpot(int immigrantsSpotSize, List<String> teryts, HistogramsByShape<Commune, Entity> workplacesByCommunes) {
         List<KilometerGridCell> cells = new ArrayList<>();
         cells.addAll(communeManager.communeForTeryt(teryts
                         .get(random.getRandomGenerator().nextInt(teryts.size())))
@@ -166,7 +173,7 @@ public class ImmigrantsSpotUrizen {
         }
     }
 
-    private void generateRoom(int inhabitants, KilometerGridCell cell, BinPool<Entity> workplaces) {
+    private void generateRoom(int inhabitants, KilometerGridCell cell, Histogram<Entity> workplaces) {
         engineIo.getEngine().execute(sessionFactory -> {
             Session session = sessionFactory.create();
             List<Entity> dependents = prototypes.immigrantsSpotRoom(session, cell).get(Household.class).getMembers();

@@ -34,19 +34,19 @@ import pl.edu.icm.board.geography.commune.Commune;
 import pl.edu.icm.board.geography.commune.CommuneManager;
 import pl.edu.icm.board.geography.commune.TerytsOfBigCities;
 import pl.edu.icm.board.geography.density.PopulationDensityLoader;
-import pl.edu.icm.board.model.AdministrationUnit;
-import pl.edu.icm.board.model.Household;
-import pl.edu.icm.board.model.Location;
-import pl.edu.icm.board.model.Replicant;
-import pl.edu.icm.board.model.ReplicantType;
-import pl.edu.icm.board.model.Person;
-import pl.edu.icm.board.model.Workplace;
+import pl.edu.icm.em.socstruct.component.geo.AdministrationUnitTag;
+import pl.edu.icm.em.socstruct.component.Household;
+import pl.edu.icm.em.socstruct.component.geo.Location;
+import pl.edu.icm.em.socstruct.component.prefab.PrefabTag;
+import pl.edu.icm.em.socstruct.component.prefab.PrefabType;
+import pl.edu.icm.em.socstruct.component.Person;
+import pl.edu.icm.em.socstruct.component.work.Workplace;
 import pl.edu.icm.board.urizen.generic.EntityStreamManipulator;
 import pl.edu.icm.board.urizen.household.model.AgeRange;
 import pl.edu.icm.board.urizen.population.Population;
 import pl.edu.icm.board.util.RandomProvider;
 import pl.edu.icm.board.workplace.ProfessionalActivityAssessor;
-import pl.edu.icm.trurl.bin.BinPool;
+import pl.edu.icm.trurl.bin.Histogram;
 import pl.edu.icm.trurl.ecs.Engine;
 import pl.edu.icm.trurl.ecs.Entity;
 import pl.edu.icm.trurl.ecs.Session;
@@ -73,9 +73,9 @@ class ImmigrantsSpotUrizenTest {
     @Mock
     private Population population;
     @Spy
-    private BinPool<Person.Sex> sexBinPool = new BinPool<>();
+    private Histogram<Person.Sex> sexHistogram = new Histogram<>();
     @Spy
-    private BinPool<AgeRange> ageRangeBinPool = new BinPool<>();
+    private Histogram<AgeRange> ageRangeHistogram = new Histogram<>();
     @Mock
     private PopulationDensityLoader populationDensityLoader;
     @Mock
@@ -103,30 +103,30 @@ class ImmigrantsSpotUrizenTest {
 
     @BeforeEach
     void before() {
-        entityMocker = new EntityMocker(session, Workplace.class, Location.class, AdministrationUnit.class, Person.class, Replicant.class);
-        sexBinPool.add(Person.Sex.K, 850);
-        sexBinPool.add(Person.Sex.M, 850);
-        ageRangeBinPool.add(AgeRange.AGE_0_4, 100);
-        ageRangeBinPool.add(AgeRange.AGE_5_9, 100);
-        ageRangeBinPool.add(AgeRange.AGE_10_14, 100);
-        ageRangeBinPool.add(AgeRange.AGE_15_19, 100);
-        ageRangeBinPool.add(AgeRange.AGE_20_24, 100);
-        ageRangeBinPool.add(AgeRange.AGE_25_29, 100);
-        ageRangeBinPool.add(AgeRange.AGE_30_34, 100);
-        ageRangeBinPool.add(AgeRange.AGE_35_39, 100);
-        ageRangeBinPool.add(AgeRange.AGE_40_44, 100);
-        ageRangeBinPool.add(AgeRange.AGE_45_49, 100);
-        ageRangeBinPool.add(AgeRange.AGE_50_54, 100);
-        ageRangeBinPool.add(AgeRange.AGE_55_59, 100);
-        ageRangeBinPool.add(AgeRange.AGE_60_64, 100);
-        ageRangeBinPool.add(AgeRange.AGE_65_69, 100);
-        ageRangeBinPool.add(AgeRange.AGE_70_74, 100);
-        ageRangeBinPool.add(AgeRange.AGE_75_79, 100);
-        ageRangeBinPool.add(AgeRange.AGE_80_, 100);
+        entityMocker = new EntityMocker(session, Workplace.class, Location.class, AdministrationUnitTag.class, Person.class, PrefabTag.class);
+        sexHistogram.add(Person.Sex.F, 850);
+        sexHistogram.add(Person.Sex.M, 850);
+        ageRangeHistogram.add(AgeRange.AGE_0_4, 100);
+        ageRangeHistogram.add(AgeRange.AGE_5_9, 100);
+        ageRangeHistogram.add(AgeRange.AGE_10_14, 100);
+        ageRangeHistogram.add(AgeRange.AGE_15_19, 100);
+        ageRangeHistogram.add(AgeRange.AGE_20_24, 100);
+        ageRangeHistogram.add(AgeRange.AGE_25_29, 100);
+        ageRangeHistogram.add(AgeRange.AGE_30_34, 100);
+        ageRangeHistogram.add(AgeRange.AGE_35_39, 100);
+        ageRangeHistogram.add(AgeRange.AGE_40_44, 100);
+        ageRangeHistogram.add(AgeRange.AGE_45_49, 100);
+        ageRangeHistogram.add(AgeRange.AGE_50_54, 100);
+        ageRangeHistogram.add(AgeRange.AGE_55_59, 100);
+        ageRangeHistogram.add(AgeRange.AGE_60_64, 100);
+        ageRangeHistogram.add(AgeRange.AGE_65_69, 100);
+        ageRangeHistogram.add(AgeRange.AGE_70_74, 100);
+        ageRangeHistogram.add(AgeRange.AGE_75_79, 100);
+        ageRangeHistogram.add(AgeRange.AGE_80_, 100);
         when(sessionFactory.create()).thenReturn(session);
         when(replicantsPopulation.getPopulation()).thenReturn(population);
-        when(population.getPeopleByAge()).thenReturn(ageRangeBinPool);
-        when(population.getPeopleBySex()).thenReturn(sexBinPool);
+        when(population.getPeopleByAge()).thenReturn(ageRangeHistogram);
+        when(population.getPeopleBySex()).thenReturn(sexHistogram);
         when(prototypes.immigrantsSpotRoom(same(session), any())).thenReturn(entity);
         when(entity.get(Household.class)).thenReturn(new Household());
         when(engineIo.getEngine()).thenReturn(engine);
@@ -153,16 +153,16 @@ class ImmigrantsSpotUrizenTest {
         return entityMocker.entity(id++,
                 new Workplace((short) i),
                 KilometerGridCell.fromPl1992ENMeters(e, n).toLocation(),
-                new AdministrationUnit(teryt));
+                new AdministrationUnitTag(teryt));
     }
 
     private Entity immigrant() {
         Person person = new Person();
         person.setSex(Person.Sex.M);
         person.setAge(30);
-        Replicant replicant = new Replicant();
-        replicant.setType(ReplicantType.IMMIGRANTS_SPOT);
-        return entityMocker.entity(id++, person, replicant);
+        PrefabTag prefabTag = new PrefabTag();
+        prefabTag.setType(PrefabType.IMMIGRANTS_SPOT);
+        return entityMocker.entity(id++, person, prefabTag);
     }
 
     @Test

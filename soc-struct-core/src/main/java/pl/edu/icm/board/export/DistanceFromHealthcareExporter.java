@@ -23,29 +23,35 @@ import net.snowyhollows.bento.annotation.WithFactory;
 import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.EngineIoFactory;
 import pl.edu.icm.em.common.EmConfig;
-import pl.edu.icm.board.model.*;
+import pl.edu.icm.em.socstruct.component.Household;
+import pl.edu.icm.em.socstruct.component.Person;
+import pl.edu.icm.em.socstruct.component.geo.Location;
+import pl.edu.icm.em.socstruct.component.health.Healthcare;
+import pl.edu.icm.em.socstruct.component.health.Patient;
 import pl.edu.icm.trurl.ecs.Engine;
 import pl.edu.icm.trurl.ecs.Entity;
-import pl.edu.icm.trurl.ecs.util.Selectors;
+import pl.edu.icm.trurl.ecs.util.ActionService;
+import pl.edu.icm.trurl.ecs.util.Indexes;
+import pl.edu.icm.trurl.ecs.util.IteratingStepBuilder;
+import pl.edu.icm.trurl.io.visnow.VnPointsExporter;
 import pl.edu.icm.trurl.util.Status;
-import pl.edu.icm.trurl.visnow.VnPointsExporter;
 
 import java.io.IOException;
-
-import static pl.edu.icm.trurl.ecs.util.EntityIterator.select;
 
 public class DistanceFromHealthcareExporter {
 
     private final EngineIo engineIo;
     private final String healthcareDistanceExportFilename;
-    private final Selectors selectors;
+    private final Indexes indexes;
+    private final ActionService actionService;
 
     @WithFactory
     public DistanceFromHealthcareExporter(EngineIo engineIo,
                                           @ByName("soc-struct.healthcare.distance-export") String healthcareDistanceExportFilename,
-                                          Selectors selectors) {
+                                          Indexes indexes, ActionService actionService) {
         this.healthcareDistanceExportFilename = healthcareDistanceExportFilename;
-        this.selectors = selectors;
+        this.indexes = indexes;
+        this.actionService = actionService;
         engineIo.require(Household.class, Location.class, Patient.class, Healthcare.class, Person.class);
         this.engineIo = engineIo;
     }
@@ -59,9 +65,10 @@ public class DistanceFromHealthcareExporter {
         ExportedPatient exported = new ExportedPatient();
         var status = Status.of("Outputing agents", 500_000);
         engine.execute(
-                select(selectors.allWithComponents(Household.class, Location.class))
-                        .dontPersist()
-                        .forEach(Household.class, Location.class, (householdEntity, household, location) -> {
+                IteratingStepBuilder.iteratingOver(indexes.allWithComponents(Household.class, Location.class))
+                        .persisting()
+                        .withoutContext()
+                        .perform(actionService.withComponents(Household.class, Location.class, (householdEntity, household, location) -> {
                             for (Entity member : household.getMembers()) {
                                 Patient patient = member.get(Patient.class);
                                 if (patient != null) {
@@ -87,7 +94,7 @@ public class DistanceFromHealthcareExporter {
                                 exporter.append(exported);
                                 status.tick();
                             }
-                        }));
+                        })).build());
         exporter.close();
         status.done();
     }

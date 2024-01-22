@@ -2,7 +2,7 @@ dependencies {
     annotationProcessor "net.snowyhollows.bento:bento-generator:${bentoVersion}"
     annotationProcessor "pl.edu.icm.em:trurl-generator:${trurlVersion}"
 
-    api "pl.edu.icm.em:trurl-core:${trurlVersion}"
+    api "pl.edu.icm.em:trurl-all:${trurlVersion}"
     api project(":soc-struct-model")
     api "com.google.guava:guava:${guavaVersion}"
     api "net.snowyhollows.bento:bento-core:${bentoVersion}"

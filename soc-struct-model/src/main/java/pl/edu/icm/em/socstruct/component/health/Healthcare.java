@@ -16,11 +16,11 @@
  *
  */
 
-package pl.edu.icm.board.model;
+package pl.edu.icm.em.socstruct.component.health;
 
-import pl.edu.icm.trurl.ecs.annotation.WithMapper;
+import pl.edu.icm.trurl.ecs.dao.annotation.WithDao;
 
-@WithMapper(namespace = "healthcare")
+@WithDao(namespace = "healthcare")
 public class Healthcare {
     HealthcareType type;
 

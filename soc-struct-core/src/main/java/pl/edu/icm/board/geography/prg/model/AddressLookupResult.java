@@ -18,7 +18,7 @@
 
 package pl.edu.icm.board.geography.prg.model;
 
-import pl.edu.icm.board.model.Location;
+import pl.edu.icm.em.socstruct.component.geo.Location;
 
 public class AddressLookupResult {
     private AddressPoint addressPoint;

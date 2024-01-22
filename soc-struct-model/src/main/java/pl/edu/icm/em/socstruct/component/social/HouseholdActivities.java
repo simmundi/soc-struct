@@ -16,13 +16,13 @@
  *
  */
 
-package pl.edu.icm.board.model;
+package pl.edu.icm.em.socstruct.component.social;
 
 import pl.edu.icm.trurl.ecs.Entity;
-import pl.edu.icm.trurl.ecs.annotation.WithMapper;
+import pl.edu.icm.trurl.ecs.dao.annotation.WithDao;
 
-@WithMapper
-public class HouseholdChores {
+@WithDao
+public class HouseholdActivities {
     private Entity responsibleForWalkingChildren;
     private float totalFamilyCost;
 

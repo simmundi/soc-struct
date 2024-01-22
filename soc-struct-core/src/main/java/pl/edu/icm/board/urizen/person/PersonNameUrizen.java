@@ -21,9 +21,9 @@ package pl.edu.icm.board.urizen.person;
 import net.snowyhollows.bento.annotation.WithFactory;
 import org.apache.commons.math3.random.RandomGenerator;
 import pl.edu.icm.board.EngineIo;
-import pl.edu.icm.board.model.Named;
-import pl.edu.icm.board.model.Household;
-import pl.edu.icm.board.model.Person;
+import pl.edu.icm.em.socstruct.component.NameTag;
+import pl.edu.icm.em.socstruct.component.Household;
+import pl.edu.icm.em.socstruct.component.Person;
 import pl.edu.icm.board.util.RandomProvider;
 import pl.edu.icm.trurl.bin.Bin;
 import pl.edu.icm.trurl.ecs.Entity;
@@ -37,17 +37,17 @@ public class PersonNameUrizen {
     private final EngineIo engineIo;
     private final NamesSource namesSource;
     private final RandomGenerator random;
-    private final Selectors selectors;
+    private final Indexes selectors;
 
     @WithFactory
     public PersonNameUrizen(EngineIo engineIo,
                             NamesSource namesSource,
                             RandomProvider randomProvider,
-                            Selectors selectors) {
+                            Indexes selectors) {
         this.engineIo = engineIo;
         this.namesSource = namesSource;
         this.selectors = selectors;
-        engineIo.require(Named.class, Household.class, Person.class);
+        engineIo.require(NameTag.class, Household.class, Person.class);
         this.random = randomProvider.getRandomGenerator(PersonNameUrizen.class);
     }
 
@@ -65,15 +65,15 @@ public class PersonNameUrizen {
                 String lastName = lastNameBin.pick();
                 Person person = memberEntity.get(Person.class);
                 String firstName = person.getSex() ==
-                        Person.Sex.K
+                        Person.Sex.F
                         ? names.femaleNames.sample(random.nextDouble()).pick()
                         : names.maleNames.sample(random.nextDouble()).pick();
-                if ((lastName.endsWith("SKI") || lastName.endsWith("CKI")) && person.getSex() == Person.Sex.K) {
+                if ((lastName.endsWith("SKI") || lastName.endsWith("CKI")) && person.getSex() == Person.Sex.F) {
                     lastName = lastName.substring(0, lastName.length() - 1) + "A";
                 }
-                Named named = new Named();
-                named.setName(firstName + " " + lastName);
-                memberEntity.add(named);
+                NameTag nameTag = new NameTag();
+                nameTag.setName(firstName + " " + lastName);
+                memberEntity.add(nameTag);
                 stats.tick();
             }
         }));

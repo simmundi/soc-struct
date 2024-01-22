@@ -1,12 +1,12 @@
 package pl.edu.icm.em.common.downloader;
 
 import net.snowyhollows.bento.annotation.WithFactory;
-import pl.edu.icm.trurl.util.AbstractSoftEnum;
+import pl.edu.icm.trurl.util.AbstractCategory;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class DownloadableFile extends AbstractSoftEnum {
+public class DownloadableFile extends AbstractCategory {
     private final URL url;
     private final String filename;
     private final String md5;

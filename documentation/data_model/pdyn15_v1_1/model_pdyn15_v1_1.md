@@ -95,7 +95,7 @@ to mark them as such.
 
 Replicants have a single attribute: `type`, which is an instance of the `ReplicantType` enum.
 
-Current set of replicant types:
+Current set of prefabTag types:
 
 - `PRESBYTERY` - "plebania", a house of the clergy (represented by a single housheold)
 - `DPS` - a nursing home - emulated by a set of households, each representing a single "room"

@@ -30,6 +30,15 @@ import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.geography.KilometerGridCell;
 import pl.edu.icm.board.geography.commune.CommuneManager;
 import pl.edu.icm.board.model.*;
+import pl.edu.icm.em.socstruct.component.Household;
+import pl.edu.icm.em.socstruct.component.Person;
+import pl.edu.icm.em.socstruct.component.edu.Attendee;
+import pl.edu.icm.em.socstruct.component.edu.EducationLevel;
+import pl.edu.icm.em.socstruct.component.edu.EducationalInstitution;
+import pl.edu.icm.em.socstruct.component.geo.AdministrationUnitTag;
+import pl.edu.icm.em.socstruct.component.geo.Location;
+import pl.edu.icm.em.socstruct.component.work.Employee;
+import pl.edu.icm.em.socstruct.component.work.Workplace;
 import pl.edu.icm.board.util.RandomProvider;
 import pl.edu.icm.em.common.DebugTextFileService;
 import pl.edu.icm.trurl.ecs.Entity;
@@ -83,7 +92,7 @@ public class PdynExporter {
                 Location.class,
                 Attendee.class,
                 Employee.class,
-                AdministrationUnit.class,
+                AdministrationUnitTag.class,
                 EducationalInstitution.class);
     }
 
@@ -116,24 +125,24 @@ public class PdynExporter {
                 selectorZakladyBuilder.add(e.getId());
             } else if (e.get(EducationalInstitution.class) != null) {
                 EducationLevel eduLevelTmp = e.get(EducationalInstitution.class).getLevel();
-                switch (eduLevelTmp) {
-                    case K:
+                switch (eduLevelTmp.name()) {
+                    case "K":
                         countKindergartens.incrementAndGet();
                         selectorKindertardensBuilder.add(e.getId());
                         break;
-                    case P:
+                    case "P":
                         countPrimarySchools.incrementAndGet();
                         selectorPrimarySchoolsBuilder.add(e.getId());
                         break;
-                    case H:
+                    case "H":
                         countHighSchools.incrementAndGet();
                         selectorHighSchoolBuilder.add(e.getId());
                         break;
-                    case U:
+                    case "U":
                         countSmallUniversities.incrementAndGet();
                         selectorSmallUniversitiesBuilder.add(e.getId());
                         break;
-                    case BU:
+                    case "BU":
                         countBigUniversities.incrementAndGet();
                         selectorBigUniversitiesBuilder.add(e.getId());
                         break;
@@ -216,7 +225,7 @@ public class PdynExporter {
         try (var datZaklady = debugTextFileService.createTextFile(new File(dir, "zaklady.dat").getPath())) {
             datZaklady.printlnf("%d", countZaklady.get());
             engineIo.getEngine().execute(select(selectorZakladyBuilder).forEach(e -> {
-                var unit = e.get(AdministrationUnit.class);
+                var unit = e.get(AdministrationUnitTag.class);
                 var possibilities = cells.get(unit.getTeryt());
                 var cell = possibilities.get(random.nextInt(possibilities.size()));
                 var workplaceAttendees = attendees.getOrDefault(e.getId(), IntLists.EMPTY_LIST).toIntArray();

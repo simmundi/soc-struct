@@ -19,7 +19,7 @@
 package pl.edu.icm.board.workplace;
 
 import net.snowyhollows.bento.annotation.WithFactory;
-import pl.edu.icm.board.model.Person;
+import pl.edu.icm.em.socstruct.component.Person;
 
 public class ProfessionalActivityAssessor {
 
@@ -34,7 +34,7 @@ public class ProfessionalActivityAssessor {
 
     private int retirementAge(Person.Sex sex) {
         switch (sex) {
-            case K: return 60;
+            case F: return 60;
             default:
             case M: return 65;
         }

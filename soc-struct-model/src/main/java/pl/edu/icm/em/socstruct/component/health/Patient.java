@@ -16,19 +16,20 @@
  *
  */
 
-package pl.edu.icm.board.model;
+package pl.edu.icm.em.socstruct.component.health;
 
-import pl.edu.icm.trurl.ecs.annotation.WithMapper;
+import pl.edu.icm.trurl.ecs.Entity;
+import pl.edu.icm.trurl.ecs.dao.annotation.WithDao;
 
-@WithMapper
-public class Named {
-    private String name;
+@WithDao
+public class Patient {
+    private Entity healthcare;
 
-    public String getName() {
-        return name;
+    public Entity getHealthcare() {
+        return healthcare;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setHealthcare(Entity healthcare) {
+        this.healthcare = healthcare;
     }
 }

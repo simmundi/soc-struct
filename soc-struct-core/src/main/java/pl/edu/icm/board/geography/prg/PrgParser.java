@@ -19,11 +19,13 @@
 package pl.edu.icm.board.geography.prg;
 
 import pl.edu.icm.board.geography.prg.model.AddressPoint;
+import pl.edu.icm.em.socstruct.component.geo.Location;
 import pl.edu.icm.trurl.xml.Parser;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -55,26 +57,27 @@ public class PrgParser extends Parser  {
         super(reader, null);
     }
 
-    public void parse(Consumer<AddressPoint> consumer) throws XMLStreamException {
+    public void parse(BiConsumer<AddressPoint, Location> consumer) throws XMLStreamException {
         inElement(FEATURE_COLLECTION, () -> {
             inElement(FEATURE_MEMBERS, () -> {
                 forEach(PRG_PUNKT_ADRESOWY, () -> {
-                    AddressPoint punkt = new AddressPoint();
-                    punkt.setPrgId(getAttribValue(ATTR_GML_ID));
+                    AddressPoint ap = new AddressPoint();
+                    Location location = new Location();
+                    ap.setPrgId(getAttribValue(ATTR_GML_ID));
                     forEachSwitch(
-                            caseIf(PRG_MIEJSCOWOSC, () -> punkt.setLocality(getElementTrimmedStringValue())),
+                            caseIf(PRG_MIEJSCOWOSC, () -> ap.setLocality(getElementTrimmedStringValue())),
                             caseIf(PRG_CZESC_MIEJSCOWOSCI, () -> {
                                 if (getAttribValue(ATTR_XSI_NIL) == null) {
-                                    punkt.setFineLocality(getElementTrimmedStringValue());
+                                    ap.setFineLocality(getElementTrimmedStringValue());
                                 }
                             }),
                             caseIf(PRG_ULICA, () -> {
                                 if (getAttribValue(ATTR_XSI_NIL) == null) {
-                                    punkt.setStreet(getElementTrimmedStringValue());
+                                    ap.setStreet(getElementTrimmedStringValue());
                                 }
                             }),
-                            caseIf(PRG_KOD_POCZTOWY, () -> punkt.setPostalCode(getElementTrimmedStringValue())),
-                            caseIf(PRG_NUMER_PORZADKOWY, () -> punkt.setNumber(getElementTrimmedStringValue())),
+                            caseIf(PRG_KOD_POCZTOWY, () -> ap.setPostalCode(getElementTrimmedStringValue())),
+                            caseIf(PRG_NUMER_PORZADKOWY, () -> ap.setNumber(getElementTrimmedStringValue())),
                             caseIf(PRG_POZYCJA, () -> {
                                 inElement(GML_POINT, () -> {
                                     inElement(GML_POS, () -> {
@@ -83,13 +86,13 @@ public class PrgParser extends Parser  {
                                         if (!matcher.matches()) {
                                             throw new IllegalArgumentException("doesn't match: <" + pos + ">");
                                         }
-                                        punkt.setNorthing(Float.parseFloat(matcher.group(1)));
-                                        punkt.setEasting(Float.parseFloat(matcher.group(2)));
+                                        location.setN(Float.parseFloat(matcher.group(1)));
+                                        location.setE(Float.parseFloat(matcher.group(2)));
                                     });
                                 });
                             })
                     );
-                    consumer.accept(punkt);
+                    consumer.accept(ap, location);
                 });
             });
         });

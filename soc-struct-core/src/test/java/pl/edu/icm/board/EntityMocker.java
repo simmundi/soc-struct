@@ -19,9 +19,9 @@
 package pl.edu.icm.board;
 
 import net.snowyhollows.bento.Bento;
-import pl.edu.icm.board.model.AdministrationUnit;
-import pl.edu.icm.board.model.Household;
-import pl.edu.icm.board.model.Person;
+import pl.edu.icm.em.socstruct.component.geo.AdministrationUnitTag;
+import pl.edu.icm.em.socstruct.component.Household;
+import pl.edu.icm.em.socstruct.component.Person;
 import pl.edu.icm.trurl.ecs.Entity;
 import pl.edu.icm.trurl.ecs.MapperSet;
 import pl.edu.icm.trurl.ecs.Session;
@@ -64,8 +64,8 @@ public class EntityMocker {
         return person;
     }
 
-    public AdministrationUnit au(String teryt) {
-        return new AdministrationUnit(teryt);
+    public AdministrationUnitTag au(String teryt) {
+        return new AdministrationUnitTag(teryt);
     }
 
     public Entity entity(int id, Object... components) {

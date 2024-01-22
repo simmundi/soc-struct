@@ -19,8 +19,19 @@
 package pl.edu.icm.board.urizen.generic;
 
 import net.snowyhollows.bento.annotation.WithFactory;
-import pl.edu.icm.board.model.*;
 import pl.edu.icm.board.urizen.household.model.ComplexBlueprint;
+import pl.edu.icm.em.socstruct.component.Household;
+import pl.edu.icm.em.socstruct.component.NameTag;
+import pl.edu.icm.em.socstruct.component.Person;
+import pl.edu.icm.em.socstruct.component.edu.Attendee;
+import pl.edu.icm.em.socstruct.component.edu.EducationLevel;
+import pl.edu.icm.em.socstruct.component.edu.EducationalInstitution;
+import pl.edu.icm.em.socstruct.component.geo.AdministrationUnitTag;
+import pl.edu.icm.em.socstruct.component.geo.Complex;
+import pl.edu.icm.em.socstruct.component.geo.Location;
+import pl.edu.icm.em.socstruct.component.health.Healthcare;
+import pl.edu.icm.em.socstruct.component.health.HealthcareType;
+import pl.edu.icm.em.socstruct.component.health.Patient;
 import pl.edu.icm.trurl.ecs.Entity;
 import pl.edu.icm.trurl.ecs.Session;
 
@@ -40,7 +51,7 @@ public class Entities {
 
     public Entity createEmptyHousehold(Session session, String teryt) {
         Entity entity = session.createEntity();
-        entity.add(new AdministrationUnit(teryt));
+        entity.add(new AdministrationUnitTag(teryt));
         entity.add(new Household());
         return entity;
     }
@@ -55,21 +66,21 @@ public class Entities {
     public Entity createEducationInstitution(Session session, String name, Location location, EducationLevel level, int pupilCount, int teacherCount, String teryt) {
         Entity entity = session.createEntity();
 
-        Named named = new Named();
-        named.setName(name);
+        NameTag nameTag = new NameTag();
+        nameTag.setName(name);
 
-        AdministrationUnit administrationUnit = new AdministrationUnit();
-        administrationUnit.setTeryt(teryt);
+        AdministrationUnitTag administrationUnitTag = new AdministrationUnitTag();
+        administrationUnitTag.setCode(teryt);
 
         EducationalInstitution educationalInstitution = new EducationalInstitution();
         educationalInstitution.setLevel(level);
-        educationalInstitution.setPupilCount(pupilCount);
-        educationalInstitution.setTeacherCount((short) teacherCount);
+        educationalInstitution.setEstPupilCount(pupilCount);
+        educationalInstitution.setEstTeacherCount((short) teacherCount);
 
         entity.add(location);
-        entity.add(named);
+        entity.add(nameTag);
         entity.add(educationalInstitution);
-        entity.add(administrationUnit);
+        entity.add(administrationUnitTag);
 
         return entity;
     }

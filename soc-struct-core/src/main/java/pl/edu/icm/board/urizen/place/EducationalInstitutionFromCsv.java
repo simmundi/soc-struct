@@ -18,12 +18,12 @@
 
 package pl.edu.icm.board.urizen.place;
 
-import pl.edu.icm.board.model.EducationLevel;
-import pl.edu.icm.trurl.ecs.annotation.WithMapper;
+import pl.edu.icm.em.socstruct.component.edu.EducationLevel;
+import pl.edu.icm.trurl.ecs.dao.annotation.WithDao;
 
 import java.util.regex.Pattern;
 
-@WithMapper
+@WithDao
 public class EducationalInstitutionFromCsv {
 
     private static Pattern PRESCHOOL_PATTERN = Pattern.compile("przedszkol", Pattern.CASE_INSENSITIVE);

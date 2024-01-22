@@ -24,7 +24,7 @@ import com.univocity.parsers.csv.CsvParserSettings;
 import net.snowyhollows.bento.annotation.ByName;
 import net.snowyhollows.bento.annotation.WithFactory;
 import net.snowyhollows.bento.config.WorkDir;
-import pl.edu.icm.trurl.bin.BinPool;
+import pl.edu.icm.trurl.bin.Histogram;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -63,7 +63,7 @@ public class NamesSource {
         }
     }
 
-    private void fill(BinPool<String> binPool, String path, int labelColumn, int countColumn) throws FileNotFoundException {
+    private void fill(Histogram<String> binPool, String path, int labelColumn, int countColumn) throws FileNotFoundException {
         CsvParserSettings settings = new CsvParserSettings();
         settings.setHeaderExtractionEnabled(true);
         CsvParser csvParser = new CsvParser(settings);

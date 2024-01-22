@@ -19,12 +19,12 @@
 package pl.edu.icm.board.export;
 
 import net.snowyhollows.bento.annotation.WithFactory;
-import pl.edu.icm.board.model.EducationalInstitution;
-import pl.edu.icm.board.model.Location;
-import pl.edu.icm.trurl.bin.BinPool;
+import pl.edu.icm.em.common.math.histogram.Histogram;
+import pl.edu.icm.em.socstruct.component.edu.EducationalInstitution;
+import pl.edu.icm.em.socstruct.component.geo.Location;
 import pl.edu.icm.trurl.ecs.Entity;
+import pl.edu.icm.trurl.io.visnow.VnPointsExporter;
 import pl.edu.icm.trurl.util.Status;
-import pl.edu.icm.trurl.visnow.VnPointsExporter;
 
 import java.io.IOException;
 
@@ -35,7 +35,7 @@ public class EducationalInstitutionsExporter {
 
     }
 
-    public void export(BinPool<Entity> institutions) throws IOException {
+    public void export(Histogram<Entity> institutions) throws IOException {
         var exporter = VnPointsExporter.create(
                 ExportedEducationalInstitution.class,
                 "output/instytucje_edukacyjne");
@@ -50,7 +50,7 @@ public class EducationalInstitutionsExporter {
             exported.setId((short) bin.getLabel().getId());
             exported.setX(location.getE() / 1000f);
             exported.setY(location.getN() / 1000f);
-            exported.setCapacity(educationalInstitution.getPupilCount());
+            exported.setCapacity(educationalInstitution.getEstPupilCount());
             exported.setLeftEmpty((short) bin.getCount());
             exported.setType((short) (level != null ? level.ordinal() : -1));
 

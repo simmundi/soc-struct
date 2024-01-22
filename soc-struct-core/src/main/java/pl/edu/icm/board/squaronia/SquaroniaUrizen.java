@@ -20,11 +20,11 @@ package pl.edu.icm.board.squaronia;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import pl.edu.icm.board.EngineIo;
-import pl.edu.icm.board.model.Location;
-import pl.edu.icm.board.model.Household;
-import pl.edu.icm.board.model.Person;
+import pl.edu.icm.em.socstruct.component.Household;
+import pl.edu.icm.em.socstruct.component.geo.Location;
+import pl.edu.icm.em.socstruct.component.Person;
 import pl.edu.icm.board.util.RandomProvider;
-import pl.edu.icm.trurl.bin.BinPool;
+import pl.edu.icm.em.common.math.histogram.Histogram;
 import pl.edu.icm.trurl.ecs.Entity;
 import pl.edu.icm.trurl.ecs.Session;
 import pl.edu.icm.trurl.util.Status;
@@ -42,8 +42,8 @@ public class SquaroniaUrizen {
 
     private final EngineIo engineIo;
 
-    private BinPool<AgeRange> ageRangeBinPool = null;
-    private BinPool<Person.Sex> sexPoll = null;
+    private Histogram<AgeRange> ageRangeHistogram = null;
+    private Histogram<Person.Sex> sexPoll = null;
 
     private final RandomGenerator random;
 
@@ -72,10 +72,10 @@ public class SquaroniaUrizen {
      */
     public SquaroniaUrizen withAgeGroupShare(AgeRange ageRange, int shares){
         checkArgument(shares > 0, "shares == " + shares + " <= 0");
-        if(this.ageRangeBinPool == null){
-            this.ageRangeBinPool = new BinPool<>();
+        if(this.ageRangeHistogram == null){
+            this.ageRangeHistogram = new Histogram<>();
         }
-        this.ageRangeBinPool.add(ageRange, shares);
+        this.ageRangeHistogram.add(ageRange, shares);
         return this;
     }
 
@@ -132,7 +132,7 @@ public class SquaroniaUrizen {
      * Builds Squaronia
      */
     public void build() {
-        if (ageRangeBinPool == null){
+        if (ageRangeHistogram == null){
             generateDefaultAgePool();
         }
         if (numberOfWomen == -1){
@@ -145,20 +145,20 @@ public class SquaroniaUrizen {
     }
 
     private void generateSexPoll() {
-        this.sexPoll = new BinPool<>();
+        this.sexPoll = new Histogram<>();
         this.sexPoll.add(Person.Sex.M,this.numberOfMen);
-        this.sexPoll.add(Person.Sex.K,this.numberOfWomen);
+        this.sexPoll.add(Person.Sex.F,this.numberOfWomen);
     }
 
     private void generateDefaultAgePool() {
-        ageRangeBinPool = new BinPool<>();
-        ageRangeBinPool.add(AgeRange.AGE_0_100,populationSize);
+        ageRangeHistogram = new Histogram<>();
+        ageRangeHistogram.add(AgeRange.AGE_0_100,populationSize);
     }
 
     private void createHouseholdsWithCitizens() {
         var engine = engineIo.getEngine();
         engine.execute(sessionFactory-> {
-            Session session = sessionFactory.create();
+            Session session = sessionFactory.createOrGet();
             Status statshaushold = Status.of("Building Squaronia's households",10000);
             int tempPop = this.populationSize;
             for (int i = 0; i < (float)this.populationSize / this.familySize; i++){
@@ -189,7 +189,7 @@ public class SquaroniaUrizen {
 
     private void createCitizenInHousehold(Session session, List<Entity> housemates) {
         var sex = sexPoll.sample(random.nextDouble()).pick();
-        var age = ageRangeBinPool.sample(random.nextDouble()).pick().getValue(random.nextDouble());
+        var age = ageRangeHistogram.sample(random.nextDouble()).pick().getValue(random.nextDouble());
         Entity cit = session.createEntity();
         Person person = cit.add(new Person());
         person.setAge(age);

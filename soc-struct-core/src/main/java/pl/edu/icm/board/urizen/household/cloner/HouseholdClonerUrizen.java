@@ -21,14 +21,14 @@ package pl.edu.icm.board.urizen.household.cloner;
 import net.snowyhollows.bento.annotation.WithFactory;
 import org.apache.commons.math3.random.RandomGenerator;
 import pl.edu.icm.board.EngineIo;
-import pl.edu.icm.board.model.AdministrationUnit;
-import pl.edu.icm.board.model.Household;
-import pl.edu.icm.board.model.Named;
-import pl.edu.icm.board.model.Person;
 import pl.edu.icm.board.urizen.population.trusted.CountyPopulationLoader;
 import pl.edu.icm.board.urizen.replicants.ReplicantsCounter;
 import pl.edu.icm.board.util.RandomProvider;
-import pl.edu.icm.trurl.bin.BinPool;
+import pl.edu.icm.em.common.math.histogram.Histogram;
+import pl.edu.icm.em.socstruct.component.Household;
+import pl.edu.icm.em.socstruct.component.NameTag;
+import pl.edu.icm.em.socstruct.component.Person;
+import pl.edu.icm.em.socstruct.component.geo.AdministrationUnitTag;
 import pl.edu.icm.trurl.ecs.Session;
 import pl.edu.icm.trurl.util.Status;
 
@@ -55,9 +55,9 @@ public class HouseholdClonerUrizen {
         this.replicantsCounter = replicantsCounter;
         engineIo.require(
                 Household.class,
-                AdministrationUnit.class,
+                AdministrationUnitTag.class,
                 Person.class,
-                Named.class);
+                NameTag.class);
     }
 
     public void cloneHouseholds() {
@@ -74,9 +74,9 @@ public class HouseholdClonerUrizen {
             int targetNonReplicantPopulation = (int) (terytTotalPopulation * nonReplicantRatio);
             int householdMembersCount = entry.getValue().get();
             int householdMembersToCreate = targetNonReplicantPopulation - householdMembersCount;
-            BinPool<HouseholdShape> householdShapes = familyShapeStats.shapesByTeryt.get(teryt);
+            Histogram<HouseholdShape> householdShapes = familyShapeStats.shapesByTeryt.get(teryt);
             engineIo.getEngine().execute(sessionFactory -> {
-                Session session = sessionFactory.create();
+                Session session = sessionFactory.createOrGet();
                 int counter = householdMembersToCreate;
                 while (counter > 0) {
                     HouseholdShape shape = householdShapes.sample(randomGenerator.nextDouble()).pick();

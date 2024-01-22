@@ -18,9 +18,9 @@
 
 package pl.edu.icm.board.urizen.population.trusted;
 
-import pl.edu.icm.trurl.ecs.annotation.WithMapper;
+import pl.edu.icm.trurl.ecs.dao.annotation.WithDao;
 
-@WithMapper
+@WithDao
 class BasicPopulationDatum {
     private String teryt;
     private int total;

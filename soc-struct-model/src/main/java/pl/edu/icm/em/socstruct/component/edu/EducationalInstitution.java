@@ -16,23 +16,25 @@
  *
  */
 
-package pl.edu.icm.board.model;
+package pl.edu.icm.em.socstruct.component.edu;
 
-import pl.edu.icm.trurl.ecs.annotation.WithMapper;
+import pl.edu.icm.trurl.ecs.dao.annotation.CategoryManagedBy;
+import pl.edu.icm.trurl.ecs.dao.annotation.WithDao;
 
-@WithMapper
+@WithDao
 public class EducationalInstitution {
+    @CategoryManagedBy(EducationLevelManager.class)
     private EducationLevel level;
-    private int pupilCount;
-    private short teacherCount;
+    private int estPupilCount;
+    private short estTeacherCount;
 
     public EducationalInstitution() {
     }
 
-    public EducationalInstitution(EducationLevel level, int pupilCount, int teacherCount) {
+    public EducationalInstitution(EducationLevel level, int estPupilCount, int estTeacherCount) {
         this.level = level;
-        this.pupilCount = pupilCount;
-        this.teacherCount = (short)teacherCount;
+        this.estPupilCount = estPupilCount;
+        this.estTeacherCount = (short) estTeacherCount;
     }
 
     public EducationLevel getLevel() {
@@ -43,19 +45,19 @@ public class EducationalInstitution {
         this.level = level;
     }
 
-    public int getPupilCount() {
-        return pupilCount;
+    public int getEstPupilCount() {
+        return estPupilCount;
     }
 
-    public void setPupilCount(int pupilCount) {
-        this.pupilCount = pupilCount;
+    public void setEstPupilCount(int estPupilCount) {
+        this.estPupilCount = estPupilCount;
     }
 
-    public short getTeacherCount() {
-        return teacherCount;
+    public short getEstTeacherCount() {
+        return estTeacherCount;
     }
 
-    public void setTeacherCount(short teacherCount) {
-        this.teacherCount = teacherCount;
+    public void setEstTeacherCount(short estTeacherCount) {
+        this.estTeacherCount = estTeacherCount;
     }
 }

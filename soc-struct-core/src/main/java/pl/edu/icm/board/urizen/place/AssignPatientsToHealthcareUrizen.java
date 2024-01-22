@@ -24,10 +24,23 @@ import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.geography.KilometerGridCell;
 import pl.edu.icm.board.geography.density.PopulationDensityLoader;
 import pl.edu.icm.board.model.*;
+import pl.edu.icm.em.socstruct.component.Household;
+import pl.edu.icm.em.socstruct.component.NameTag;
+import pl.edu.icm.em.socstruct.component.Person;
+import pl.edu.icm.em.socstruct.component.edu.Attendee;
+import pl.edu.icm.em.socstruct.component.edu.EducationalInstitution;
+import pl.edu.icm.em.socstruct.component.geo.AdministrationUnitTag;
+import pl.edu.icm.em.socstruct.component.geo.Complex;
+import pl.edu.icm.em.socstruct.component.geo.Location;
+import pl.edu.icm.em.socstruct.component.health.Healthcare;
+import pl.edu.icm.em.socstruct.component.health.Patient;
+import pl.edu.icm.em.socstruct.component.prefab.PrefabTag;
+import pl.edu.icm.em.socstruct.component.work.Employee;
+import pl.edu.icm.em.socstruct.component.work.Workplace;
 import pl.edu.icm.board.urizen.generic.Entities;
 import pl.edu.icm.board.urizen.generic.EntityStreamManipulator;
 import pl.edu.icm.board.util.RandomProvider;
-import pl.edu.icm.trurl.bin.BinPoolsByShape;
+import pl.edu.icm.trurl.bin.HistogramsByShape;
 import pl.edu.icm.trurl.ecs.Engine;
 import pl.edu.icm.trurl.ecs.Entity;
 import pl.edu.icm.trurl.ecs.util.EntityIterator;
@@ -63,15 +76,15 @@ public class AssignPatientsToHealthcareUrizen {
         this.staticSelectors = staticSelectors;
         engineIo.require(
                 Household.class,
-                Named.class,
+                NameTag.class,
                 Person.class,
                 Location.class,
-                AdministrationUnit.class,
+                AdministrationUnitTag.class,
                 Workplace.class,
                 EducationalInstitution.class,
                 Attendee.class,
                 Employee.class,
-                Replicant.class,
+                PrefabTag.class,
                 Complex.class,
                 Healthcare.class,
                 Patient.class);
@@ -92,7 +105,7 @@ public class AssignPatientsToHealthcareUrizen {
         assign(householdsSelector, mapPossibilities(leftGridCells, 70));
     }
 
-    private Set<KilometerGridCell> assign(Selector householdsSelector, BinPoolsByShape<KilometerGridCell, Entity> healthcareUnits) {
+    private Set<KilometerGridCell> assign(Selector householdsSelector, HistogramsByShape<KilometerGridCell, Entity> healthcareUnits) {
         Engine engine = engineIo.getEngine();
         Set<KilometerGridCell> unassignedCells = new HashSet<>();
         var status = Status.of("Assigning patients to healthcare units", 500000);
@@ -124,7 +137,7 @@ public class AssignPatientsToHealthcareUrizen {
         return unassignedCells;
     }
 
-    private Entity findUnitIfNotAlreadyFound(BinPoolsByShape<KilometerGridCell, Entity> gridCellEntityBinsByShape, KilometerGridCell cell, Entity found) {
+    private Entity findUnitIfNotAlreadyFound(HistogramsByShape<KilometerGridCell, Entity> gridCellEntityBinsByShape, KilometerGridCell cell, Entity found) {
         if (found != null) {
             return found;
         }
@@ -135,7 +148,7 @@ public class AssignPatientsToHealthcareUrizen {
                 .pick();
     }
 
-    private BinPoolsByShape<KilometerGridCell, Entity> mapPossibilities(int radius) {
+    private HistogramsByShape<KilometerGridCell, Entity> mapPossibilities(int radius) {
         int skip = 2000 * radius * radius;
         var status = Status.of("Mapping slots in healthcare: radius = " + radius + " km", skip);
         Engine engine = engineIo.getEngine();
@@ -155,7 +168,7 @@ public class AssignPatientsToHealthcareUrizen {
         return result;
     }
 
-    private BinPoolsByShape<KilometerGridCell, Entity> mapPossibilities(Set<KilometerGridCell> cells, int radius) {
+    private HistogramsByShape<KilometerGridCell, Entity> mapPossibilities(Set<KilometerGridCell> cells, int radius) {
         int skip = 2000000;
         var status = Status.of("Final mapping of slots in healthcare", skip);
         Engine engine = engineIo.getEngine();

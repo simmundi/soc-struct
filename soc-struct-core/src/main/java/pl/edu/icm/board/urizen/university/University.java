@@ -18,7 +18,7 @@
 
 package pl.edu.icm.board.urizen.university;
 
-import pl.edu.icm.board.model.Location;
+import pl.edu.icm.em.socstruct.component.geo.Location;
 
 public class University {
     protected final Location location;

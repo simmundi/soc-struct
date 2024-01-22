@@ -26,20 +26,20 @@ import pl.edu.icm.board.EngineIo;
 import pl.edu.icm.board.geography.KilometerGridCell;
 import pl.edu.icm.board.geography.commune.Commune;
 import pl.edu.icm.board.geography.commune.CommuneManager;
-import pl.edu.icm.board.model.AdministrationUnit;
-import pl.edu.icm.board.model.Employee;
-import pl.edu.icm.board.model.Household;
-import pl.edu.icm.board.model.Location;
-import pl.edu.icm.board.model.Person;
-import pl.edu.icm.board.model.Workplace;
+import pl.edu.icm.em.socstruct.component.geo.AdministrationUnitTag;
+import pl.edu.icm.em.socstruct.component.work.Employee;
+import pl.edu.icm.em.socstruct.component.Household;
+import pl.edu.icm.em.socstruct.component.geo.Location;
+import pl.edu.icm.em.socstruct.component.Person;
+import pl.edu.icm.em.socstruct.component.work.Workplace;
 import pl.edu.icm.board.urizen.generic.EntityStreamManipulator;
 import pl.edu.icm.board.util.RandomProvider;
 import pl.edu.icm.board.workplace.ProfessionalActivityAssessor;
 import pl.edu.icm.board.workplace.WorkplacesInCommunes;
 import pl.edu.icm.em.common.DebugTextFile;
 import pl.edu.icm.em.common.DebugTextFileService;
-import pl.edu.icm.trurl.bin.BinPool;
-import pl.edu.icm.trurl.bin.BinPoolsByShape;
+import pl.edu.icm.trurl.bin.Histogram;
+import pl.edu.icm.trurl.bin.HistogramsByShape;
 import pl.edu.icm.trurl.ecs.Entity;
 import pl.edu.icm.trurl.ecs.Session;
 import pl.edu.icm.trurl.ecs.util.Selectors;
@@ -63,7 +63,7 @@ public class WorkplacesUrizen {
     private final EngineIo engineIo;
     private final ProfessionalActivityAssessor professionalActivityAssessor;
     private final RandomGenerator random;
-    private final Selectors selectors;
+    private final Indexes selectors;
     private final DebugTextFileService debugTextFileService;
 
     private final double[] workplaceCountsByEmployees;
@@ -81,7 +81,7 @@ public class WorkplacesUrizen {
             WorkDir workDir, CommuneManager communeManager,
             EntityStreamManipulator entityStreamManipulator,
             ProfessionalActivityAssessor professionalActivityAssessor,
-            RandomProvider randomProvider, Selectors selectors, DebugTextFileService debugTextFileService) {
+            RandomProvider randomProvider, Indexes selectors, DebugTextFileService debugTextFileService) {
         this.workplacesInCommunes = workplacesInCommunes;
         this.engineIo = engineIo;
         this.workDir = workDir;
@@ -99,7 +99,7 @@ public class WorkplacesUrizen {
         accumulateEmpoyeeSlots(privateSectorTotal, new ZipfDistribution(privateSectorZipfN, Double.parseDouble(privateSectorZipfS)));
         smearOneSlot();
 
-        engineIo.require(Workplace.class, AdministrationUnit.class, Employee.class);
+        engineIo.require(Workplace.class, AdministrationUnitTag.class, Employee.class);
     }
 
     private void smearOneSlot() {
@@ -127,7 +127,7 @@ public class WorkplacesUrizen {
             throw new IllegalStateException(e);
         }
         var engine = engineIo.getEngine();
-        BinPool<Commune> employees = new BinPool<>();
+        Histogram<Commune> employees = new Histogram<>();
         for (Commune commune : communeManager.getCommunes()) {
             employees.add(commune, workplacesInCommunes.getEmploymentDataFor(commune).getWorkplaces());
         }
@@ -151,7 +151,7 @@ public class WorkplacesUrizen {
                     Entity workplaceEntity = session.createEntity();
                     workplaceEntity.add(new Workplace((short) i));
                     var choice = employees.sample(random.nextDouble()).pick(i);
-                    workplaceEntity.add(new AdministrationUnit(choice.getTeryt()));
+                    workplaceEntity.add(new AdministrationUnitTag(choice.getTeryt()));
                     status.tick();
                     accumulator -= 1.0;
                 }
@@ -164,14 +164,14 @@ public class WorkplacesUrizen {
     public void assignWorkersToWorkplaces() {
         Status status = Status.of("grouping workplaces by communes");
         Map<Commune, Integer> slotsInExistingWorplaces = new HashMap<>();
-        BinPoolsByShape<Commune, Entity> workplacesByCommunes = entityStreamManipulator.groupIntoShapes(
+        HistogramsByShape<Commune, Entity> workplacesByCommunes = entityStreamManipulator.groupIntoShapes(
                 engineIo.getEngine().streamDetached()
                         .filter(e -> e.get(Workplace.class) != null),
-                e -> e.get(Workplace.class).getEmployees(),
+                e -> e.get(Workplace.class).getEstEmployeeCount(),
                 e -> Stream.of(
                         communeManager
                                 .communeForTeryt(
-                                        e.get(AdministrationUnit.class).getTeryt())
+                                        e.get(AdministrationUnitTag.class).getCode())
                                 .get()
                 )
         );
@@ -180,25 +180,25 @@ public class WorkplacesUrizen {
         });
         status.done();
 
-        Map<Commune, BinPool<Commune>> flows = new HashMap<>();
-        Map<Commune, BinPool<Classification>> classifications = new HashMap<>();
+        Map<Commune, Histogram<Commune>> flows = new HashMap<>();
+        Map<Commune, Histogram<Classification>> classifications = new HashMap<>();
 
         try (var df = debugTextFileService.createTextFile("output/debug_flows.csv")) {
             df.println("commune,traveling,local,unemployed,workplaces");
             communeManager.getCommunes().forEach(commune -> {
                 var employment = workplacesInCommunes.getEmploymentDataFor(commune);
-                BinPool<Classification> classificationBinPool = new BinPool<>();
-                classifications.put(commune, classificationBinPool);
-                BinPool<Commune> flowsForOneCommune = new BinPool<>();
+                Histogram<Classification> classificationHistogram = new Histogram<>();
+                classifications.put(commune, classificationHistogram);
+                Histogram<Commune> flowsForOneCommune = new Histogram<>();
                 flows.put(commune, flowsForOneCommune);
 
                 employment.getTravelingEmployees().forEach(flow -> {
                     flowsForOneCommune.add(flow.getCommune(), flow.getNumberOfPeople());
                 });
 
-                var traveling = classificationBinPool.add(Classification.EMPLOYED_IN_ANOTHER_COMMUNE, flowsForOneCommune.getTotalCount());
-                var local = classificationBinPool.add(Classification.EMPLOYED_IN_OWN_COMMUNE, employment.getLocalEmployees());
-                var unemployed = classificationBinPool.add(Classification.UNEMPLOYED, employment.getPotentialEmployees() - classificationBinPool.getTotalCount());
+                var traveling = classificationHistogram.add(Classification.EMPLOYED_IN_ANOTHER_COMMUNE, flowsForOneCommune.getTotalCount());
+                var local = classificationHistogram.add(Classification.EMPLOYED_IN_OWN_COMMUNE, employment.getLocalEmployees());
+                var unemployed = classificationHistogram.add(Classification.UNEMPLOYED, employment.getPotentialEmployees() - classificationHistogram.getTotalCount());
 
                 df.printf("%s,%d,%d,%d,%d\n", commune.getName(),
                         traveling.getCount(),
